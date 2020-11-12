@@ -6,15 +6,10 @@ import { notFoundHandler, errorHandler } from "./middlewares/middlewares";
 import api from "./api/api";
 import cors from "cors";
 import socket from "./socket";
-const io = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const retard = io(server);
-retard.on("connection", (socket: any) => {
-  console.log(socket);
-});
-// socket(server);
+socket(server);
 
 app.use(
   cors({
