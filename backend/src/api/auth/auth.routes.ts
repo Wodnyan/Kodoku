@@ -1,6 +1,7 @@
 import { Router } from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import User from "../user/user.model";
 
 dotenv.config();
@@ -20,15 +21,21 @@ router.get("/github/callback", async (req, res, next) => {
       `https://github.com/login/oauth/access_token?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${code}`
     );
     // Get the token from the response.
-    const [, token] = data.split("&")[0].split("=");
-    const { data: user } = await axios.get("https://api.github.com/user", {
+    const [, accessToken] = data.split("&")[0].split("=");
+    const { data: userData } = await axios.get("https://api.github.com/user", {
       headers: {
-        Authorization: `token ${token}`,
+        Authorization: `token ${accessToken}`,
       },
     });
-    console.log(user);
+    console.log(accessToken);
+    const payload = {
+      username: userData.login,
+      github_id: userData.id,
+      avatar_url: userData.avatar_url,
+    };
+    const token = await jwt.sign(payload, process.env.JWT_SECRET!);
     res.json({
-      user,
+      user: payload,
       token,
     });
   } catch (error) {
