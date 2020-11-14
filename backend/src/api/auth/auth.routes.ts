@@ -15,21 +15,26 @@ router.get("/github", (req, res, next) => {
 
 router.get("/github/callback", async (req, res, next) => {
   const { code } = req.query;
-  const { data } = await axios.post(
-    `https://github.com/login/oauth/access_token?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${code}`
-  );
-  // Get the token from the response.
-  const [, token] = data.split("&")[0].split("=");
-  const { data: user } = await axios.get("https://api.github.com/user", {
-    headers: {
-      Authorization: `token ${token}`,
-    },
-  });
-  console.log(user);
-  res.json({
-    user,
-    token,
-  });
+  try {
+    const { data } = await axios.post(
+      `https://github.com/login/oauth/access_token?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${code}`
+    );
+    // Get the token from the response.
+    const [, token] = data.split("&")[0].split("=");
+    const { data: user } = await axios.get("https://api.github.com/user", {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    });
+    console.log(user);
+    res.json({
+      user,
+      token,
+    });
+  } catch (error) {
+    res.status(error.response?.status || 500);
+    next(error);
+  }
 });
 
 export default router;
