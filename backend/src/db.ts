@@ -6,6 +6,6 @@ const environment = process.env.NODE_ENV || "development";
 
 const connection = knex(config[environment]);
 
-Model.knex(connection);
-
-export default connection;
+export default function makeConnection() {
+  Model.knex(connection);
+}

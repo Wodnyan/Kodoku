@@ -1,6 +1,10 @@
 import { Router } from "express";
+import user from "./user/user.routes";
+import auth from "./auth/auth.routes";
 
 const router = Router();
+router.use("/user", user);
+router.use("/auth", auth);
 
 export const messages = {
   root: "Welcome to my API",
