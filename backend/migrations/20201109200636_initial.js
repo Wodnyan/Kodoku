@@ -21,7 +21,7 @@ exports.up = async (knex) => {
     table.string("username", 100).notNullable();
     table.string("password", 100);
     table.string("email").unique();
-    table.string("profile_picture", 2083);
+    table.string("avatar_url", 2083);
     table.timestamps(false, true);
   });
   await knex.schema.createTable(tableNames.servers, (table) => {
