@@ -7,3 +7,7 @@
 .btn--circular {
   @apply rounded-full h-10 w-10 mx-auto my-2 cursor-pointer;
 }
+
+/* .input {
+  @apply
+} */

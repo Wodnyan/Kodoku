@@ -14,12 +14,12 @@ const OAuthButton: React.FC<Props> = ({ children, icon, location }) => {
   return (
     <button
       onClick={onClick}
-      className="flex p-2 rounded bg-gray-900 text-white hover:bg-black"
+      className="flex w-full p-3 rounded bg-gray-900 text-white hover:bg-black"
     >
-      <span>
+      <span className="inline">
         <img src={icon} alt="icon" />
       </span>
-      <span>{children}</span>
+      <span className="inline text-center flex-1">{children}</span>
     </button>
   );
 };
