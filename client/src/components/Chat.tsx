@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ChatMessage from "./ChatMessage";
 import { Message } from "../types";
 
-const Chat = () => {
+const Chat = React.memo(() => {
   const [messages, setMessages] = useState<Message[] | []>([]);
   return (
     <div className="overflow-auto h-full">
@@ -14,5 +14,5 @@ const Chat = () => {
       ))}
     </div>
   );
-};
+});
 export default Chat;

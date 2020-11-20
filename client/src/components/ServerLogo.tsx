@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface ServerLogoProps {
   src: string;
@@ -24,11 +24,11 @@ export const CreateNewServerButton = () => {
   );
 };
 
-const ServerLogo: React.FC<ServerLogoProps> = ({ src }) => {
+const ServerLogo: React.FC<ServerLogoProps> = React.memo(({ src }) => {
   return (
     <a href="/chat">
       <img className="object-cover btn--circular" src={src} alt="Server logo" />
     </a>
   );
-};
+});
 export default ServerLogo;
