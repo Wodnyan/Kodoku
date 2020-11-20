@@ -14,7 +14,11 @@ const setup = () => {
   });
   passport.deserializeUser(async ({ id }, done) => {
     try {
-      const userInfo = await User.query().where({ id }).skipUndefined();
+      const userInfo = await User.query()
+        .where({ id })
+        .skipUndefined()
+        .select(["id", "username", "email", "avatar_url"])
+        .first();
       done(null, userInfo);
     } catch (error) {
       done(error);

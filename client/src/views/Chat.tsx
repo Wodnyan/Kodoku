@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
 import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
 import ServerName from "../components/ServerName";
+import { API_ENDPOINT } from "../constants";
 
 const ChatPage = () => {
   const [socket, setSocket] = useState<null | Socket>(null);
   const [inputValue, setInputValue] = useState("");
+  const history = useHistory();
   useEffect(() => {
     const socketio = io("/");
     setSocket(socketio);
@@ -20,6 +23,23 @@ const ChatPage = () => {
     return () => {
       socket?.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const authenticate = await fetch(`${API_ENDPOINT}/user`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Access-Control-Allow-Credentials": "true",
+        },
+      });
+      if (!authenticate.ok) {
+        history.push("/");
+      }
+      console.log(await authenticate.json());
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
