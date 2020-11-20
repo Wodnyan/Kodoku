@@ -1,12 +1,14 @@
 import { Router } from "express";
+import { checkAuth } from "../../middlewares/middlewares";
 import User from "./user.model";
 
 const router = Router();
 
-router.get("/", async (req, res, next) => {
-  const users = await User.query();
+router.get("/", checkAuth, (req, res, next) => {
+  const user = req.user;
   res.json({
-    users,
+    user,
+    message: "User",
   });
 });
 

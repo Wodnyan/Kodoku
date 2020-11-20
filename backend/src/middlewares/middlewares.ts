@@ -10,6 +10,15 @@ export function notFoundHandler(
   next(error);
 }
 
+export function checkAuth(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    const error = new Error("Unauthorized");
+    res.status(401);
+    return next(error);
+  }
+  return next();
+}
+
 export function errorHandler(
   error: any,
   req: Request,
