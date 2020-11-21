@@ -21,7 +21,7 @@ exports.up = async (knex) => {
   // USERS
   await knex.schema.createTable(tableNames.users, (table) => {
     table.increments();
-    table.string("username", 100).notNullable();
+    table.string("username", 30).notNullable();
     table.string("password", 100);
     table.string("email").unique().notNullable();
     table.string("avatar_url", 2083);
