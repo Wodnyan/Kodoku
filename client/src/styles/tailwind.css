@@ -8,6 +8,22 @@
   @apply rounded-full h-10 w-10 mx-auto my-2 cursor-pointer;
 }
 
-/* .input {
-  @apply
-} */
+.link {
+  @apply text-blue-400 underline;
+}
+
+.error-message {
+  @apply text-red-500;
+}
+
+.input {
+  @apply w-full border-black border-2 border-solid p-1;
+}
+
+.input.input--password {
+  @apply p-0;
+}
+
+.input.input--error {
+  @apply border-red-500;
+}

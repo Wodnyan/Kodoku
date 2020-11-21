@@ -318,6 +318,10 @@ module.exports = {
       0: "0",
       auto: "auto",
       "1/2": "50%",
+      1: "0.25rem",
+      2: "0.50rem",
+      3: "0.75rem",
+      4: "1rem",
     },
     letterSpacing: {
       tighter: "-0.05em",
@@ -379,6 +383,14 @@ module.exports = {
     },
     minWidth: {
       0: "0",
+      1: "0.25rem",
+      2: "0.50rem",
+      3: "0.75rem",
+      4: "1rem",
+      8: "2rem",
+      16: "3rem",
+      32: "4rem",
+      64: "5rem",
       full: "100%",
     },
     objectPosition: {
