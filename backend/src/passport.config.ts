@@ -1,8 +1,10 @@
 import passport from "passport";
-import * as p from "passport-github2";
+import { Strategy as GithubStrategy } from "passport-github2";
+import { Strategy as LocalStrategy } from "passport-local";
 import dotenv from "dotenv";
 import axios from "axios";
 import User from "./api/user/user.model";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -25,7 +27,28 @@ const setup = () => {
     }
   });
   passport.use(
-    new p.Strategy(
+    new LocalStrategy(
+      {
+        usernameField: "email",
+      },
+      async (email, password, done) => {
+        try {
+          const user = await User.query().where({ email }).first();
+          if (!user) return done(null, false);
+          const dehashedPassword = await bcrypt.compare(
+            password,
+            user.password
+          );
+          if (!dehashedPassword) return done(null, false);
+          done(null, user);
+        } catch (error) {
+          done(error);
+        }
+      }
+    )
+  );
+  passport.use(
+    new GithubStrategy(
       {
         clientID: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
