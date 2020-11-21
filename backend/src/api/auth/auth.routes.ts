@@ -3,6 +3,7 @@ import passport from "passport";
 import bcrypt from "bcrypt";
 import User from "../user/user.model";
 import { CLIENT_URL } from "../../constants";
+import validateRequestBody from "../../lib/validateRequestBody";
 
 const router = Router();
 
@@ -15,10 +16,8 @@ router.post(
 
 router.post("/register", async (req, res, next) => {
   try {
-    // [] Validate inputs
-    // [x] Check if email is used
-    // [x] Hash password
-    // [x] Serialize user (req.login)
+    // validate inputs
+    const bruh = await validateRequestBody(req.body);
     const { email, password, username } = req.body;
     const isEmailUsed = await User.query().where({ email }).first();
     if (isEmailUsed) {
