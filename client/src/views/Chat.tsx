@@ -61,7 +61,7 @@ const ChatPage = () => {
   return (
     <>
       <div className="h-full flex">
-        <section className="bg-red-400 w-24 h-screen overflow-auto">
+        <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
           {[...Array(10)].map((_, id) => (
             <ServerLogo src="https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg" />
           ))}
