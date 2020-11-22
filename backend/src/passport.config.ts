@@ -32,14 +32,15 @@ const setup = () => {
         usernameField: "email",
       },
       async (email, password, done) => {
+        const error = new Error("Invalid login attempt");
         try {
           const user = await User.query().where({ email }).first();
-          if (!user) return done(null, false);
+          if (!user) return done(error);
           const dehashedPassword = await bcrypt.compare(
             password,
             user.password
           );
-          if (!dehashedPassword) return done(null, false);
+          if (!dehashedPassword) return done(error);
           done(null, user);
         } catch (error) {
           done(error);

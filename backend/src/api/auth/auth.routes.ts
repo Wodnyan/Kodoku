@@ -7,17 +7,16 @@ import validateRequestBody from "../../lib/validateRequestBody";
 
 const router = Router();
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: `${CLIENT_URL}/chat`,
-  })
-);
+router.post("/login", passport.authenticate("local"), (req, res, next) => {
+  res.json({
+    user: req.user,
+    message: "Login",
+  });
+});
 
 router.post("/register", async (req, res, next) => {
   try {
-    // validate inputs
-    const bruh = await validateRequestBody(req.body);
+    const validateInputs = await validateRequestBody(req.body);
     const { email, password, username } = req.body;
     const isEmailUsed = await User.query().where({ email }).first();
     if (isEmailUsed) {
@@ -48,7 +47,10 @@ router.post("/register", async (req, res, next) => {
     });
     req.login(user, (error) => {
       if (error) return next(error);
-      res.redirect(CLIENT_URL);
+      res.json({
+        user,
+        message: "Register",
+      });
     });
   } catch (error) {
     next(error);

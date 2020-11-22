@@ -1,1 +1,1 @@
-export const CLIENT_URL = "http://locahost:3000";
+export const CLIENT_URL = "http://localhost:3000";

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import OAuthButton from "../../components/OAuthButton";
 import Line from "../../components/Line";
 import { API_ENDPOINT } from "../../constants";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 interface Inputs {
@@ -12,13 +12,48 @@ interface Inputs {
 }
 
 const Signup = () => {
-  const { register, handleSubmit, errors } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    setError,
+    clearErrors,
+  } = useForm<Inputs>();
   const [showPassword, setShowPassword] = useState(false);
+  const history = useHistory();
   useEffect(() => {
-    document.title = "Login";
+    document.title = "Sign up";
   }, []);
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+  const onSubmit = async (data: any) => {
+    clearErrors();
+    const resp = await fetch(`${API_ENDPOINT}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+    if (resp.ok) {
+      const user = await resp.json();
+      history.push("/chat");
+    } else {
+      const error = await resp.json();
+      if (error.code === 409) {
+        setError("email", { type: "required", message: "email is in use" });
+      } else {
+        error.errors?.forEach((error: any) => {
+          setError(error.split(" ")[0], {
+            type: "required",
+            message: error,
+          });
+        });
+      }
+      // setError("email", { type: "required", message: error.message });
+    }
   };
   return (
     <main className="flex flex-col justify-center items-center h-full">
@@ -48,7 +83,11 @@ const Signup = () => {
               className={`input ${errors.email && "input--error"}`}
             />
             {errors.email && (
-              <p className="error-message">This field is required</p>
+              <p className="error-message">
+                {errors.email.message?.length === 0
+                  ? "This field is required"
+                  : errors.email.message}
+              </p>
             )}
           </div>
           <div>
@@ -63,7 +102,11 @@ const Signup = () => {
               className={`input ${errors.username && "input--error"}`}
             />
             {errors.username && (
-              <p className="error-message">This field is required</p>
+              <p className="error-message">
+                {errors.username.message?.length === 0
+                  ? "This field is required"
+                  : errors.username.message}
+              </p>
             )}
           </div>
           <div>
@@ -84,13 +127,19 @@ const Signup = () => {
               />
               <button
                 className="min-w-32 focus:outline-none"
-                onClick={() => setShowPassword((prev) => !prev)}
+                // If this isn't set explicitly than it be a type "submit".
+                type="button"
+                onClick={toggleShowPassword}
               >
                 {showPassword ? "hide" : "show"}
               </button>
             </div>
             {errors.password && (
-              <p className="error-message">This field is required</p>
+              <p className="error-message">
+                {errors.password.message?.length === 0
+                  ? "This field is required"
+                  : errors.password.message}
+              </p>
             )}
           </div>
           <div className="flex justify-between">
