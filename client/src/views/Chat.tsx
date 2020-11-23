@@ -3,12 +3,14 @@ import { useHistory } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
+import NewServer from "../components/NewServer";
 import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
 import ServerName from "../components/ServerName";
 import { API_ENDPOINT } from "../constants";
 
 const ChatPage = () => {
   const [socket, setSocket] = useState<null | Socket>(null);
+  const [showNewServerOverlay, setShowNewServerOverlay] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const history = useHistory();
   useEffect(() => {
@@ -60,12 +62,17 @@ const ChatPage = () => {
 
   return (
     <>
+      {showNewServerOverlay && <NewServer />}
       <div className="h-full flex">
         <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
           {[...Array(10)].map((_, id) => (
             <ServerLogo src="https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg" />
           ))}
-          <CreateNewServerButton />
+          <CreateNewServerButton
+            toggleNewServerOverlay={() =>
+              setShowNewServerOverlay((prev) => !prev)
+            }
+          />
         </section>
         <section className="bg-red-900 w-1/3 h-full">
           <ul className="h-screen overflow-auto">
