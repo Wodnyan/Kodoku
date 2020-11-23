@@ -4,9 +4,18 @@ interface ServerLogoProps {
   src: string;
 }
 
-export const CreateNewServerButton = () => {
+interface CreateNewServerButtonProps {
+  toggleNewServerOverlay: () => void;
+}
+
+export const CreateNewServerButton: React.FC<CreateNewServerButtonProps> = ({
+  toggleNewServerOverlay,
+}) => {
   return (
-    <button className="btn--circular bg-blue-400 flex justify-center items-center">
+    <button
+      onClick={toggleNewServerOverlay}
+      className="btn--circular bg-blue-400 flex justify-center items-center"
+    >
       <svg
         viewBox="0 0 24 24"
         width="30"

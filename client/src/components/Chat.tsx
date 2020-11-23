@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ChatMessage from "./ChatMessage";
 import { Message } from "../types";
-import scrollToBottom from "../lib/scrollTop";
+import scrollToBottom from "../lib/scrollToBottom";
 
 const Chat = React.memo(() => {
   const [messages, setMessages] = useState<Message[] | []>([]);
