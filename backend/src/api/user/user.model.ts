@@ -22,7 +22,18 @@ class User extends Model {
   static get tableName() {
     return "users";
   }
-
+  static get jsonSchema() {
+    return {
+      type: "object",
+      required: ["username", "email"],
+      properties: {
+        id: { type: "integer" },
+        username: { type: "string" },
+        email: { type: "string", maxLength: 255 },
+        avatar_url: { type: "string", maxLength: 2083 },
+      },
+    };
+  }
   static relationMappings = {
     provider: {
       relation: Model.BelongsToOneRelation,
