@@ -16,8 +16,8 @@ class User extends Model {
   password!: string;
   email!: string;
   avatar_url!: string;
-  created_at!: Date;
-  updated_at!: Date;
+  created_at!: string;
+  updated_at!: string;
 
   static get tableName() {
     return "users";
@@ -33,6 +33,9 @@ class User extends Model {
         avatar_url: { type: "string", maxLength: 2083 },
       },
     };
+  }
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
   }
   static relationMappings = {
     provider: {
