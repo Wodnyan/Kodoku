@@ -1,5 +1,6 @@
 import { Model } from "objection";
 import User from "../user/user.model";
+import Member from "../member/member.model";
 
 export class Server extends Model {
   id!: number;
@@ -32,8 +33,16 @@ export class Server extends Model {
       relation: Model.BelongsToOneRelation,
       modelClass: User,
       join: {
+        from: "servers.owner_id",
+        to: "users.id",
+      },
+    },
+    members: {
+      relation: Model.HasManyRelation,
+      modelClass: Member,
+      join: {
         from: "servers.id",
-        to: "users.owner_id",
+        to: "members.server_id",
       },
     },
   };
