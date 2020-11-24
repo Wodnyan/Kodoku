@@ -16,13 +16,27 @@ class User extends Model {
   password!: string;
   email!: string;
   avatar_url!: string;
-  created_at!: Date;
-  updated_at!: Date;
+  created_at!: string;
+  updated_at!: string;
 
   static get tableName() {
     return "users";
   }
-
+  static get jsonSchema() {
+    return {
+      type: "object",
+      required: ["username", "email"],
+      properties: {
+        id: { type: "integer" },
+        username: { type: "string" },
+        email: { type: "string", maxLength: 255 },
+        avatar_url: { type: "string", maxLength: 2083 },
+      },
+    };
+  }
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
+  }
   static relationMappings = {
     provider: {
       relation: Model.BelongsToOneRelation,
