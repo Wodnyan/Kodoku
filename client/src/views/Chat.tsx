@@ -7,11 +7,14 @@ import NewServer from "../components/NewServer";
 import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
 import ServerName from "../components/ServerName";
 import { API_ENDPOINT } from "../constants";
+import UserContext from "../context/UserContext";
+import { User } from "../types";
 
 const ChatPage = () => {
   const [socket, setSocket] = useState<null | Socket>(null);
   const [showNewServerOverlay, setShowNewServerOverlay] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [user, setUser] = useState<User | null>(null);
   const history = useHistory();
   useEffect(() => {
     const socketio = io("/");
@@ -40,7 +43,8 @@ const ChatPage = () => {
       if (!authenticate.ok) {
         history.push("/");
       }
-      console.log(await authenticate.json());
+      const { user } = await authenticate.json();
+      setUser(user);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -61,8 +65,10 @@ const ChatPage = () => {
   };
 
   return (
-    <>
-      {showNewServerOverlay && <NewServer />}
+    <UserContext.Provider value={user}>
+      {showNewServerOverlay && (
+        <NewServer closeOverlay={() => setShowNewServerOverlay(false)} />
+      )}
       <div className="h-full flex">
         <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
           {[...Array(10)].map((_, id) => (
@@ -103,7 +109,7 @@ const ChatPage = () => {
           </ul>
         </section>
       </div>
-    </>
+    </UserContext.Provider>
   );
 };
 export default ChatPage;
