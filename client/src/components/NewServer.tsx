@@ -1,24 +1,60 @@
-import React from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { API_ENDPOINT } from "../constants";
+import UserContext from "../context/UserContext";
 
-const NewServer = () => {
+interface NewServerInputs {
+  serverName: string;
+  serverIcon: string;
+}
+
+interface NewServerProps {
+  closeOverlay: () => void;
+}
+
+const NewServer: React.FC<NewServerProps> = ({ closeOverlay }) => {
+  const ref = useRef<null | HTMLDivElement>(null);
+  useEffect(() => {
+    const handle = (e: any) => {
+      if (ref.current && e.target === ref.current) {
+        closeOverlay();
+      }
+    };
+    document.addEventListener("click", handle);
+    return () => {
+      document.removeEventListener("click", handle);
+    };
+  }, [closeOverlay]);
+
   return (
-    <div className="absolute flex flex-col justify-center items-center h-full w-full bg-black bg-opacity-50">
+    <div
+      ref={ref}
+      className="absolute flex flex-col justify-center items-center h-full w-full bg-black bg-opacity-50"
+    >
       <NewServerForm />
     </div>
   );
 };
 
-interface NewServerInputs {
-  serverName: string;
-  iconUrl: string;
-}
-
 export const NewServerForm = () => {
   const { register, handleSubmit, watch } = useForm<NewServerInputs>();
+  const user = useContext(UserContext);
 
-  const onSubmit = (data: NewServerInputs) => {
-    console.log(data);
+  const onSubmit = async (data: NewServerInputs) => {
+    const payload = {
+      name: data.serverName,
+      icon: data.serverIcon,
+      ownerId: user?.id,
+    };
+    const resp = await fetch(`${API_ENDPOINT}/server`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const body = await resp.json();
+    console.log(body);
   };
 
   return (
@@ -37,13 +73,13 @@ export const NewServerForm = () => {
         />
       </div>
       <div className="w-full">
-        <label htmlFor="serverUrl" className="text-white">
+        <label htmlFor="serverIcon" className="text-white">
           Server Icon URL
         </label>
         <input
           className="input"
-          name="serverUrl"
-          id="serverUrl"
+          name="serverIcon"
+          id="serverIcon"
           type="text"
           ref={register({ required: true })}
         />
