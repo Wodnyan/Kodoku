@@ -1,4 +1,5 @@
 import { Router } from "express";
+import validateServer from "../../lib/validateServer";
 import Server from "../server/server.model";
 
 const router = Router();
@@ -23,11 +24,17 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const { name, ownerId } = req.body;
+  const { name, ownerId, icon } = req.body;
   try {
+    await validateServer({
+      name,
+      ownerId,
+      icon,
+    });
     const newServer = await Server.query().insertAndFetch({
       name,
       owner_id: ownerId,
+      icon,
     });
     res.status(201).json({
       message: "Created a new server",
