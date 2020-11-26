@@ -8,13 +8,14 @@ import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
 import ServerName from "../components/ServerName";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
-import { User } from "../types";
+import { Server, User } from "../types";
 
 const ChatPage = () => {
   const [socket, setSocket] = useState<null | Socket>(null);
   const [showNewServerOverlay, setShowNewServerOverlay] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [user, setUser] = useState<User | null>(null);
+  const [servers, setServers] = useState<[] | Server[]>([]);
   const history = useHistory();
   useEffect(() => {
     const socketio = io("/");
@@ -49,6 +50,13 @@ const ChatPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const addNewServer = (payload: Server) => {
+    console.log("Payload");
+    console.log(payload);
+    console.log("Payload");
+    setServers((prev) => [...prev, payload]);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const target = e.currentTarget[0] as HTMLInputElement;
@@ -67,13 +75,16 @@ const ChatPage = () => {
   return (
     <UserContext.Provider value={user}>
       {showNewServerOverlay && (
-        <NewServer closeOverlay={() => setShowNewServerOverlay(false)} />
+        <NewServer
+          closeOverlay={() => setShowNewServerOverlay(false)}
+          addServer={addNewServer}
+        />
       )}
       <div className="h-full flex">
         <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
-          {[...Array(10)].map((_, id) => (
-            <ServerLogo src="https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg" />
-          ))}
+          {(servers as Server[]).map((server) => {
+            return <ServerLogo src={server.icon} key={server.id} />;
+          })}
           <CreateNewServerButton
             toggleNewServerOverlay={() =>
               setShowNewServerOverlay((prev) => !prev)

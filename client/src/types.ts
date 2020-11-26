@@ -9,3 +9,9 @@ export interface User {
   email: string;
   avatar_url?: string;
 }
+
+export interface Server {
+  id: number;
+  name: string;
+  icon: string;
+}

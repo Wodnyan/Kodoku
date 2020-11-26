@@ -40,7 +40,11 @@ exports.up = async (knex) => {
     table.increments();
     references(table, "owner_id", tableNames.users);
     table.string("name", 100).notNullable();
-    table.string("icon", 2083);
+    table
+      .string("icon", 2083)
+      .defaultTo(
+        "https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg"
+      );
     table.timestamps(false, true);
   });
   // ROOMS
