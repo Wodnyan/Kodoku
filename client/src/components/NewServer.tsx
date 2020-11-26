@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
+import { Server } from "../types";
 
 interface NewServerInputs {
   serverName: string;
@@ -11,8 +12,13 @@ interface JoinServerInput {
   serverInviteCode: string;
 }
 
+interface NewServerFormProps {
+  addServer: (payload: Server) => void;
+}
+
 interface NewServerProps {
   closeOverlay: () => void;
+  addServer: (payload: Server) => void;
 }
 
 enum CurrentFormState {
@@ -20,7 +26,7 @@ enum CurrentFormState {
   Join = 1,
 }
 
-const NewServer: React.FC<NewServerProps> = ({ closeOverlay }) => {
+const NewServer: React.FC<NewServerProps> = ({ closeOverlay, addServer }) => {
   const ref = useRef<null | HTMLDivElement>(null);
   const [currentForm, setCurrentForm] = useState<
     CurrentFormState.Create | CurrentFormState.Join
@@ -66,7 +72,7 @@ const NewServer: React.FC<NewServerProps> = ({ closeOverlay }) => {
         </span>
       </div>
       {currentForm === CurrentFormState.Create ? (
-        <NewServerForm />
+        <NewServerForm addServer={addServer} />
       ) : (
         <JoinServerForm />
       )}
@@ -102,14 +108,14 @@ export const JoinServerForm = () => {
   );
 };
 
-export const NewServerForm = () => {
+export const NewServerForm: React.FC<NewServerFormProps> = ({ addServer }) => {
   const { register, handleSubmit, watch } = useForm<NewServerInputs>();
   const user = useContext(UserContext);
 
   const onSubmit = async (data: NewServerInputs) => {
     const payload = {
       name: data.serverName,
-      icon: data.serverIcon,
+      icon: data.serverIcon === "" ? undefined : data.serverIcon,
       ownerId: user?.id,
     };
     const resp = await fetch(`${API_ENDPOINT}/server`, {
@@ -119,8 +125,13 @@ export const NewServerForm = () => {
       },
       body: JSON.stringify(payload),
     });
-    const body = await resp.json();
-    console.log(body);
+    const { newServer } = await resp.json();
+    addServer({
+      id: newServer.id,
+      icon: newServer.icon,
+      name: newServer.name,
+    });
+    console.log(newServer);
   };
 
   return (
@@ -147,7 +158,7 @@ export const NewServerForm = () => {
           name="serverIcon"
           id="serverIcon"
           type="text"
-          ref={register({ required: true })}
+          ref={register()}
         />
       </div>
       <button className="text-white">Submit</button>
