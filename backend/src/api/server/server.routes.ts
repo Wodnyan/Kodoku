@@ -11,14 +11,21 @@ interface Update {
 
 router.get("/", async (req, res, next) => {
   const { userId } = req.query;
-  const servers = await Server.query();
   try {
+    const servers = await Server.query()
+      .where({ owner_id: userId })
+      .skipUndefined();
     res.json({
-      servers,
       message: "All Servers",
+      servers,
       userId,
     });
   } catch (error) {
+    if (error.nativeError.code === "22P02") {
+      const error = new Error("Invalid parameter value");
+      res.status(400);
+      return next(error);
+    }
     next(error);
   }
 });
