@@ -15,3 +15,8 @@ export interface Server {
   name: string;
   icon: string;
 }
+
+export interface Room {
+  id: number;
+  name: string;
+}
