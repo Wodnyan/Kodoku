@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllRooms } from "../api/rooms";
 import { Room } from "../types";
+import shortenString from "../lib/shortenString";
 
 interface RoomNameProps {
   children: React.ReactNode;
@@ -21,19 +22,26 @@ export const RoomName: React.FC<RoomNameProps> = React.memo(({ children }) => {
   );
 });
 
-const Rooms: React.FC<RoomsProps> = ({ rooms }) => {
+const Rooms: React.FC<RoomsProps> = (props) => {
+  const [rooms, setRooms] = useState([]);
   useEffect(() => {
-    console.log(
-      getAllRooms(1)
-        .then((res) => res.json())
-        .then((res) => console.log(res))
-    );
+    getAllRooms(1)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        setRooms(res.rooms);
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <ul className="h-screen overflow-auto">
-      {(rooms as Room[]).map((_, id) => (
-        <li key={id}>
-          <RoomName>Bruh</RoomName>
+      {(rooms as Room[]).map((room, id) => (
+        <li key={room.id}>
+          <RoomName>
+            {room.name.length > 20 ? shortenString(room.name, 20) : room.name}
+          </RoomName>
         </li>
       ))}
     </ul>
