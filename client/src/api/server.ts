@@ -5,6 +5,5 @@ export async function getAllServers(userId?: number) {
     `${API_ENDPOINT}/server${isNaN(Number(userId)) ? "" : "?userId=" + userId}`
   );
   const body = await resp.json();
-  console.log(body);
   return body.servers;
 }
