@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
+import { getAllServers } from "../api/server";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
 import NewServer from "../components/NewServer";
@@ -46,14 +47,13 @@ const ChatPage = () => {
       }
       const { user } = await authenticate.json();
       setUser(user);
+      const servers = await getAllServers(user.id);
+      setServers(servers);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addNewServer = (payload: Server) => {
-    console.log("Payload");
-    console.log(payload);
-    console.log("Payload");
     setServers((prev) => [...prev, payload]);
   };
 
