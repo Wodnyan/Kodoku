@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
+import useCloseOnClick from "../hooks/close-on-click";
 import { Server } from "../types";
 
 interface NewServerInputs {
@@ -27,26 +28,15 @@ enum CurrentFormState {
 }
 
 const NewServer: React.FC<NewServerProps> = ({ closeOverlay, addServer }) => {
-  const ref = useRef<null | HTMLDivElement>(null);
+  const ref = useCloseOnClick(closeOverlay);
   const [currentForm, setCurrentForm] = useState<
     CurrentFormState.Create | CurrentFormState.Join
   >(CurrentFormState.Create);
-  useEffect(() => {
-    const handle = (e: any) => {
-      if (ref.current && e.target === ref.current) {
-        closeOverlay();
-      }
-    };
-    document.addEventListener("click", handle);
-    return () => {
-      document.removeEventListener("click", handle);
-    };
-  }, [closeOverlay]);
 
   return (
     <div
       ref={ref}
-      className="absolute flex flex-col justify-center items-center h-full w-full bg-black bg-opacity-50"
+      className="absolute flex flex-col justify-center items-center h-full w-full bg-black bg-opacity-50 z-50"
     >
       <div className="cursor-pointer">
         <span

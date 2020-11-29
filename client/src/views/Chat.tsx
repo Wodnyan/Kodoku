@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { getAllServers } from "../api/server";
@@ -6,7 +7,7 @@ import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
 import NewServer from "../components/NewServer";
 import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
-import ServerName from "../components/ServerName";
+import Rooms from "../components/Rooms";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
 import { Server, User } from "../types";
@@ -17,7 +18,9 @@ const ChatPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [servers, setServers] = useState<[] | Server[]>([]);
+
   const history = useHistory();
+
   useEffect(() => {
     const socketio = io("/");
     setSocket(socketio);
@@ -74,52 +77,48 @@ const ChatPage = () => {
 
   return (
     <UserContext.Provider value={user}>
-      {showNewServerOverlay && (
-        <NewServer
-          closeOverlay={() => setShowNewServerOverlay(false)}
-          addServer={addNewServer}
-        />
-      )}
-      <div className="h-full flex">
-        <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
-          {(servers as Server[]).map((server) => {
-            return <ServerLogo src={server.icon} key={server.id} />;
-          })}
-          <CreateNewServerButton
-            toggleNewServerOverlay={() =>
-              setShowNewServerOverlay((prev) => !prev)
-            }
+      <Router>
+        {showNewServerOverlay && (
+          <NewServer
+            closeOverlay={() => setShowNewServerOverlay(false)}
+            addServer={addNewServer}
           />
-        </section>
-        <section className="bg-red-900 w-1/3 h-full">
-          <ul className="h-screen overflow-auto">
-            {[...Array(100)].map((_, id) => (
-              <li key={id}>
-                <ServerName>Bruh</ServerName>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className="bg-blue-400 w-full grid grid-rows-2">
-          <div className="row-span-2">
-            <Chat />
-          </div>
-          <form onSubmit={handleSubmit} className="bg-blue-600">
-            <ChatInput
-              value={inputValue}
-              onChange={(e) => handleInputChange(e)}
+        )}
+        <div className="relative h-full flex">
+          <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
+            {(servers as Server[]).map((server) => {
+              return <ServerLogo src={server.icon} key={server.id} />;
+            })}
+            <CreateNewServerButton
+              toggleNewServerOverlay={() =>
+                setShowNewServerOverlay((prev) => !prev)
+              }
             />
-          </form>
-        </section>
-        <section className="bg-blue-800 w-1/3 h-screen overflow-auto">
-          <h1>Members</h1>
-          <ul>
-            {[...Array(100)].map((_, i) => (
-              <h1>Username</h1>
-            ))}
-          </ul>
-        </section>
-      </div>
+          </section>
+          <section className="bg-red-900 w-1/3 h-full overflow-auto">
+            <Rooms rooms={[...Array(50)]} />
+          </section>
+          <section className="bg-blue-400 w-full grid grid-rows-2">
+            <div className="row-span-2">
+              <Chat />
+            </div>
+            <form onSubmit={handleSubmit} className="bg-blue-600">
+              <ChatInput
+                value={inputValue}
+                onChange={(e) => handleInputChange(e)}
+              />
+            </form>
+          </section>
+          <section className="bg-blue-800 w-1/3 h-screen overflow-auto">
+            <h1>Members</h1>
+            <ul>
+              {[...Array(100)].map((_, i) => (
+                <h1>Username</h1>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </Router>
     </UserContext.Provider>
   );
 };
