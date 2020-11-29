@@ -4,9 +4,11 @@ import { Room } from "../types";
 import { useForm } from "react-hook-form";
 import shortenString from "../lib/shorten-string";
 import useCloseOnClick from "../hooks/close-on-click";
+import { Link, useParams } from "react-router-dom";
 
 interface RoomNameProps {
   children: React.ReactNode;
+  id: number;
 }
 
 interface RoomsProps {
@@ -28,14 +30,21 @@ interface TopRowProps {
   openOverlay: () => void;
 }
 
-export const RoomName: React.FC<RoomNameProps> = React.memo(({ children }) => {
-  return (
-    <div className="cursor-pointer mb-3 mt-1 hover:bg-red-500 p-1 w-11/12 mx-auto rounded transition-colors duration-100 ease">
-      <span>#</span>
-      <span>{children}</span>
-    </div>
-  );
-});
+export const RoomName: React.FC<RoomNameProps> = React.memo(
+  ({ children, id }) => {
+    const params = useParams();
+    console.log(params);
+    return (
+      <Link
+        to={`/chat/1/${id}`}
+        className="cursor-pointer block mb-3 mt-1 hover:bg-red-500 p-1 w-11/12 mx-auto rounded transition-colors duration-100 ease"
+      >
+        <span>#</span>
+        <span>{children}</span>
+      </Link>
+    );
+  }
+);
 
 const TopRow: React.FC<TopRowProps> = React.memo(({ openOverlay }) => {
   return (
@@ -122,7 +131,7 @@ const Rooms: React.FC<RoomsProps> = React.memo((props) => {
       <ul className="h-full">
         {(rooms as Room[]).map((room, id) => (
           <li key={room.id}>
-            <RoomName>
+            <RoomName id={room.id}>
               {room.name.length > 20 ? shortenString(room.name, 20) : room.name}
             </RoomName>
           </li>
