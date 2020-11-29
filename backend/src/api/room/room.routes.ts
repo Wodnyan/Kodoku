@@ -27,6 +27,7 @@ router.post("/", async (req, res, next) => {
     });
     res.status(201).json({
       message: "New server",
+      room: newRoom,
     });
   } catch (error) {
     next(error);

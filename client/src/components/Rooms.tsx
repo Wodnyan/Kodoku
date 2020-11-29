@@ -3,6 +3,7 @@ import { createRoom, getAllRooms } from "../api/rooms";
 import { Room } from "../types";
 import { useForm } from "react-hook-form";
 import shortenString from "../lib/shorten-string";
+import useCloseOnClick from "../hooks/close-on-click";
 
 interface RoomNameProps {
   children: React.ReactNode;
@@ -12,6 +13,11 @@ interface RoomsProps {
   // rooms: Room[] | [];
   rooms: any;
   serverId?: number;
+}
+
+interface OverlayProps {
+  closeOverlay: () => void;
+  addRoom: (room: Room) => void;
 }
 
 interface NewRoomInputs {
@@ -55,18 +61,23 @@ const TopRow: React.FC<TopRowProps> = ({ openOverlay }) => {
   );
 };
 
-const Overlay = () => {
+const Overlay: React.FC<OverlayProps> = ({ closeOverlay, addRoom }) => {
   const { register, handleSubmit } = useForm<NewRoomInputs>();
+  const ref = useCloseOnClick(closeOverlay);
 
   async function onSubmit(data: any) {
-    console.log(data);
     createRoom(3, data.roomName)
-      .then((res) => res.json)
-      .then((res) => console.log(res));
+      .then((res) => res.json())
+      .then((res) => {
+        addRoom(res.room);
+      });
   }
 
   return (
-    <div className="absolute z-10 bg-black bg-opacity-50 w-full h-full top-0 left-0">
+    <div
+      ref={ref}
+      className="absolute z-10 bg-black bg-opacity-50 w-full h-full top-0 left-0"
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="roomName">Room Name</label>
@@ -85,22 +96,28 @@ const Overlay = () => {
 };
 
 const Rooms: React.FC<RoomsProps> = (props) => {
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState<Room[] | []>([]);
   const [overlay, setOverlay] = useState(false);
+
   useEffect(() => {
     getAllRooms(3)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         setRooms(res.rooms);
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const addRoom = (room: Room) => {
+    setRooms((prev) => [...prev, room]);
+  };
+
   return (
     <section>
-      {overlay && <Overlay />}
+      {overlay && (
+        <Overlay addRoom={addRoom} closeOverlay={() => setOverlay(false)} />
+      )}
       <TopRow openOverlay={() => setOverlay(true)} />
       <ul className="h-full">
         {(rooms as Room[]).map((room, id) => (
