@@ -1,7 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface ServerLogoProps {
-  src: string;
+  logoSrc: string;
+  id: number;
 }
 
 interface CreateNewServerButtonProps {
@@ -33,11 +35,15 @@ export const CreateNewServerButton: React.FC<CreateNewServerButtonProps> = ({
   );
 };
 
-const ServerLogo: React.FC<ServerLogoProps> = React.memo(({ src }) => {
+const ServerLogo: React.FC<ServerLogoProps> = React.memo(({ logoSrc, id }) => {
   return (
-    <a href="/chat">
-      <img className="object-cover btn--circular" src={src} alt="Server logo" />
-    </a>
+    <Link to={`/chat/${id}`}>
+      <img
+        className="object-cover btn--circular"
+        src={logoSrc}
+        alt="Server logo"
+      />
+    </Link>
   );
 });
 export default ServerLogo;
