@@ -1,5 +1,5 @@
 import { Router } from "express";
-import validateServer from "../../lib/validateServer";
+import validateServer from "../../lib/validate-server";
 import Server from "../server/server.model";
 
 const router = Router();

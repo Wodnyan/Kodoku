@@ -1,4 +1,5 @@
 import { Router } from "express";
+import Invite from "../invite/invite.model";
 import Member from "./member.model";
 
 const router = Router();
@@ -23,10 +24,20 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { userId, serverId } = req.body;
+    const { code, userId } = req.body;
+    const server = await Invite.query()
+      .joinRelated("server")
+      .select(["server.name", "invites.code", "server.id as server_id"])
+      .where({ code })
+      .first();
+    if (!server) {
+      return res.status(400).json({
+        message: "Something went wrong",
+      });
+    }
     const newMember = await Member.query().insertAndFetch({
       member_id: userId,
-      server_id: serverId,
+      server_id: server.server_id,
     });
     res.json({
       newMember,

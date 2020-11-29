@@ -37,7 +37,7 @@ export const RoomName: React.FC<RoomNameProps> = React.memo(({ children }) => {
   );
 });
 
-const TopRow: React.FC<TopRowProps> = ({ openOverlay }) => {
+const TopRow: React.FC<TopRowProps> = React.memo(({ openOverlay }) => {
   return (
     <div className="flex justify-between px-4 py-2">
       <h1>Rooms</h1>
@@ -59,7 +59,7 @@ const TopRow: React.FC<TopRowProps> = ({ openOverlay }) => {
       </button>
     </div>
   );
-};
+});
 
 const Overlay: React.FC<OverlayProps> = ({ closeOverlay, addRoom }) => {
   const { register, handleSubmit } = useForm<NewRoomInputs>();
@@ -95,7 +95,7 @@ const Overlay: React.FC<OverlayProps> = ({ closeOverlay, addRoom }) => {
   );
 };
 
-const Rooms: React.FC<RoomsProps> = (props) => {
+const Rooms: React.FC<RoomsProps> = React.memo((props) => {
   const [rooms, setRooms] = useState<Room[] | []>([]);
   const [overlay, setOverlay] = useState(false);
 
@@ -130,6 +130,6 @@ const Rooms: React.FC<RoomsProps> = (props) => {
       </ul>
     </section>
   );
-};
+});
 
 export default Rooms;

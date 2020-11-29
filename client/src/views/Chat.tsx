@@ -11,6 +11,7 @@ import Rooms from "../components/Rooms";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
 import { Server, User } from "../types";
+import Members from "../components/Members";
 
 const ChatPage = () => {
   const [socket, setSocket] = useState<null | Socket>(null);
@@ -110,12 +111,7 @@ const ChatPage = () => {
             </form>
           </section>
           <section className="bg-blue-800 w-1/3 h-screen overflow-auto">
-            <h1>Members</h1>
-            <ul>
-              {[...Array(100)].map((_, i) => (
-                <h1>Username</h1>
-              ))}
-            </ul>
+            <Members />
           </section>
         </div>
       </Router>
