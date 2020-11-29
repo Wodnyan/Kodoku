@@ -5,6 +5,7 @@ const tableNames = {
   messages: "messages",
   members: "members",
   provider: "provider",
+  invites: "invites",
 };
 
 function references(table, name, tableName) {
@@ -70,9 +71,16 @@ exports.up = async (knex) => {
     table.unique(["member_id", "server_id"]);
     table.timestamps(false, true);
   });
+  await knex.schema.createTable(tableNames.invites, (table) => {
+    table.increments();
+    references(table, "server_id", tableNames.servers);
+    table.string("code", 10).unique().notNullable();
+    table.timestamps(false, true);
+  });
 };
 
 exports.down = async (knex) => {
+  await knex.schema.dropTableIfExists(tableNames.invites);
   await knex.schema.dropTableIfExists(tableNames.provider);
   await knex.schema.dropTableIfExists(tableNames.members);
   await knex.schema.dropTableIfExists(tableNames.messages);

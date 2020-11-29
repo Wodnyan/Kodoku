@@ -3,7 +3,7 @@ import passport from "passport";
 import bcrypt from "bcrypt";
 import User from "../user/user.model";
 import { CLIENT_URL } from "../../constants";
-import validateRequestBody from "../../lib/validateUser";
+import validateRequestBody from "../../lib/validate-user";
 
 const router = Router();
 
