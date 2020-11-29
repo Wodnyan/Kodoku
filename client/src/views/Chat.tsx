@@ -84,7 +84,7 @@ const ChatPage = () => {
             addServer={addNewServer}
           />
         )}
-        <div className="h-full flex">
+        <div className="relative h-full flex">
           <section className="hide-scrollbar bg-red-400 w-24 h-screen overflow-auto">
             {(servers as Server[]).map((server) => {
               return <ServerLogo src={server.icon} key={server.id} />;
@@ -95,34 +95,7 @@ const ChatPage = () => {
               }
             />
           </section>
-          <section className="bg-red-900 w-1/3 h-full">
-            {/* <ul className="h-screen overflow-auto">
-            {[...Array(100)].map((_, id) => (
-              <li key={id}>
-                <RoomName>Bruh</RoomName>
-              </li>
-            ))}
-          </ul> */}
-            <Switch>
-              <Route
-                path="/chat/:serverId"
-                exact
-                component={(props: any) => {
-                  return <h1>{props.match.params.serverId}</h1>;
-                }}
-              />
-              <Route
-                path="/chat/:serverId/:roomId"
-                exact
-                component={(props: any) => {
-                  return (
-                    <h1>
-                      {props.match.params.serverId}/{props.match.params.roomId}
-                    </h1>
-                  );
-                }}
-              />
-            </Switch>
+          <section className="bg-red-900 w-1/3 h-full overflow-auto">
             <Rooms rooms={[...Array(50)]} />
           </section>
           <section className="bg-blue-400 w-full grid grid-rows-2">
