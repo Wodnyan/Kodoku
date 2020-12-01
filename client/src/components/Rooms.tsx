@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoom, getAllRooms } from "../api/rooms";
 import { Room } from "../types";
 import { useForm } from "react-hook-form";
 import shortenString from "../lib/shorten-string";
 import useCloseOnClick from "../hooks/close-on-click";
 import { Link, useParams } from "react-router-dom";
+import { createInvite } from "../api/invites";
+
+enum Popups {
+  Create = 1,
+  Join,
+}
 
 interface RoomNameProps {
   children: React.ReactNode;
@@ -12,10 +18,20 @@ interface RoomNameProps {
   id: number;
 }
 
-interface OverlayProps {
-  closeOverlay: () => void;
+interface InvitePopupProps {
+  close: () => void;
+  serverId: number;
+}
+
+interface PopupProps {
+  close: () => void;
   addRoom: (room: Room) => void;
   serverId: number;
+}
+
+interface DropdownProps {
+  openCreateRoomPopup: () => void;
+  openInvitePopup: () => void;
 }
 
 interface NewRoomInputs {
@@ -23,7 +39,8 @@ interface NewRoomInputs {
 }
 
 interface TopRowProps {
-  openOverlay: () => void;
+  openCreateRoomPopup: () => void;
+  openInvitePopup: () => void;
 }
 
 export const RoomName: React.FC<RoomNameProps> = React.memo(
@@ -40,37 +57,92 @@ export const RoomName: React.FC<RoomNameProps> = React.memo(
   }
 );
 
-const TopRow: React.FC<TopRowProps> = React.memo(({ openOverlay }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  openCreateRoomPopup,
+  openInvitePopup,
+}) => {
   return (
-    <div className="flex justify-between px-4 py-2">
-      <h1>Rooms</h1>
-      <button onClick={openOverlay}>
-        <svg
-          viewBox="0 0 24 24"
-          width="24"
-          height="24"
-          stroke="currentColor"
-          strokeWidth="2"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="css-i6dzq1"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
+    <ul className="absolute top-full left-1/2 transform -translate-x-1/2 bg-blue-500 w-10/12">
+      <li>
+        <button className="room-dropdown-btn" onClick={openInvitePopup}>
+          Invite a lonely fella
+        </button>
+      </li>
+      <li>
+        <button className="room-dropdown-btn" onClick={openCreateRoomPopup}>
+          Create a room
+        </button>
+      </li>
+    </ul>
+  );
+};
+
+const TopRow: React.FC<TopRowProps> = React.memo(
+  ({ openCreateRoomPopup, openInvitePopup }) => {
+    const [dropdown, setDropdown] = useState(true);
+    return (
+      <div className="relative flex justify-between px-4 py-2">
+        <h1>Rooms</h1>
+        <button onClick={() => setDropdown(true)}>
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="css-i6dzq1"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        {dropdown && (
+          <Dropdown
+            openInvitePopup={openInvitePopup}
+            openCreateRoomPopup={openCreateRoomPopup}
+          />
+        )}
+      </div>
+    );
+  }
+);
+
+const InvitePopup: React.FC<InvitePopupProps> = ({ close, serverId }) => {
+  const [inviteCode, setInviteCode] = useState("");
+  const ref = useCloseOnClick(close);
+  const inputRef = useRef() as any;
+
+  useEffect(() => {
+    createInvite(serverId)
+      .then((res) => res.json())
+      .then((res) => setInviteCode(res.newInvite.code));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const copyToClipBoard = (event: any) => {
+    inputRef.current.select();
+    document.execCommand("copy");
+    console.log("Copied");
+    event.target.focus();
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="absolute z-10 bg-black bg-opacity-50 w-full h-full top-0 left-0"
+    >
+      <input ref={inputRef} value={inviteCode} type="text" />
+      <button onClick={copyToClipBoard}>Copy to clip board</button>
     </div>
   );
-});
+};
 
-const Overlay: React.FC<OverlayProps> = ({
-  closeOverlay,
-  addRoom,
-  serverId,
-}) => {
+const NewRoomPopup: React.FC<PopupProps> = ({ close, addRoom, serverId }) => {
   const { register, handleSubmit } = useForm<NewRoomInputs>();
-  const ref = useCloseOnClick(closeOverlay);
+  const ref = useCloseOnClick(close);
 
   async function onSubmit(data: any) {
     createRoom(serverId, data.roomName)
@@ -104,7 +176,7 @@ const Overlay: React.FC<OverlayProps> = ({
 
 const Rooms = React.memo(() => {
   const [rooms, setRooms] = useState<Room[] | []>([]);
-  const [overlay, setOverlay] = useState(false);
+  const [popup, setPopup] = useState<Popups | null>(null);
   const params = useParams() as any;
 
   useEffect(() => {
@@ -121,18 +193,26 @@ const Rooms = React.memo(() => {
     setRooms((prev) => [...prev, room]);
   };
 
+  const closePopup = () => setPopup(null);
+
   return (
-    <section>
-      {overlay && (
-        <Overlay
+    <section className="h-full flex flex-col">
+      {popup === Popups.Create && (
+        <NewRoomPopup
           serverId={params.serverId!}
           addRoom={addRoom}
-          closeOverlay={() => setOverlay(false)}
+          close={closePopup}
         />
       )}
-      <TopRow openOverlay={() => setOverlay(true)} />
-      <ul className="h-full">
-        {(rooms as Room[]).map((room, id) => (
+      {popup === Popups.Join && (
+        <InvitePopup serverId={params.serverId} close={closePopup} />
+      )}
+      <TopRow
+        openInvitePopup={() => setPopup(Popups.Join)}
+        openCreateRoomPopup={() => setPopup(Popups.Create)}
+      />
+      <ul className="overflow-auto">
+        {(rooms as Room[]).map((room) => (
           <li key={room.id}>
             <RoomName serverId={params.serverId!} id={room.id}>
               {room.name.length > 20 ? shortenString(room.name, 20) : room.name}
