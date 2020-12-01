@@ -4,6 +4,10 @@
 
 @tailwind utilities;
 
+.room-dropdown-btn {
+  @apply w-full bg-blue-600 text-left;
+}
+
 .btn--circular {
   @apply rounded-full h-10 w-10 mx-auto my-2 cursor-pointer;
 }
