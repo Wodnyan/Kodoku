@@ -78,7 +78,10 @@ const ChatPage = () => {
               <section className="bg-red-900 w-1/5 h-full overflow-auto">
                 <Rooms />
               </section>
-              <section className="w-full bg-blue-400"></section>
+              <section className="bg-blue-400 w-8/12 "></section>
+              <section className="bg-blue-800 w-1/6 h-screen overflow-auto">
+                <Members />
+              </section>
             </Route>
             <Route exact path="/chat/:serverId/:roomId">
               <section className="bg-red-900 w-1/5 h-full overflow-auto">
