@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import { getAllServers } from "../api/server";
 import Chat from "../components/Chat";
-import NewServer from "../components/NewServer";
-import ServerLogo, { CreateNewServerButton } from "../components/ServerLogo";
 import Rooms from "../components/Rooms";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
-import { Server, User } from "../types";
+import { User } from "../types";
 import Members from "../components/Members";
+import Servers from "../components/Servers";
 
 const ChatPage = () => {
-  const [showNewServerOverlay, setShowNewServerOverlay] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [servers, setServers] = useState<[] | Server[]>([]);
 
   const history = useHistory();
 
@@ -32,41 +28,16 @@ const ChatPage = () => {
       }
       const { user } = await authenticate.json();
       setUser(user);
-      const servers = await getAllServers(user.id);
-      setServers(servers);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const addNewServer = (payload: Server) => {
-    setServers((prev) => [...prev, payload]);
-  };
-
   return (
     <UserContext.Provider value={user}>
       <Router>
-        {showNewServerOverlay && (
-          <NewServer
-            closeOverlay={() => setShowNewServerOverlay(false)}
-            addServer={addNewServer}
-          />
-        )}
         <div className="relative h-full flex">
           <section className="hide-scrollbar bg-red-400 w-16 h-screen overflow-auto">
-            {(servers as Server[]).map((server) => {
-              return (
-                <ServerLogo
-                  logoSrc={server.icon}
-                  key={server.id}
-                  id={server.id}
-                />
-              );
-            })}
-            <CreateNewServerButton
-              toggleNewServerOverlay={() =>
-                setShowNewServerOverlay((prev) => !prev)
-              }
-            />
+            <Servers />
           </section>
           <Switch>
             <Route exact path="/chat">

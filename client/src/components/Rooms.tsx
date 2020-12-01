@@ -12,7 +12,7 @@ interface RoomNameProps {
   id: number;
 }
 
-interface OverlayProps {
+interface PopupProps {
   closeOverlay: () => void;
   addRoom: (room: Room) => void;
   serverId: number;
@@ -64,7 +64,7 @@ const TopRow: React.FC<TopRowProps> = React.memo(({ openOverlay }) => {
   );
 });
 
-const Overlay: React.FC<OverlayProps> = ({
+const Popup: React.FC<PopupProps> = ({
   closeOverlay,
   addRoom,
   serverId,
@@ -104,7 +104,7 @@ const Overlay: React.FC<OverlayProps> = ({
 
 const Rooms = React.memo(() => {
   const [rooms, setRooms] = useState<Room[] | []>([]);
-  const [overlay, setOverlay] = useState(false);
+  const [popup, setPopup] = useState(false);
   const params = useParams() as any;
 
   useEffect(() => {
@@ -123,14 +123,14 @@ const Rooms = React.memo(() => {
 
   return (
     <section>
-      {overlay && (
-        <Overlay
+      {popup && (
+        <Popup
           serverId={params.serverId!}
           addRoom={addRoom}
-          closeOverlay={() => setOverlay(false)}
+          closeOverlay={() => setPopup(false)}
         />
       )}
-      <TopRow openOverlay={() => setOverlay(true)} />
+      <TopRow openOverlay={() => setPopup(true)} />
       <ul className="h-full">
         {(rooms as Room[]).map((room, id) => (
           <li key={room.id}>
