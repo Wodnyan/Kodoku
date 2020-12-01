@@ -8,18 +8,14 @@ import { Link, useParams } from "react-router-dom";
 
 interface RoomNameProps {
   children: React.ReactNode;
+  serverId: number;
   id: number;
-}
-
-interface RoomsProps {
-  // rooms: Room[] | [];
-  rooms: any;
-  serverId?: number;
 }
 
 interface OverlayProps {
   closeOverlay: () => void;
   addRoom: (room: Room) => void;
+  serverId: number;
 }
 
 interface NewRoomInputs {
@@ -31,12 +27,10 @@ interface TopRowProps {
 }
 
 export const RoomName: React.FC<RoomNameProps> = React.memo(
-  ({ children, id }) => {
-    const params = useParams();
-    console.log(params);
+  ({ children, id, serverId }) => {
     return (
       <Link
-        to={`/chat/1/${id}`}
+        to={`/chat/${serverId}/${id}`}
         className="cursor-pointer block mb-3 mt-1 hover:bg-red-500 p-1 w-11/12 mx-auto rounded transition-colors duration-100 ease"
       >
         <span>#</span>
@@ -70,12 +64,16 @@ const TopRow: React.FC<TopRowProps> = React.memo(({ openOverlay }) => {
   );
 });
 
-const Overlay: React.FC<OverlayProps> = ({ closeOverlay, addRoom }) => {
+const Overlay: React.FC<OverlayProps> = ({
+  closeOverlay,
+  addRoom,
+  serverId,
+}) => {
   const { register, handleSubmit } = useForm<NewRoomInputs>();
   const ref = useCloseOnClick(closeOverlay);
 
   async function onSubmit(data: any) {
-    createRoom(3, data.roomName)
+    createRoom(serverId, data.roomName)
       .then((res) => res.json())
       .then((res) => {
         addRoom(res.room);
@@ -104,19 +102,20 @@ const Overlay: React.FC<OverlayProps> = ({ closeOverlay, addRoom }) => {
   );
 };
 
-const Rooms: React.FC<RoomsProps> = React.memo((props) => {
+const Rooms = React.memo(() => {
   const [rooms, setRooms] = useState<Room[] | []>([]);
   const [overlay, setOverlay] = useState(false);
+  const params = useParams() as any;
 
   useEffect(() => {
-    getAllRooms(3)
+    getAllRooms(params.serverId)
       .then((res) => res.json())
       .then((res) => {
         setRooms(res.rooms);
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [params.serverId]);
 
   const addRoom = (room: Room) => {
     setRooms((prev) => [...prev, room]);
@@ -125,13 +124,17 @@ const Rooms: React.FC<RoomsProps> = React.memo((props) => {
   return (
     <section>
       {overlay && (
-        <Overlay addRoom={addRoom} closeOverlay={() => setOverlay(false)} />
+        <Overlay
+          serverId={params.serverId!}
+          addRoom={addRoom}
+          closeOverlay={() => setOverlay(false)}
+        />
       )}
       <TopRow openOverlay={() => setOverlay(true)} />
       <ul className="h-full">
         {(rooms as Room[]).map((room, id) => (
           <li key={room.id}>
-            <RoomName id={room.id}>
+            <RoomName serverId={params.serverId!} id={room.id}>
               {room.name.length > 20 ? shortenString(room.name, 20) : room.name}
             </RoomName>
           </li>

@@ -76,13 +76,13 @@ const ChatPage = () => {
             </Route>
             <Route exact path="/chat/:serverId">
               <section className="bg-red-900 w-1/5 h-full overflow-auto">
-                <Rooms rooms={[...Array(50)]} />
+                <Rooms />
               </section>
               <section className="w-full bg-blue-400"></section>
             </Route>
             <Route exact path="/chat/:serverId/:roomId">
               <section className="bg-red-900 w-1/5 h-full overflow-auto">
-                <Rooms rooms={[...Array(50)]} />
+                <Rooms />
               </section>
               <section className="bg-blue-400 w-8/12 ">
                 <Chat />
