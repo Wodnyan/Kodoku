@@ -62,10 +62,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   openInvitePopup,
 }) => {
   return (
-    <ul className="absolute top-full left-1/2 transform -translate-x-1/2 bg-blue-500 w-10/12">
+    <ul className="absolute top-full left-1/2 transform -translate-x-1/2 bg-blue-500 w-10/12 p-1">
       <li>
         <button className="room-dropdown-btn" onClick={openInvitePopup}>
-          Invite a lonely fella
+          Invite People
         </button>
       </li>
       <li>
@@ -79,11 +79,11 @@ const Dropdown: React.FC<DropdownProps> = ({
 
 const TopRow: React.FC<TopRowProps> = React.memo(
   ({ openCreateRoomPopup, openInvitePopup }) => {
-    const [dropdown, setDropdown] = useState(true);
+    const [dropdown, setDropdown] = useState(false);
     return (
       <div className="relative flex justify-between px-4 py-2">
         <h1>Rooms</h1>
-        <button onClick={() => setDropdown(true)}>
+        <button onClick={() => setDropdown((prev) => !prev)}>
           <svg
             viewBox="0 0 24 24"
             width="24"
@@ -95,8 +95,7 @@ const TopRow: React.FC<TopRowProps> = React.memo(
             strokeLinejoin="round"
             className="css-i6dzq1"
           >
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         {dropdown && (
@@ -130,12 +129,19 @@ const InvitePopup: React.FC<InvitePopupProps> = ({ close, serverId }) => {
   };
 
   return (
-    <div
-      ref={ref}
-      className="absolute z-10 bg-black bg-opacity-50 w-full h-full top-0 left-0"
-    >
-      <input ref={inputRef} value={inviteCode} type="text" />
-      <button onClick={copyToClipBoard}>Copy to clip board</button>
+    <div ref={ref} className="simple-popup-container-full">
+      <form>
+        <input
+          className="input"
+          ref={inputRef}
+          value={inviteCode}
+          readOnly
+          type="text"
+        />
+        <button type="button" onClick={copyToClipBoard}>
+          Copy to clip board
+        </button>
+      </form>
     </div>
   );
 };
@@ -153,10 +159,7 @@ const NewRoomPopup: React.FC<PopupProps> = ({ close, addRoom, serverId }) => {
   }
 
   return (
-    <div
-      ref={ref}
-      className="absolute z-10 bg-black bg-opacity-50 w-full h-full top-0 left-0"
-    >
+    <div ref={ref} className="simple-popup-container-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="roomName">Room Name</label>

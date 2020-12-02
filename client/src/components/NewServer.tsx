@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { joinServer } from "../api/members";
 import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
 import useCloseOnClick from "../hooks/close-on-click";
@@ -10,7 +11,7 @@ interface NewServerInputs {
   serverIcon: string;
 }
 interface JoinServerInput {
-  serverInviteCode: string;
+  inviteCode: string;
 }
 
 interface NewServerFormProps {
@@ -74,8 +75,10 @@ export const JoinServerForm = () => {
   const { register, handleSubmit, watch } = useForm<JoinServerInput>();
   const user = useContext(UserContext);
 
-  const onSubmit = async (data: NewServerInputs) => {
-    console.log(data);
+  const onSubmit = async ({ inviteCode }: JoinServerInput) => {
+    joinServer(inviteCode, user?.id!)
+      .then((res) => res.json())
+      .then((res) => console.log(res));
   };
 
   return (
