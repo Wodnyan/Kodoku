@@ -13,7 +13,9 @@ router.get("/", async (req, res, next) => {
   const { userId } = req.query;
   try {
     const servers = await Server.query()
-      .where({ owner_id: userId })
+      .joinRelated("members")
+      .where({ "members.member_id": userId })
+      .select(["servers.id", "servers.name", "servers.icon"])
       .skipUndefined();
     res.json({
       message: "All Servers",
@@ -38,10 +40,17 @@ router.post("/", async (req, res, next) => {
       ownerId,
       icon,
     });
-    const newServer = await Server.query().insertAndFetch({
-      name,
-      owner_id: ownerId,
-      icon,
+    const newServer = await Server.transaction(async (trx) => {
+      const newServer = await Server.query(trx).insertAndFetch({
+        name,
+        owner_id: ownerId,
+        icon,
+      });
+      const member = await newServer.$relatedQuery<any>("members", trx).insert({
+        member_id: ownerId,
+        server_id: newServer.id,
+      });
+      return newServer;
     });
     res.status(201).json({
       message: "Created a new server",
