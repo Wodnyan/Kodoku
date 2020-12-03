@@ -76,7 +76,7 @@ const setup = () => {
             .first();
           if (!alreadyExists) {
             const user = await User.transaction(async (trx) => {
-              const newUser = await User.query().insertAndFetch({
+              const newUser = await User.query(trx).insertAndFetch({
                 username: profile.username,
                 avatar_url: profile._json.avatar_url,
                 email,

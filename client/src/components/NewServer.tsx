@@ -124,7 +124,6 @@ export const NewServerForm: React.FC<NewServerFormProps> = ({ addServer }) => {
       icon: newServer.icon,
       name: newServer.name,
     });
-    console.log(newServer);
   };
 
   return (
