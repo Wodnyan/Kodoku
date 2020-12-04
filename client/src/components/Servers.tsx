@@ -7,13 +7,19 @@ import ServerLogo, { CreateNewServerButton } from "./ServerLogo";
 
 const Servers = React.memo(() => {
   const [servers, setServers] = useState<Server[] | []>([]);
+  console.log(servers);
   const [popup, setPopup] = useState(false);
   const user = useContext(UserContext);
 
   useEffect(() => {
-    getAllServers(user?.id)
-      .then((res) => res.json())
-      .then((res) => setServers(res.servers));
+    if (user) {
+      getAllServers(user?.id)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+          setServers(res.servers);
+        });
+    }
   }, [user]);
 
   return (
@@ -26,11 +32,9 @@ const Servers = React.memo(() => {
           }
         />
       )}
-      {(servers as Server[]).map((server) => {
-        return (
-          <ServerLogo logoSrc={server.icon} key={server.id} id={server.id} />
-        );
-      })}
+      {(servers as Server[]).map((server) => (
+        <ServerLogo logoSrc={server.icon} id={server.id} key={server.id} />
+      ))}
       <CreateNewServerButton toggleNewServerOverlay={() => setPopup(true)} />
     </>
   );

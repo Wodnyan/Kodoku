@@ -40,10 +40,7 @@ const NewServer: React.FC<NewServerProps> = ({ closeOverlay, addServer }) => {
   >(CurrentFormState.Create);
 
   return (
-    <div
-      ref={ref}
-      className="absolute flex flex-col justify-center items-center h-full w-full bg-black bg-opacity-50 z-50"
-    >
+    <div ref={ref} className="simple-popup-container-full">
       <div className="cursor-pointer">
         <span
           onClick={() => setCurrentForm(CurrentFormState.Create)}
