@@ -15,7 +15,13 @@ router.get("/", async (req, res, next) => {
     const servers = await Server.query()
       .joinRelated("members")
       .where({ "members.member_id": userId })
-      .select(["servers.id", "servers.name", "servers.icon"])
+      .select([
+        "servers.id",
+        "servers.name",
+        "servers.icon",
+        "members.created_at as joined_at",
+      ])
+      .orderBy("joined_at", "asc")
       .skipUndefined();
     res.json({
       message: "All Servers",
