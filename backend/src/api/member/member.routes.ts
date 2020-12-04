@@ -26,8 +26,13 @@ router.post("/", async (req, res, next) => {
   try {
     const { code, userId } = req.body;
     const server = await Invite.query()
-      .joinRelated("server")
-      .select(["server.name", "invites.code", "server.id as server_id"])
+      .leftJoinRelated("server")
+      .select([
+        "server.name",
+        "server.icon",
+        "invites.code",
+        "server.id as server_id",
+      ])
       .where({ code })
       .first();
     if (!server) {
@@ -40,7 +45,10 @@ router.post("/", async (req, res, next) => {
       server_id: server.server_id,
     });
     res.json({
-      newMember,
+      newMember: {
+        id: newMember.member_id,
+      },
+      joinedServer: server,
     });
   } catch (error) {
     next(error);
