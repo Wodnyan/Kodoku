@@ -10,6 +10,7 @@ interface NewServerInputs {
   serverName: string;
   serverIcon: string;
 }
+
 interface JoinServerInput {
   inviteCode: string;
 }
@@ -20,6 +21,10 @@ interface NewServerFormProps {
 
 interface NewServerProps {
   closeOverlay: () => void;
+  addServer: (payload: Server) => void;
+}
+
+interface JoinServerFormProps {
   addServer: (payload: Server) => void;
 }
 
@@ -65,20 +70,29 @@ const NewServer: React.FC<NewServerProps> = ({ closeOverlay, addServer }) => {
       {currentForm === CurrentFormState.Create ? (
         <NewServerForm addServer={addServer} />
       ) : (
-        <JoinServerForm />
+        <JoinServerForm addServer={addServer} />
       )}
     </div>
   );
 };
 
-export const JoinServerForm = () => {
+export const JoinServerForm: React.FC<JoinServerFormProps> = ({
+  addServer,
+}) => {
   const { register, handleSubmit, watch } = useForm<JoinServerInput>();
   const user = useContext(UserContext);
 
   const onSubmit = async ({ inviteCode }: JoinServerInput) => {
+    // Id, icon, name
     joinServer(inviteCode, user?.id!)
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) =>
+        addServer({
+          id: res.joinedServer.server_id,
+          icon: res.joinedServer.icon,
+          name: res.joinedServer.name,
+        })
+      );
   };
 
   return (

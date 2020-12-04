@@ -5,7 +5,7 @@ import { Server } from "../types";
 import NewServer from "./NewServer";
 import ServerLogo, { CreateNewServerButton } from "./ServerLogo";
 
-const Servers = () => {
+const Servers = React.memo(() => {
   const [servers, setServers] = useState<Server[] | []>([]);
   const [popup, setPopup] = useState(false);
   const user = useContext(UserContext);
@@ -34,6 +34,6 @@ const Servers = () => {
       <CreateNewServerButton toggleNewServerOverlay={() => setPopup(true)} />
     </>
   );
-};
+});
 
 export default Servers;
