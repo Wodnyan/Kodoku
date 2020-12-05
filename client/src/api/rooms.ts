@@ -1,6 +1,6 @@
 import { API_ENDPOINT } from "../constants";
 
-const ROOM_ENDPOINT = `${API_ENDPOINT}/room`;
+const ROOM_ENDPOINT = `${API_ENDPOINT}/rooms`;
 
 export async function getAllRooms(serverId: number) {
   const resp = await fetch(`${ROOM_ENDPOINT}?serverId=${serverId}`);

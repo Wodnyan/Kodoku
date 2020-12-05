@@ -1,6 +1,6 @@
 import { API_ENDPOINT } from "../constants";
 
-const MEMBERS_ENPOINT = `${API_ENDPOINT}/member`;
+const MEMBERS_ENPOINT = `${API_ENDPOINT}/members`;
 
 export async function getAllMembers(serverId?: number) {
   const resp = await fetch(
@@ -10,7 +10,7 @@ export async function getAllMembers(serverId?: number) {
 }
 
 export function joinServer(code: string, userId: number) {
-  return fetch(`${API_ENDPOINT}/member`, {
+  return fetch(MEMBERS_ENPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
