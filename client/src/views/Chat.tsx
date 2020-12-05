@@ -16,7 +16,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     (async () => {
-      const authenticate = await fetch(`${API_ENDPOINT}/user`, {
+      const authenticate = await fetch(`${API_ENDPOINT}/users`, {
         method: "GET",
         credentials: "include",
         headers: {

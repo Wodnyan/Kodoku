@@ -9,7 +9,7 @@ router.get("/", async (req, res, next) => {
   try {
     const allMembers = await Member.query()
       .joinRelated("[server, user]")
-      .select(["user.username", "server.name"])
+      .select(["user.username", "server.name", "user.id"])
       .where({
         server_id: serverId,
       })
