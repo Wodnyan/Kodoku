@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { Message } from "../types";
 import UserContext from "../context/UserContext";
 import useSocket from "../hooks/connect-to-socket";
+import { getAllMessages } from "../api/messages";
 
 interface ChatInputProps {
   innerRef: any;
@@ -27,7 +28,16 @@ const Chat = React.memo(() => {
 
   useEffect(() => {
     scrollToBottom(chat.current);
-  }, []);
+  }, [messages]);
+
+  useEffect(() => {
+    getAllMessages(params.roomId)
+      .then((res) => res.json())
+      .then(({ messages }) => {
+        console.log(messages);
+        setMessages(messages);
+      });
+  }, [params.roomId]);
 
   useEffect(() => {
     socket?.on("message", (message: string, username: string) => {
@@ -39,7 +49,6 @@ const Chat = React.memo(() => {
           sender: username,
         },
       ]);
-      scrollToBottom(chat.current);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -58,11 +67,11 @@ const Chat = React.memo(() => {
         sender: user?.username!,
       },
     ]);
-    scrollToBottom(chat.current);
     socket?.emit(
       "message",
       data.chatInput,
       user?.username,
+      user?.id,
       params.serverId,
       params.roomId
     );

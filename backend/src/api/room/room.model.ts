@@ -1,4 +1,5 @@
 import { Model } from "objection";
+import Message from "../message/message.models";
 import Server from "../server/server.model";
 
 class Room extends Model {
@@ -18,6 +19,14 @@ class Room extends Model {
       join: {
         from: "rooms.server_id",
         to: "servers.id",
+      },
+    },
+    messages: {
+      relation: Model.HasManyRelation,
+      modelClass: Message,
+      join: {
+        from: "rooms.id",
+        to: "messages.sender_id",
       },
     },
   };

@@ -1,12 +1,8 @@
 import { Server } from "http";
 import { Socket } from "socket.io";
+import Message from "./api/message/message.models";
 
 const socketio = require("socket.io");
-
-interface Message {
-  sender: string;
-  body: string;
-}
 
 export default function (server: Server) {
   const io = socketio(server);
@@ -19,10 +15,19 @@ export default function (server: Server) {
       socket.join(room);
     });
 
-    socket.on("message", (message, username, serverId, roomId) => {
-      console.log(message);
-      const room = `${serverId}:${roomId}`;
-      socket.to(room).emit("message", message, username);
-    });
+    socket.on(
+      "message",
+      async (message, username, userId, serverId, roomId) => {
+        const room = `${serverId}:${roomId}`;
+        const newMessage = await Message.query().insertAndFetch({
+          body: message,
+          sender_id: userId,
+          room_id: roomId,
+        });
+        console.log(newMessage);
+        console.log(message, username, userId, serverId, roomId);
+        socket.to(room).emit("message", message, username);
+      }
+    );
   });
 }
