@@ -7,7 +7,6 @@ import ServerLogo, { CreateNewServerButton } from "./ServerLogo";
 
 const Servers = React.memo(() => {
   const [servers, setServers] = useState<Server[] | []>([]);
-  console.log(servers);
   const [popup, setPopup] = useState(false);
   const user = useContext(UserContext);
 
@@ -16,7 +15,6 @@ const Servers = React.memo(() => {
       getAllServers(user?.id)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
           setServers(res.servers);
         });
     }

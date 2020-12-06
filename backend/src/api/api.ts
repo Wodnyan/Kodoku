@@ -5,6 +5,7 @@ import server from "./server/server.routes";
 import member from "./member/member.routes";
 import room from "./room/room.routes";
 import invite from "./invite/invite.routes";
+import message from "./message/message.routes";
 
 const router = Router();
 router.use("/users", user);
@@ -13,6 +14,7 @@ router.use("/servers", server);
 router.use("/members", member);
 router.use("/rooms", room);
 router.use("/invites", invite);
+router.use("/messages", message);
 
 export const messages = {
   root: "Welcome to my API",
