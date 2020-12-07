@@ -87,7 +87,7 @@ const Chat = React.memo(() => {
           </ChatMessage>
         ))}
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-blue-600">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-gray-800">
         <ChatInput innerRef={register({ required: true })} />
       </form>
     </div>

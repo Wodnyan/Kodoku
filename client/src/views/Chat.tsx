@@ -36,7 +36,7 @@ const ChatPage = () => {
     <UserContext.Provider value={user}>
       <Router>
         <div className="relative h-full flex">
-          <section className="hide-scrollbar bg-red-400 w-16 h-screen overflow-auto">
+          <section className="hide-scrollbar bg-gray-800 w-16 h-screen overflow-auto">
             <Servers />
           </section>
           <Switch>
@@ -46,22 +46,22 @@ const ChatPage = () => {
               </section>
             </Route>
             <Route exact path="/chat/:serverId">
-              <section className="bg-red-900 w-1/5 h-screen">
+              <section className="bg-gray-700 w-1/5 h-screen">
                 <Rooms />
               </section>
-              <section className="bg-blue-400 w-8/12 "></section>
-              <section className="bg-blue-800 w-1/6 h-screen overflow-auto">
+              <section className="w-8/12 bg-gray-600"></section>
+              <section className="bg-gray-700 w-1/6 h-screen overflow-auto">
                 <Members />
               </section>
             </Route>
             <Route exact path="/chat/:serverId/:roomId">
-              <section className="bg-red-900 w-1/5 h-full overflow-auto">
+              <section className="bg-gray-700 w-1/5 h-screen">
                 <Rooms />
               </section>
-              <section className="bg-blue-400 w-8/12 ">
+              <section className="w-8/12 bg-gray-600">
                 <Chat />
               </section>
-              <section className="bg-blue-800 w-1/6 h-screen overflow-auto">
+              <section className="bg-gray-700 w-1/6 h-screen overflow-auto">
                 <Members />
               </section>
             </Route>
