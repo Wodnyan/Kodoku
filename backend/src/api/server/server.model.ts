@@ -1,5 +1,5 @@
 import { Model } from "objection";
-import User from "../user/user.model";
+import User from "../../models/User";
 import Member from "../member/member.model";
 
 export class Server extends Model {

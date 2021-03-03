@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "npx jest",
+    "test": "npx jest --runInBand",
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/index.ts",
@@ -29,7 +29,7 @@
     "passport": "^0.4.1",
     "passport-github2": "^0.1.12",
     "passport-local": "^1.0.0",
-    "pg": "^8.4.2",
+    "pg": "^8.5.1",
     "socket.io": "^3.0.1",
     "yup": "^0.30.0"
   },
