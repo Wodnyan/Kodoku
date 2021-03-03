@@ -1,5 +1,4 @@
 import { Model } from "objection";
-import connection from "../../db";
 
 export class Provider extends Model {
   provider_id!: number;
@@ -37,6 +36,7 @@ class User extends Model {
   $beforeUpdate() {
     this.updated_at = new Date().toISOString();
   }
+
   static relationMappings = {
     provider: {
       relation: Model.BelongsToOneRelation,

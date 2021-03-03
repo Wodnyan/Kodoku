@@ -1,6 +1,6 @@
 import { Model } from "objection";
 import Room from "../room/room.model";
-import User from "../user/user.model";
+import User from "../../models/User";
 
 class Message extends Model {
   id!: number;

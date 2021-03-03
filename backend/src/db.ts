@@ -4,7 +4,7 @@ const config = require("../knexfile");
 
 const environment = process.env.NODE_ENV || "development";
 
-const connection = knex(config[environment]);
+export const connection = knex(config[environment]);
 
 export default function makeConnection() {
   Model.knex(connection);

@@ -10,8 +10,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
 import makeConnectionToDb from "./db";
-import passport from "passport";
-import passportConfig from "./passport.config";
+//import passport from "passport";
+//import passportConfig from "./passport.config";
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const server = http.createServer(app);
 makeConnectionToDb();
 socket(server);
 
-passportConfig();
+//passportConfig();
 app.use(helmet());
 app.use(morgan("common"));
 app.use(
@@ -38,8 +38,8 @@ app.use(
     maxAge: 24 * 60 * 60 * 100,
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 app.use(express.json());
 app.use("/api/v1", api);
 app.use(notFoundHandler);
