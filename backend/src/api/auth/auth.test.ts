@@ -12,6 +12,8 @@ afterAll(async () => {
 });
 
 const AUTH_ROUTE = "/api/v1/auth";
+const jwtRegex = "[A-Za-z0-9-_=]+.[A-Za-z0-9-_=]+.[A-Za-z0-9-_.+/=]*";
+const cookieJWTRegex = `^refresh_token=${jwtRegex};$`;
 
 const user = {
   username: "test",
@@ -26,9 +28,6 @@ const invalidUser = {
 };
 
 describe("Register User", () => {
-  const jwtRegex = "[A-Za-z0-9-_=]+.[A-Za-z0-9-_=]+.[A-Za-z0-9-_.+/=]*";
-  const cookieJWTRegex = `^refresh_token=${jwtRegex};$`;
-
   it("should respond with an access token and a refresh token", async () => {
     const response = await supertest(app)
       .post(`${AUTH_ROUTE}/register`)
@@ -49,6 +48,52 @@ describe("Register User", () => {
   it("should respond with 400 Bad Request", async () => {
     await supertest(app)
       .post(`${AUTH_ROUTE}/register`)
+      .send(invalidUser)
+      .expect(400);
+  });
+});
+
+describe("Login User", () => {
+  const wrongPassword = {
+    ...user,
+    password: "wrong-password",
+  };
+
+  const noEmailFound = {
+    ...user,
+    email: "foo@bar.com",
+  };
+
+  it("should respond with an access token and a refresh token", async () => {
+    const response = await supertest(app)
+      .post(`${AUTH_ROUTE}/login`)
+      .send(user)
+      .expect(200);
+    const cookie = response.headers["set-cookie"][0].split(" ");
+
+    expect(response.body.accessToken).toMatch(new RegExp(jwtRegex));
+
+    expect(cookie[0]).toMatch(new RegExp(cookieJWTRegex));
+    expect(cookie[2]).toEqual("HttpOnly");
+  });
+
+  it("should respond with 401 Unauthorized", async () => {
+    await supertest(app)
+      .post(`${AUTH_ROUTE}/login`)
+      .send(wrongPassword)
+      .expect(401);
+  });
+
+  it("should respond with 404 Not Found", async () => {
+    await supertest(app)
+      .post(`${AUTH_ROUTE}/login`)
+      .send(noEmailFound)
+      .expect(404);
+  });
+
+  it("should respond with 400 Bad Request", async () => {
+    await supertest(app)
+      .post(`${AUTH_ROUTE}/login`)
       .send(invalidUser)
       .expect(400);
   });
