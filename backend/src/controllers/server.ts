@@ -1,10 +1,21 @@
 import Member from "../api/member/member.model";
-import server from "../app";
 import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
 
 export class ServerController {
+  modifiers = {
+    selectNonCredentials(builder: any) {
+      builder.select("id", "username", "email", "avatar_url as avatarUrl");
+    },
+  };
+  public async getAll() {
+    const allServers = await Server.query()
+      .withGraphJoined("owner(selectNonCredentials)")
+      .modifiers(this.modifiers);
+    return allServers;
+  }
+
   public async create(userId: number, name: string, icon?: string) {
     await validateServer({
       name,
