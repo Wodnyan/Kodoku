@@ -6,11 +6,21 @@ import ErrorHandler from "../../lib/error-handler";
 
 const router = Router();
 
-router.post("/login", passport.authenticate("local"), (req, res, next) => {
-  res.json({
-    user: req.user,
-    message: "Login",
-  });
+router.post("/login", async (req, res, next) => {
+  try {
+    const authController = new AuthController();
+    const { accessToken, refreshToken } = await authController.login(req.body);
+    res.cookie("refresh_token", refreshToken, { httpOnly: true });
+    res.json({
+      message: "login",
+      accessToken,
+    });
+  } catch (error) {
+    if (error.errors?.length > 0) {
+      next(new ErrorHandler(400, error.message, error.errors));
+    }
+    next(error);
+  }
 });
 
 router.post("/register", async (req, res, next) => {
