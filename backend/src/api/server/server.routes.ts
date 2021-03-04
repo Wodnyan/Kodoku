@@ -23,6 +23,23 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:serverId", async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const server = await serverController.getOne(Number(serverId));
+    if (!server) {
+      return next(new ErrorHandler(404, "No server found"));
+    }
+    return res.json({
+      server,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:serverId/members", async (req, res, next) => {});
+
 router.post("/", async (req, res, next) => {
   const { name, ownerId, icon } = req.body;
   try {

@@ -4,16 +4,35 @@ import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
 
 export class ServerController {
-  modifiers = {
+  private readonly modifiers = {
     selectNonCredentials(builder: any) {
       builder.select("id", "username", "email", "avatar_url as avatarUrl");
     },
   };
+
+  private readonly select = [
+    "servers.id",
+    "icon",
+    "name",
+    "created_at as createdAt",
+    "updated_at as updatedAt",
+  ];
+
   public async getAll() {
     const allServers = await Server.query()
       .withGraphJoined("owner(selectNonCredentials)")
-      .modifiers(this.modifiers);
+      .modifiers(this.modifiers)
+      .select(this.select);
     return allServers;
+  }
+
+  public async getOne(serverId: number) {
+    const server = await Server.query()
+      .findOne({ "servers.id": serverId })
+      .withGraphJoined("owner(selectNonCredentials)")
+      .modifiers(this.modifiers)
+      .select(this.select);
+    return server;
   }
 
   public async create(userId: number, name: string, icon?: string) {
