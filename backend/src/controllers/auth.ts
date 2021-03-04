@@ -2,8 +2,8 @@ import Objection from "objection";
 import User from "../models/User";
 import ErrorHandler from "../lib/error-handler";
 import { createAccessToken, createRefreshToken } from "../lib/jwt";
-import registerCredentialsValidator from "../lib/validate-user";
-import { hashPassword } from "../lib/password";
+import { validateLogin, validateRegister } from "../lib/validate-user";
+import { decryptPassword, hashPassword } from "../lib/password";
 
 interface LoginCredentials {
   email: string;
@@ -23,10 +23,28 @@ export class AuthController {
     this.query = User.query();
   }
 
-  // login(credentials: LoginCredentials) {}
+  async login(credentials: LoginCredentials) {
+    await validateLogin(credentials);
+    const user = await this.query.findOne({
+      email: credentials.email,
+    });
+    if (!user) {
+      throw new ErrorHandler(404, "Email not found");
+    }
+    const dehashed = await decryptPassword(credentials.password, user.password);
+    if (!dehashed) {
+      throw new ErrorHandler(401, "Incorrect password");
+    }
+    const accessToken = await createAccessToken(user.id);
+    const refreshToken = await createRefreshToken(user.id);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 
   async signUp(credentials: SignUpCredentials) {
-    await registerCredentialsValidator(credentials);
+    await validateRegister(credentials);
     const uniqueEmail = await this.isEmailUnique(credentials.email);
     if (!uniqueEmail) {
       throw new ErrorHandler(409, "Email is in use");

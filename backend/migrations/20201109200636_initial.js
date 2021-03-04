@@ -40,7 +40,7 @@ exports.up = async (knex) => {
   await knex.schema.createTable(tableNames.servers, (table) => {
     table.increments();
     references(table, "owner_id", tableNames.users);
-    table.string("name", 100).notNullable();
+    table.string("name", 100).unique().notNullable();
     table
       .string("icon", 2083)
       .defaultTo(
