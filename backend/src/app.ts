@@ -8,10 +8,7 @@ import cors from "cors";
 import socket from "./socket";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cookieSession from "cookie-session";
 import makeConnectionToDb from "./db";
-//import passport from "passport";
-//import passportConfig from "./passport.config";
 
 dotenv.config();
 
@@ -20,7 +17,6 @@ const server = http.createServer(app);
 makeConnectionToDb();
 socket(server);
 
-//passportConfig();
 app.use(helmet());
 app.use(morgan("common"));
 app.use(
@@ -31,15 +27,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(
-  cookieSession({
-    name: "session",
-    keys: [process.env.SESSION_KEY!],
-    maxAge: 24 * 60 * 60 * 100,
-  })
-);
-//app.use(passport.initialize());
-//app.use(passport.session());
 app.use(express.json());
 app.use("/api/v1", api);
 app.use(notFoundHandler);
