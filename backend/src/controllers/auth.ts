@@ -1,9 +1,14 @@
 import Objection from "objection";
 import User from "../models/User";
 import ErrorHandler from "../lib/error-handler";
-import { createAccessToken, createRefreshToken } from "../lib/jwt";
+import {
+  createAccessToken,
+  createRefreshToken,
+  verifyAccessToken,
+} from "../lib/jwt";
 import { validateLogin, validateRegister } from "../lib/validate-user";
 import { decryptPassword, hashPassword } from "../lib/password";
+import { UserController } from "./user";
 
 interface LoginCredentials {
   email: string;
@@ -15,6 +20,8 @@ interface SignUpCredentials {
   email: string;
   password: string;
 }
+
+const userController = new UserController();
 
 export class AuthController {
   private readonly query!: Objection.QueryBuilder<User, User[]>;
@@ -61,6 +68,12 @@ export class AuthController {
       accessToken,
       refreshToken,
     };
+  }
+
+  public async checkAccessToken(token: string) {
+    const { userId } = (await verifyAccessToken(token)) as any;
+    const user = await userController.getOne(userId);
+    return user;
   }
 
   private async isEmailUnique(email: string) {
