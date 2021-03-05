@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import { AuthController } from "../controllers/auth";
+import ErrorHandler from "../lib/error-handler";
 
 const authController = new AuthController();
 
@@ -25,6 +26,18 @@ export async function checkAuth(
     req.user = user;
     next();
   } catch (error) {
+    next();
+  }
+}
+
+export async function protectRoute(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!req.user) {
+    next(new ErrorHandler(401, "Unauthorized"));
+  } else {
     next();
   }
 }
