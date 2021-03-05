@@ -1,20 +1,13 @@
 import { Router } from "express";
-import { MemberController } from "../../controllers/member";
 import { ServerController } from "../../controllers/server";
 import ErrorHandler from "../../lib/error-handler";
-import Server from "../server/server.model";
-import members from "../member/member.routes";
 import { protectRoute } from "../../middlewares/middlewares";
+import members from "../member/member.routes";
+import invites from "../invite/invite.routes";
 
 const router = Router();
 
 const serverController = new ServerController();
-const memberController = new MemberController();
-
-interface Update {
-  name?: string;
-  icon?: string;
-}
 
 router.get("/", async (req, res, next) => {
   try {
@@ -79,5 +72,6 @@ router.delete("/:serverId", async (req, res, next) => {
 });
 
 router.use("/:serverId/members", members);
+router.use("/:serverId/invite", invites);
 
 export default router;
