@@ -1,4 +1,7 @@
 import { NextFunction, Response, Request } from "express";
+import { AuthController } from "../controllers/auth";
+
+const authController = new AuthController();
 
 export function notFoundHandler(
   req: Request,
@@ -10,13 +13,20 @@ export function notFoundHandler(
   next(error);
 }
 
-export function checkAuth(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
-    const error = new Error("Unauthorized");
-    res.status(401);
-    return next(error);
+export async function checkAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const bearerToken = req.headers.authorization;
+    const token = bearerToken?.split(" ")[1];
+    const user = await authController.checkAccessToken(token!);
+    req.user = user;
+    next();
+  } catch (error) {
+    next();
   }
-  return next();
 }
 
 export function errorHandler(
