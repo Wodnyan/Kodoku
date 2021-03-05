@@ -30,18 +30,18 @@ export const createAccessToken = async (userId: number) => {
 
 export const verifyRefreshToken = async (token: string) => {
   return new Promise((resolve, reject) => {
-    jwt.sign(token, process.env.REFRESH_TOKEN_SECRET!, (error, jwt) => {
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!, (error, data) => {
       if (error) reject(error);
-      resolve(jwt);
+      resolve(data);
     });
   });
 };
 
 export const verifyAccessToken = async (token: string) => {
   return new Promise((resolve, reject) => {
-    jwt.sign(token, process.env.ACCESS_TOKEN_SECRET!, (error, jwt) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!, (error, data) => {
       if (error) reject(error);
-      resolve(jwt);
+      resolve(data);
     });
   });
 };
