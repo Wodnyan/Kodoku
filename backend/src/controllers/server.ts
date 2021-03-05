@@ -3,6 +3,10 @@ import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
 
+interface Update {
+  icon?: string;
+}
+
 export class ServerController {
   private readonly modifiers = {
     selectNonCredentials(builder: any) {
@@ -58,6 +62,15 @@ export class ServerController {
       return server;
     });
     return newServer;
+  }
+
+  public async update(serverId: number, update?: Update) {
+    const updatedServer = await Server.query()
+      .patch({
+        icon: update?.icon,
+      })
+      .findById(serverId);
+    return updatedServer;
   }
 
   public async delete(serverId: number) {

@@ -58,18 +58,11 @@ router.get("/:serverId", async (req, res, next) => {
   }
 });
 
-// TODO: Refactor this
 router.put("/:serverId", protectRoute, async (req, res, next) => {
-  const { serverId } = req.params;
-  const update = {
-    name: req.body.name,
-    icon: req.body.icon,
-  } as Update;
   try {
-    const updatedServer = await Server.query().patch(update).findById(serverId);
-    res.json({
-      updated: updatedServer,
-    });
+    const { serverId } = req.params;
+    const updated = await serverController.update(Number(serverId), req.body);
+    res.status(200).json({});
   } catch (error) {
     next(error);
   }
