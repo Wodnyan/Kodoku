@@ -1,32 +1,19 @@
 import { Router } from "express";
-import randomString from "../../lib/random-string";
-import Invite from "./invite.model";
+import { InviteController } from "../../controllers/invite";
+import { protectRoute } from "../../middlewares/middlewares";
 
-const router = Router();
-
-router.get("/", async (req, res, next) => {
-  try {
-    const invites = await Invite.query();
-    res.json({
-      message: "Invites",
-      invites,
-    });
-  } catch (error) {
-    next(error);
-  }
+const router = Router({
+  mergeParams: true,
 });
 
-router.post("/", async (req, res, next) => {
+const inviteController = new InviteController();
+
+router.post("/", protectRoute, async (req, res, next) => {
   try {
-    const { serverId } = req.body;
-    const code = randomString();
-    const newInvite = await Invite.query().insertAndFetch({
-      server_id: serverId,
-      code,
-    });
-    res.status(201).json({
-      message: "New invite",
-      newInvite,
+    const { serverId } = req.params;
+    const inviteCode = await inviteController.create(Number(serverId));
+    return res.status(201).json({
+      inviteCode,
     });
   } catch (error) {
     next(error);

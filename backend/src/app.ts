@@ -2,7 +2,11 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
-import { notFoundHandler, errorHandler } from "./middlewares/middlewares";
+import {
+  notFoundHandler,
+  errorHandler,
+  checkAuth,
+} from "./middlewares/middlewares";
 import api from "./api/api";
 import cors from "cors";
 import socket from "./socket";
@@ -19,6 +23,7 @@ socket(server);
 
 app.use(helmet());
 app.use(morgan("common"));
+app.use(checkAuth);
 app.use(
   cors({
     origin: "http://localhost:3000",

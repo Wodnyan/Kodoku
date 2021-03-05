@@ -1,19 +1,17 @@
 import { Router } from "express";
 import { ServerController } from "../../controllers/server";
 import ErrorHandler from "../../lib/error-handler";
-import Server from "../server/server.model";
+import { protectRoute } from "../../middlewares/middlewares";
+import members from "../member/member.routes";
+import invites from "../invite/invite.routes";
 
 const router = Router();
 
 const serverController = new ServerController();
 
-interface Update {
-  name?: string;
-  icon?: string;
-}
-
 router.get("/", async (req, res, next) => {
   try {
+    console.log(req.user);
     const allServers = await serverController.getAll();
     return res.json({
       servers: allServers,
@@ -23,7 +21,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", protectRoute, async (req, res, next) => {
   const { name, ownerId, icon } = req.body;
   try {
     const newServer = await serverController.create(ownerId, name, icon);
@@ -38,17 +36,26 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:serverId", async (req, res, next) => {
-  const { serverId } = req.params;
-  const update = {
-    name: req.body.name,
-    icon: req.body.icon,
-  } as Update;
+router.get("/:serverId", async (req, res, next) => {
   try {
-    const updatedServer = await Server.query().patch(update).findById(serverId);
-    res.json({
-      updated: updatedServer,
+    const { serverId } = req.params;
+    const server = await serverController.getOne(Number(serverId));
+    if (!server) {
+      return next(new ErrorHandler(404, "No server found"));
+    }
+    return res.json({
+      server,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:serverId", protectRoute, async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const updated = await serverController.update(Number(serverId), req.body);
+    res.status(200).json({});
   } catch (error) {
     next(error);
   }
@@ -63,5 +70,8 @@ router.delete("/:serverId", async (req, res, next) => {
     next(error);
   }
 });
+
+router.use("/:serverId/members", members);
+router.use("/:serverId/invite", invites);
 
 export default router;
