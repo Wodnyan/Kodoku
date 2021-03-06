@@ -10,4 +10,12 @@ export class InviteController {
     });
     return newInvite.code;
   }
+
+  public async getOne(serverId: number, inviteCode: string) {
+    const code = await Invite.query().findOne({
+      server_id: serverId,
+      code: inviteCode,
+    });
+    return code;
+  }
 }
