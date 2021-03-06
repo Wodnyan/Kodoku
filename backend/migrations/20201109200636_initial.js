@@ -29,13 +29,13 @@ exports.up = async (knex) => {
     table.timestamps(false, true);
   });
   // PROVIDER
-  await knex.schema.createTable(tableNames.provider, (table) => {
-    table.increments();
-    table.integer("provider_id").notNullable();
-    table.string("provider").notNullable();
-    table.unique(["provider", "provider_id"]);
-    references(table, "user_id", tableNames.users);
-  });
+  // await knex.schema.createTable(tableNames.provider, (table) => {
+  //   table.increments();
+  //   table.integer("provider_id").notNullable();
+  //   table.string("provider").notNullable();
+  //   table.unique(["provider", "provider_id"]);
+  //   references(table, "user_id", tableNames.users);
+  // });
   // SERVERS
   await knex.schema.createTable(tableNames.servers, (table) => {
     table.increments();
@@ -54,6 +54,7 @@ exports.up = async (knex) => {
     references(table, "server_id", tableNames.servers);
     table.string("name", 100).notNullable();
     table.timestamps(false, true);
+    table.unique(["name", "server_id"]);
   });
   // MESSAGES
   await knex.schema.createTable(tableNames.messages, (table) => {
