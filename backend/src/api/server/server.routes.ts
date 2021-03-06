@@ -72,6 +72,6 @@ router.delete("/:serverId", async (req, res, next) => {
 });
 
 router.use("/:serverId/members", members);
-router.use("/:serverId/invite", invites);
+router.use("/:serverId/invites", invites);
 
 export default router;
