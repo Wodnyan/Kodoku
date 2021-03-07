@@ -4,6 +4,7 @@ import ErrorHandler from "../../lib/error-handler";
 import { protectRoute } from "../../middlewares/middlewares";
 import members from "../member/member.routes";
 import invites from "../invite/invite.routes";
+import rooms from "../room/room.routes";
 
 const router = Router();
 
@@ -73,5 +74,6 @@ router.delete("/:serverId", async (req, res, next) => {
 
 router.use("/:serverId/members", members);
 router.use("/:serverId/invites", invites);
+router.use("/:serverId/rooms", rooms);
 
 export default router;

@@ -1,4 +1,4 @@
-import Member from "../api/member/member.model";
+import Member from "../models/Member";
 import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
