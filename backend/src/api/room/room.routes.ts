@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { RoomController } from "../../controllers/room";
 import { protectRoute } from "../../middlewares/middlewares";
+import messages from "../message/message.routes";
 
 const router = Router({
   mergeParams: true,
@@ -43,5 +44,7 @@ router.delete("/:roomId", protectRoute, async (req, res, next) => {
     next(error);
   }
 });
+
+router.use("/:roomId/messages", messages);
 
 export default router;

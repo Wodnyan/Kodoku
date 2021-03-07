@@ -1,8 +1,7 @@
-import ErrorHandler from "../lib/error-handler";
 import User from "../models/User";
 
 export class UserController {
-  private select: string[] = [
+  static readonly nonCredentials: string[] = [
     "id",
     "username",
     "email",

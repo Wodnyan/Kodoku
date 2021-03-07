@@ -1,18 +1,37 @@
 import { Router } from "express";
-import Message from "./message.models";
+import { MessageController } from "../../controllers/message";
+import { protectRoute } from "../../middlewares/middlewares";
 
-const router = Router();
+const router = Router({
+  mergeParams: true,
+});
+
+const messageController = new MessageController();
+
+router.post("/", protectRoute, async (req, res, next) => {
+  try {
+    const { roomId, serverId } = req.params;
+    const { userId, message } = req.body;
+    console.log(userId);
+    const newMessage = await messageController.create(
+      Number(serverId),
+      Number(roomId),
+      Number(userId),
+      message
+    );
+    res.status(201).json({
+      newMessage,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/", async (req, res, next) => {
-  const { roomId } = req.query;
   try {
-    const messages = await Message.query()
-      .joinRelated("user")
-      .where({ room_id: roomId })
-      .select(["user.username as sender", "messages.id", "messages.body"])
-      .skipUndefined();
+    const { roomId } = req.params;
+    const messages = await messageController.getAll(Number(roomId));
     res.json({
-      message: "Messages",
       messages,
     });
   } catch (error) {

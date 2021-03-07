@@ -56,14 +56,6 @@ exports.up = async (knex) => {
     table.timestamps(false, true);
     table.unique(["name", "server_id"]);
   });
-  // MESSAGES
-  await knex.schema.createTable(tableNames.messages, (table) => {
-    table.increments();
-    references(table, "sender_id", tableNames.users);
-    references(table, "room_id", tableNames.rooms);
-    table.string("body").notNullable();
-    table.timestamps(false, true);
-  });
   // MEMBERS
   await knex.schema.createTable(tableNames.members, (table) => {
     table.increments();
@@ -72,6 +64,15 @@ exports.up = async (knex) => {
     table.unique(["member_id", "server_id"]);
     table.timestamps(false, true);
   });
+  // MESSAGES
+  await knex.schema.createTable(tableNames.messages, (table) => {
+    table.increments();
+    references(table, "sender_id", tableNames.members);
+    references(table, "room_id", tableNames.rooms);
+    table.string("body").notNullable();
+    table.timestamps(false, true);
+  });
+  // INVITES
   await knex.schema.createTable(tableNames.invites, (table) => {
     table.increments();
     references(table, "server_id", tableNames.servers);
