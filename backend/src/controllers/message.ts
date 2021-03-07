@@ -1,9 +1,16 @@
 import Message from "../models/Message";
 import { MemberController } from "./member";
+import { UserController } from "./user";
 
 const memberController = new MemberController();
 
 export class MessageController {
+  private readonly modifiers = {
+    selectNonCredentials(builder: any) {
+      builder.select(...UserController.nonCredentials);
+    },
+  };
+  static select = ["messages.id", "body", "messages.created_at as createdAt"];
   public async create(
     serverId: number,
     roomId: number,
@@ -19,5 +26,12 @@ export class MessageController {
     return newMessage;
   }
 
-  // public async getAll(roomId: number) {}
+  public async getAll(roomId?: number) {
+    const messages = await Message.query()
+      .withGraphJoined("user(selectNonCredentials)")
+      .modifiers(this.modifiers)
+      .select(MessageController.select)
+      .where({ room_id: roomId });
+    return messages;
+  }
 }

@@ -27,21 +27,16 @@ router.post("/", protectRoute, async (req, res, next) => {
   }
 });
 
-// router.get("/", async (req, res, next) => {
-//   const { roomId } = req.query;
-//   try {
-//     const messages = await Message.query()
-//       .joinRelated("user")
-//       .where({ room_id: roomId })
-//       .select(["user.username as sender", "messages.id", "messages.body"])
-//       .skipUndefined();
-//     res.json({
-//       message: "Messages",
-//       messages,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+router.get("/", async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const messages = await messageController.getAll(Number(roomId));
+    res.json({
+      messages,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;

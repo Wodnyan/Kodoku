@@ -2,6 +2,7 @@ import Member from "../models/Member";
 import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
+import { UserController } from "./user";
 
 interface Update {
   icon?: string;
@@ -10,7 +11,7 @@ interface Update {
 export class ServerController {
   private readonly modifiers = {
     selectNonCredentials(builder: any) {
-      builder.select("id", "username", "email", "avatar_url as avatarUrl");
+      builder.select(...UserController.nonCredentials);
     },
   };
 
