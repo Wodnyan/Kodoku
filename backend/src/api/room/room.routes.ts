@@ -1,14 +1,16 @@
 import { Router } from "express";
-import Room from "./room.model";
+import { RoomController } from "../../controllers/room";
+import { protectRoute } from "../../middlewares/middlewares";
 
-const router = Router();
+const router = Router({
+  mergeParams: true,
+});
+const roomController = new RoomController();
 
 router.get("/", async (req, res, next) => {
   try {
-    const { serverId } = req.query;
-    const rooms = await Room.query()
-      .where({ server_id: serverId })
-      .skipUndefined();
+    const { serverId } = req.params;
+    const rooms = await roomController.getAll(Number(serverId));
     res.json({
       message: "All rooms",
       rooms,
@@ -18,13 +20,11 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", protectRoute, async (req, res, next) => {
   try {
-    const { serverId, name } = req.body;
-    const newRoom = await Room.query().insertAndFetch({
-      server_id: serverId,
-      name,
-    });
+    const { serverId } = req.params;
+    const { roomName } = req.body;
+    const newRoom = await roomController.create(Number(serverId), roomName);
     res.status(201).json({
       message: "New server",
       room: newRoom,
@@ -34,13 +34,11 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:roomId", async (req, res, next) => {
+router.delete("/:roomId", protectRoute, async (req, res, next) => {
   try {
-    const { roomId } = req.params;
-    const deleteRoom = await Room.query().findById(roomId).delete();
-    res.json({
-      message: "Deleted room",
-    });
+    const { roomId, serverId } = req.params;
+    await roomController.delete(Number(serverId), Number(roomId));
+    res.status(204).json();
   } catch (error) {
     next(error);
   }

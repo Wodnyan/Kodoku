@@ -1,6 +1,6 @@
 import { Model } from "objection";
-import Message from "../message/message.models";
-import Server from "../server/server.model";
+import Message from "./Message";
+import Server from "./Server";
 
 class Room extends Model {
   id!: number;
