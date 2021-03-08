@@ -2,59 +2,21 @@ import React, { useEffect, useState } from "react";
 import OAuthButton from "../../components/OAuthButton";
 import Line from "../../components/Line";
 import { API_ENDPOINT } from "../../constants";
-import { Link, useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
-
-interface Inputs {
-  email: string;
-  password: string;
-  username: string;
-}
+import { Link } from "react-router-dom";
+import { useSignUp } from "../../hooks/api/auth";
 
 const Signup = () => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    setError,
-    clearErrors,
-  } = useForm<Inputs>();
+  const { register, onSubmit, errors } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
-  const history = useHistory();
+
   useEffect(() => {
     document.title = "Sign up";
   }, []);
+
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const onSubmit = async (data: any) => {
-    clearErrors();
-    const resp = await fetch(`${API_ENDPOINT}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-    if (resp.ok) {
-      const user = await resp.json();
-      history.push("/chat");
-    } else {
-      const error = await resp.json();
-      if (error.code === 409) {
-        setError("email", { type: "required", message: "email is in use" });
-      } else {
-        error.errors?.forEach((error: any) => {
-          setError(error.split(" ")[0], {
-            type: "required",
-            message: error,
-          });
-        });
-      }
-      // setError("email", { type: "required", message: error.message });
-    }
-  };
+
   return (
     <main className="flex flex-col justify-center items-center h-full">
       <div className="w-1/3">
@@ -70,7 +32,7 @@ const Signup = () => {
           <div className="mx-2">or</div>
           <Line />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <div>
             <label htmlFor="email" className="font-bold">
               Email Address
@@ -80,7 +42,7 @@ const Signup = () => {
               type="text"
               name="email"
               ref={register({ required: true })}
-              className={`input ${errors.email && "input--error"}`}
+              className={`input`}
             />
             {errors.email && (
               <p className="error-message">
@@ -99,7 +61,7 @@ const Signup = () => {
               type="text"
               name="username"
               ref={register({ required: true })}
-              className={`input ${errors.username && "input--error"}`}
+              className={`input`}
             />
             {errors.username && (
               <p className="error-message">
@@ -113,11 +75,7 @@ const Signup = () => {
             <label htmlFor="password" className="font-bold">
               Password
             </label>
-            <div
-              className={`flex input input--password ${
-                errors.password && "input--error"
-              }`}
-            >
+            <div className={`flex input input--password`}>
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -127,7 +85,6 @@ const Signup = () => {
               />
               <button
                 className="min-w-32 focus:outline-none"
-                // If this isn't set explicitly than it be a type "submit".
                 type="button"
                 onClick={toggleShowPassword}
               >
