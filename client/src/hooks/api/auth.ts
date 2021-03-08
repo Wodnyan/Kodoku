@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { login } from "../../api/auth";
+import { signUp } from "../../api/auth";
 
 export const useSignUp = () => {
   const { register, handleSubmit, errors, clearErrors, setError } = useForm();
@@ -9,9 +9,9 @@ export const useSignUp = () => {
   const onSubmit = async (data: any) => {
     try {
       clearErrors();
-      const { accessToken } = await login(data);
+      const { accessToken } = await signUp(data);
       localStorage.setItem("access_token", accessToken);
-      console.log("New account! :3");
+      history.push("/chat");
     } catch (error) {
       if (error.response) {
         const {

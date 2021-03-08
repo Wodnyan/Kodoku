@@ -7,9 +7,26 @@ interface LoginCredentials {
   password: string;
 }
 
+interface SignUpCredentials {
+  username: string;
+  email: string;
+  password: string;
+}
+
 const AUTH_ENDPOINT = `${API_ENDPOINT}/auth`;
 
-export const login = async (userCredentials: LoginCredentials) => {
+export const login = async (userCredentials: SignUpCredentials) => {
+  const { data } = await axios.post(
+    `${AUTH_ENDPOINT}/register`,
+    userCredentials,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
+
+export const signUp = async (userCredentials: SignUpCredentials) => {
   const { data } = await axios.post(
     `${AUTH_ENDPOINT}/register`,
     userCredentials,
