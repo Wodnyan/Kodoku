@@ -15,14 +15,10 @@ interface SignUpCredentials {
 
 const AUTH_ENDPOINT = `${API_ENDPOINT}/auth`;
 
-export const login = async (userCredentials: SignUpCredentials) => {
-  const { data } = await axios.post(
-    `${AUTH_ENDPOINT}/register`,
-    userCredentials,
-    {
-      withCredentials: true,
-    }
-  );
+export const login = async (userCredentials: LoginCredentials) => {
+  const { data } = await axios.post(`${AUTH_ENDPOINT}/login`, userCredentials, {
+    withCredentials: true,
+  });
   return data;
 };
 
