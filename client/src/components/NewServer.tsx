@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { joinServer } from "../api/members";
-import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
 import useCloseOnClick from "../hooks/close-on-click";
 import { Server } from "../types";
+import { createServer } from "../api/server";
 
 interface NewServerInputs {
   serverName: string;
-  serverIcon: string;
 }
 
 interface JoinServerInput {
@@ -79,22 +77,10 @@ export const JoinServerForm: React.FC<JoinServerFormProps> = ({
   const { register, handleSubmit, watch } = useForm<JoinServerInput>();
   const user = useContext(UserContext);
 
-  const onSubmit = async ({ inviteCode }: JoinServerInput) => {
-    // Id, icon, name
-    joinServer(inviteCode, user?.id!)
-      .then((res) => res.json())
-      .then((res) =>
-        addServer({
-          id: res.joinedServer.server_id,
-          icon: res.joinedServer.icon,
-          name: res.joinedServer.name,
-        })
-      );
-  };
+  const onSubmit = async ({ inviteCode }: JoinServerInput) => {};
 
   return (
     <form className="w-1/3" onSubmit={handleSubmit(onSubmit)}>
-      <img src={String(watch("serverUrl"))} alt="" />
       <div className="w-full">
         <label htmlFor="inviteCode" className="text-white">
           Invite Code
@@ -113,33 +99,27 @@ export const JoinServerForm: React.FC<JoinServerFormProps> = ({
 };
 
 export const NewServerForm: React.FC<NewServerFormProps> = ({ addServer }) => {
-  const { register, handleSubmit, watch } = useForm<NewServerInputs>();
+  const { register, handleSubmit } = useForm<NewServerInputs>();
   const user = useContext(UserContext);
 
   const onSubmit = async (data: NewServerInputs) => {
-    const payload = {
-      name: data.serverName,
-      icon: data.serverIcon === "" ? undefined : data.serverIcon,
-      ownerId: user?.id,
-    };
-    const resp = await fetch(`${API_ENDPOINT}/server`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    const { newServer } = await resp.json();
-    addServer({
-      id: newServer.id,
-      icon: newServer.icon,
-      name: newServer.name,
-    });
+    try {
+      const { newServer } = await createServer({
+        ownerId: user!.id!,
+        name: data.serverName,
+      });
+      addServer({
+        name: newServer.name,
+        id: newServer.id,
+        icon: newServer.icon,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <form className="w-1/3" onSubmit={handleSubmit(onSubmit)}>
-      <img src={String(watch("serverUrl"))} alt="" />
       <div className="w-full">
         <label htmlFor="serverName" className="text-white">
           Server Name
@@ -150,18 +130,6 @@ export const NewServerForm: React.FC<NewServerFormProps> = ({ addServer }) => {
           id="serverName"
           type="text"
           ref={register({ required: true })}
-        />
-      </div>
-      <div className="w-full">
-        <label htmlFor="serverIcon" className="text-white">
-          Server Icon URL
-        </label>
-        <input
-          className="input"
-          name="serverIcon"
-          id="serverIcon"
-          type="text"
-          ref={register()}
         />
       </div>
       <button className="text-white">Submit</button>
