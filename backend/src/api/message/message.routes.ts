@@ -12,7 +12,6 @@ router.post("/", protectRoute, async (req, res, next) => {
   try {
     const { roomId, serverId } = req.params;
     const { userId, message } = req.body;
-    console.log(userId);
     const newMessage = await messageController.create(
       Number(serverId),
       Number(roomId),
