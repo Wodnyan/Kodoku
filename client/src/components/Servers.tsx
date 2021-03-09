@@ -11,13 +11,13 @@ const Servers = React.memo(() => {
   const user = useContext(UserContext);
 
   useEffect(() => {
-    if (user) {
-      getAllServers(user?.id)
-        .then((res) => res.json())
-        .then((res) => {
-          setServers(res.servers);
-        });
-    }
+    // if (user) {
+    //   getAllServers(user?.id)
+    //     .then((res) => res.json())
+    //     .then((res) => {
+    //       setServers(res.servers);
+    //     });
+    // }
   }, [user]);
 
   return (

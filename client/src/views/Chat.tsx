@@ -1,36 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 import Chat from "../components/Chat";
 import Rooms from "../components/Rooms";
-import { API_ENDPOINT } from "../constants";
 import UserContext from "../context/UserContext";
-import { User } from "../types";
 import Members from "../components/Members";
 import Servers from "../components/Servers";
+import { useAuth } from "../hooks/api/auth";
 
 const ChatPage = () => {
-  const [user, setUser] = useState<User | null>(null);
-
-  const history = useHistory();
-
-  useEffect(() => {
-    (async () => {
-      const authenticate = await fetch(`${API_ENDPOINT}/users`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Access-Control-Allow-Credentials": "true",
-        },
-      });
-      if (authenticate.status === 401) {
-        return history.push("/");
-      }
-      const { user } = await authenticate.json();
-      setUser(user);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { user } = useAuth("/");
 
   return (
     <UserContext.Provider value={user}>
