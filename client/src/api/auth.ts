@@ -32,3 +32,14 @@ export const signUp = async (userCredentials: SignUpCredentials) => {
   );
   return data;
 };
+
+export const check = async () => {
+  const accessToken = localStorage.getItem("access_token");
+  const { data } = await axios.get(`${AUTH_ENDPOINT}/check`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return data;
+};

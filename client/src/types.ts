@@ -7,13 +7,14 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  avatar_url?: string;
+  avatarUrl: string | null;
 }
 
 export interface Server {
   id: number;
   name: string;
   icon: string;
+  user?: User;
 }
 
 export interface Room {

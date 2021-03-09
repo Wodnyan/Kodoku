@@ -1,37 +1,27 @@
 import React, { useEffect, useState, useContext } from "react";
-import { getAllServers } from "../api/server";
+// import { getAllServers } from "../api/server";
 import UserContext from "../context/UserContext";
-import { Server } from "../types";
+// import { Server } from "../types";
 import NewServer from "./NewServer";
 import ServerLogo, { CreateNewServerButton } from "./ServerLogo";
+import { useServer } from "../hooks/api/server";
+import { Server } from "../types";
 
 const Servers = React.memo(() => {
-  const [servers, setServers] = useState<Server[] | []>([]);
   const [popup, setPopup] = useState(false);
   const user = useContext(UserContext);
-
-  useEffect(() => {
-    if (user) {
-      getAllServers(user?.id)
-        .then((res) => res.json())
-        .then((res) => {
-          setServers(res.servers);
-        });
-    }
-  }, [user]);
+  const { servers, setServers } = useServer(user?.id);
 
   return (
     <>
       {popup && (
         <NewServer
           closeOverlay={() => setPopup(false)}
-          addServer={(server: Server) =>
-            setServers((prev) => [...prev, server])
-          }
+          addServer={(server) => setServers((prev) => [server, ...prev])}
         />
       )}
       {(servers as Server[]).map((server) => (
-        <ServerLogo logoSrc={server.icon} id={server.id} key={server.id} />
+        <ServerLogo id={server.id} logoSrc={server.icon} key={server.id} />
       ))}
       <CreateNewServerButton toggleNewServerOverlay={() => setPopup(true)} />
     </>

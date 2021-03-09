@@ -1,6 +1,26 @@
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { login, signUp } from "../../api/auth";
+import { login, signUp, check } from "../../api/auth";
+
+export const useAuth = (redirectUrl?: string) => {
+  const [user, setUser] = useState(null);
+  const history = useHistory();
+
+  useEffect(() => {
+    check()
+      .then(({ user }) => {
+        setUser(user);
+      })
+      .catch(() => {
+        if (redirectUrl) {
+          history.push(redirectUrl);
+        }
+      });
+  }, []);
+
+  return { user };
+};
 
 export const useLogin = () => {
   const { register, handleSubmit, errors, clearErrors, setError } = useForm();

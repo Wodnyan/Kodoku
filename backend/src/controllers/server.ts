@@ -3,10 +3,13 @@ import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validate-server";
 import Server from "../models/Server";
 import { UserController } from "./user";
+import { MemberController } from "./member";
 
 interface Update {
   icon?: string;
 }
+
+const memberController = new MemberController();
 
 export class ServerController {
   private readonly modifiers = {
@@ -19,15 +22,20 @@ export class ServerController {
     "servers.id",
     "icon",
     "name",
-    "created_at as createdAt",
-    "updated_at as updatedAt",
+    "servers.created_at as createdAt",
+    "servers.updated_at as updatedAt",
   ];
 
-  public async getAll() {
+  public async getAll(userId?: number) {
     const allServers = await Server.query()
       .withGraphJoined("owner(selectNonCredentials)")
       .modifiers(this.modifiers)
-      .select(this.select);
+      .joinRelated("members")
+      .where({
+        "members.member_id": userId,
+      })
+      .select(this.select)
+      .skipUndefined();
     return allServers;
   }
 
