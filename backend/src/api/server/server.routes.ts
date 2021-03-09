@@ -12,7 +12,6 @@ const serverController = new ServerController();
 
 router.get("/", async (req, res, next) => {
   try {
-    console.log(req.user);
     const allServers = await serverController.getAll();
     return res.json({
       servers: allServers,

@@ -2,44 +2,17 @@ import React, { useEffect, useState } from "react";
 import OAuthButton from "../../components/OAuthButton";
 import Line from "../../components/Line";
 import { API_ENDPOINT } from "../../constants";
-import { Link, useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
-
-interface Inputs {
-  email: string;
-  password: string;
-  server: string;
-}
-
-interface Error {
-  message: string;
-  type?: string;
-}
+import { Link } from "react-router-dom";
+import { useLogin } from "../../hooks/api/auth";
 
 const Login = () => {
-  const { register, handleSubmit, errors } = useForm<Inputs>();
+  const { register, onSubmit, errors } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const [serverError, setServerError] = useState<null | Error>(null);
-  const history = useHistory();
+
   useEffect(() => {
     document.title = "Login";
   }, []);
-  const onSubmit = async (data: any) => {
-    const resp = await fetch(`${API_ENDPOINT}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-    if (resp.ok) {
-      const user = await resp.json();
-      history.push("/chat");
-    } else {
-      setServerError({ message: "Invalid login attempt" });
-    }
-  };
+
   return (
     <main className="flex flex-col justify-center items-center h-full">
       <div className="w-1/3">
@@ -55,7 +28,7 @@ const Login = () => {
           <div className="mx-2">or</div>
           <Line />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <div>
             <label htmlFor="email" className="font-bold">
               Email Address
@@ -68,7 +41,7 @@ const Login = () => {
               className={`input ${errors.email && "input--error"}`}
             />
             {errors.email && (
-              <p className="error-message">This field is required</p>
+              <p className="error-message">{errors.email.message}</p>
             )}
           </div>
           <div>
@@ -96,14 +69,9 @@ const Login = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="error-message">This field is required</p>
+              <p className="error-message">{errors.password.message}</p>
             )}
           </div>
-          {serverError && (
-            <p className="error-message text-center text-xl">
-              {serverError.message}
-            </p>
-          )}
           <div className="flex justify-between">
             <div className="">
               <span>Don't have an account? </span>

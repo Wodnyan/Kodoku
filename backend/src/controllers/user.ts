@@ -10,7 +10,9 @@ export class UserController {
   ];
 
   public async getOne(id: number) {
-    const user = await User.query().findById(id);
+    const user = await User.query()
+      .findById(id)
+      .select(UserController.nonCredentials);
     return user;
   }
 }
