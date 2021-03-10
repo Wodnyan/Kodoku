@@ -6,6 +6,7 @@ import shortenString from "../lib/shorten-string";
 import useCloseOnClick from "../hooks/close-on-click";
 import { Link, useParams } from "react-router-dom";
 import { createInvite } from "../api/invites";
+import { useRooms } from "../hooks/api/rooms";
 
 enum Popups {
   Create = 1,
@@ -150,12 +151,9 @@ const NewRoomPopup: React.FC<PopupProps> = ({ close, addRoom, serverId }) => {
   const { register, handleSubmit } = useForm<NewRoomInputs>();
   const ref = useCloseOnClick(close);
 
-  async function onSubmit(data: any) {
-    createRoom(serverId, data.roomName)
-      .then((res) => res.json())
-      .then((res) => {
-        addRoom(res.room);
-      });
+  async function onSubmit({ roomName }: any) {
+    const room = await createRoom(serverId, roomName);
+    console.log(room);
   }
 
   return (
@@ -178,22 +176,14 @@ const NewRoomPopup: React.FC<PopupProps> = ({ close, addRoom, serverId }) => {
 };
 
 const Rooms = React.memo(() => {
-  const [rooms, setRooms] = useState<Room[] | []>([]);
+  // const [rooms, setRooms] = useState<Room[] | []>([]);
   const [popup, setPopup] = useState<Popups | null>(null);
   const params = useParams() as any;
-
-  // useEffect(() => {
-  //   getAllRooms(params.serverId)
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       setRooms(res.rooms);
-  //     });
-  //
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [params.serverId]);
+  const { rooms } = useRooms(params.serverId);
 
   const addRoom = (room: Room) => {
-    setRooms((prev) => [...prev, room]);
+    // setRooms((prev) => [...prev, room]);
+    console.log("add room");
   };
 
   const closePopup = () => setPopup(null);
