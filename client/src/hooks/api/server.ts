@@ -6,11 +6,13 @@ export const useServer = (userId?: number) => {
   const [servers, setServers] = useState<Server[] | []>([]);
 
   useEffect(() => {
-    getAllServersOfUser(userId)
-      .then(({ servers }) => {
-        setServers(servers);
-      })
-      .catch(console.log);
+    if (userId) {
+      getAllServersOfUser(userId)
+        .then(({ servers }) => {
+          setServers(servers);
+        })
+        .catch(console.log);
+    }
   }, [userId]);
 
   return {

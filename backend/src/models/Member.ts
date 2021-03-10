@@ -13,7 +13,7 @@ class Member extends Model {
   static relationMappings = {
     user: {
       relation: Model.BelongsToOneRelation,
-      modelClass: path.join(__dirname + "./User"),
+      modelClass: path.join(__dirname + "/User"),
       join: {
         from: "members.member_id",
         to: "users.id",
@@ -21,7 +21,7 @@ class Member extends Model {
     },
     server: {
       relation: Model.BelongsToOneRelation,
-      modelClass: path.join(__dirname + "./Server"),
+      modelClass: path.join(__dirname + "/Server"),
       join: {
         from: "members.server_id",
         to: "servers.id",

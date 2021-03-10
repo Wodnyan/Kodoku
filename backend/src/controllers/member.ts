@@ -1,10 +1,17 @@
 import ErrorHandler from "../lib/error-handler";
 import Member from "../models/Member";
 import { InviteController } from "./invite";
+import { UserController } from "./user";
 
 const inviteController = new InviteController();
 
 export class MemberController {
+  static select = [
+    "members.id",
+    "user.username",
+    "members.created_at as createdAt",
+  ];
+
   public async create(serverId: number, userId: number, inviteCode: string) {
     const isAlreadyMember = await this.isAlreadyMember(serverId, userId);
     if (isAlreadyMember) {
@@ -23,7 +30,11 @@ export class MemberController {
   }
 
   public async getAll(serverId?: number) {
-    const allMembers = await Member.query().where({ server_id: serverId });
+    const allMembers = await Member.query()
+      .where({ server_id: serverId })
+      .joinRelated("user")
+      .select(MemberController.select)
+      .skipUndefined();
     return allMembers;
   }
 

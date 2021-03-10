@@ -25,7 +25,9 @@ router.get("/:userId/servers", protectRoute, async (req, res, next) => {
     res.json({
       servers,
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;
