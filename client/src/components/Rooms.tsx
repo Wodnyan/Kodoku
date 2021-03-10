@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { createRoom, getAllRooms } from "../api/rooms";
+import React, { useRef, useState } from "react";
+import { createRoom } from "../api/rooms";
 import { Room } from "../types";
 import { useForm } from "react-hook-form";
 import shortenString from "../lib/shorten-string";
@@ -114,17 +114,14 @@ const InvitePopup: React.FC<InvitePopupProps> = ({ close, serverId }) => {
   const ref = useCloseOnClick(close);
   const inputRef = useRef() as any;
 
-  useEffect(() => {
-    createInvite(serverId)
-      .then((res) => res.json())
-      .then((res) => setInviteCode(res.newInvite.code));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const createInviteCode = async () => {
+    const code = await createInvite(serverId);
+    setInviteCode(code);
+  };
 
   const copyToClipBoard = (event: any) => {
     inputRef.current.select();
     document.execCommand("copy");
-    console.log("Copied");
     event.target.focus();
   };
 
@@ -138,8 +135,11 @@ const InvitePopup: React.FC<InvitePopupProps> = ({ close, serverId }) => {
           readOnly
           type="text"
         />
-        <button type="button" onClick={copyToClipBoard}>
-          Copy to clip board
+        <button
+          type="button"
+          onClick={inviteCode ? copyToClipBoard : createInviteCode}
+        >
+          {inviteCode ? "Copy to clip board" : "Create code"}
         </button>
       </form>
     </div>
@@ -182,15 +182,15 @@ const Rooms = React.memo(() => {
   const [popup, setPopup] = useState<Popups | null>(null);
   const params = useParams() as any;
 
-  useEffect(() => {
-    getAllRooms(params.serverId)
-      .then((res) => res.json())
-      .then((res) => {
-        setRooms(res.rooms);
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.serverId]);
+  // useEffect(() => {
+  //   getAllRooms(params.serverId)
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       setRooms(res.rooms);
+  //     });
+  //
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [params.serverId]);
 
   const addRoom = (room: Room) => {
     setRooms((prev) => [...prev, room]);
