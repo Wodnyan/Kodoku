@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAllMembers } from "../api/members";
+import { useMembers } from "../hooks/api/members";
 
 interface Member {
   id: number;
@@ -8,14 +8,8 @@ interface Member {
 }
 
 const Members = React.memo(() => {
-  const [members, setMembers] = useState<Member[] | []>([]);
-  const { serverId } = useParams() as any;
-
-  useEffect(() => {
-    getAllMembers(serverId)
-      .then((res) => res.json())
-      .then((res) => setMembers(res.members));
-  }, [serverId]);
+  const params = useParams() as any;
+  const { members } = useMembers(params.serverId);
 
   return (
     <>
