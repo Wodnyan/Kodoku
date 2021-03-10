@@ -4,6 +4,7 @@ import UserContext from "../context/UserContext";
 import useCloseOnClick from "../hooks/close-on-click";
 import { Server } from "../types";
 import { createServer } from "../api/server";
+import { joinServer } from "../api/members";
 
 interface NewServerInputs {
   serverName: string;
@@ -74,10 +75,14 @@ const NewServer: React.FC<NewServerProps> = ({ closeOverlay, addServer }) => {
 export const JoinServerForm: React.FC<JoinServerFormProps> = ({
   addServer,
 }) => {
-  const { register, handleSubmit, watch } = useForm<JoinServerInput>();
+  const { register, handleSubmit } = useForm<JoinServerInput>();
   const user = useContext(UserContext);
 
-  const onSubmit = async ({ inviteCode }: JoinServerInput) => {};
+  const onSubmit = async ({ inviteCode }: JoinServerInput) => {
+    if (user) {
+      const member = await joinServer(inviteCode, user.id, 2);
+    }
+  };
 
   return (
     <form className="w-1/3" onSubmit={handleSubmit(onSubmit)}>

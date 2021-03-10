@@ -4,7 +4,7 @@ import { API_ENDPOINT } from "../constants";
 const MEMBERS_ENPOINT = `${API_ENDPOINT}/members`;
 const SERVERS_ENDPOINT = `${API_ENDPOINT}/servers`;
 
-export async function getAllMembers(serverId: number | null) {
+export async function getAllMembers(serverId: number) {
   const accessToken = localStorage.getItem("access_token");
   const {
     data: { members },
@@ -16,16 +16,25 @@ export async function getAllMembers(serverId: number | null) {
   return members;
 }
 
-export function joinServer(code: string, userId: number) {
-  return fetch(MEMBERS_ENPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      code,
+export async function joinServer(
+  code: string,
+  userId: number,
+  serverId: number
+) {
+  const accessToken = localStorage.getItem("access_token");
+  const {
+    data: { member },
+  } = await axios.post(
+    `${SERVERS_ENDPOINT}/${serverId}/members`,
+    {
+      inviteCode: code,
       userId,
-    }),
-  });
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  return member;
 }
