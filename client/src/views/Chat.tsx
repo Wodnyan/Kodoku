@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import Chat from "../components/Chat";
-import Rooms from "../components/Rooms";
+import Rooms from "../components/room/Rooms";
 import UserContext from "../context/UserContext";
 import Members from "../components/Members";
 import Servers from "../components/Servers";
