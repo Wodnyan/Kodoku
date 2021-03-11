@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { createInvite } from "../../api/invites";
 import { createRoom } from "../../api/rooms";
 import useCloseOnClick from "../../hooks/close-on-click";
 import { Room } from "../../types";
@@ -28,8 +29,8 @@ export const InvitePopup: React.FC<InvitePopupProps> = ({
   const inputRef = useRef() as any;
 
   const createInviteCode = async () => {
-    // const code = await createInvite(serverId);
-    // setInviteCode(code);
+    const code = await createInvite(serverId);
+    setInviteCode(code);
   };
 
   const copyToClipBoard = (event: any) => {
