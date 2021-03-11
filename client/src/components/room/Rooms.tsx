@@ -31,10 +31,10 @@ export const RoomName: React.FC<RoomNameProps> = React.memo(
 const Rooms = React.memo(() => {
   const [popup, setPopup] = useState<Popups | null>(null);
   const params = useParams() as any;
-  const { rooms } = useRooms(params.serverId);
+  const { rooms, setRooms } = useRooms(params.serverId);
 
   const addRoom = (room: Room) => {
-    console.log(room);
+    setRooms((prev) => [...prev, room]);
   };
 
   const closePopup = () => setPopup(null);

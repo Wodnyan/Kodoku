@@ -13,5 +13,6 @@ export const useRooms = (serverId: number) => {
   }, [serverId]);
   return {
     rooms,
+    setRooms,
   };
 };

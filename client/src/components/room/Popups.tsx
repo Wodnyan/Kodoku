@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { createRoom } from "../../api/rooms";
 import useCloseOnClick from "../../hooks/close-on-click";
 import { Room } from "../../types";
 
@@ -67,7 +68,12 @@ export const NewRoomPopup: React.FC<PopupProps> = ({
   const ref = useCloseOnClick(close);
 
   async function onSubmit({ roomName }: any) {
-    // const room = await createRoom(serverId, roomName);
+    try {
+      const room = await createRoom(serverId, roomName);
+      addRoom(room);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
