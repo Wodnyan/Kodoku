@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Message } from "../types";
 import UserContext from "../context/UserContext";
 import useSocket from "../hooks/connect-to-socket";
-import { getAllMessages } from "../api/messages";
+import { useFetchAllMessages } from "../hooks/api/message";
 
 interface ChatInputProps {
   innerRef: any;
@@ -19,25 +19,19 @@ interface MessageInput {
 }
 
 const Chat = React.memo(() => {
-  const { register, handleSubmit, reset } = useForm<MessageInput>();
-  const [messages, setMessages] = useState<[] | Message[]>([]);
+  const { register, handleSubmit } = useForm<MessageInput>();
   const params = useParams() as any;
   const user = useContext(UserContext);
   const socket = useSocket("/");
   const chat = useRef<any>(null);
+  const { messages, setMessages } = useFetchAllMessages(
+    params.serverId,
+    params.roomId
+  );
 
   useEffect(() => {
     scrollToBottom(chat.current);
   }, [messages]);
-
-  useEffect(() => {
-    getAllMessages(params.roomId)
-      .then((res) => res.json())
-      .then(({ messages }) => {
-        console.log(messages);
-        setMessages(messages);
-      });
-  }, [params.roomId]);
 
   useEffect(() => {
     socket?.on("message", (message: string, username: string) => {
@@ -54,9 +48,11 @@ const Chat = React.memo(() => {
   }, [socket]);
 
   useEffect(() => {
-    socket?.emit("subscribe", params);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
+    socket?.emit("subscribe", {
+      serverId: params.serverId,
+      roomId: params.roomId,
+    });
+  }, [params, socket]);
 
   const onSubmit = (data: MessageInput, e: any) => {
     setMessages((prev) => [
@@ -67,14 +63,13 @@ const Chat = React.memo(() => {
         sender: user?.username!,
       },
     ]);
-    socket?.emit(
-      "message",
-      data.chatInput,
-      user?.username,
-      user?.id,
-      params.serverId,
-      params.roomId
-    );
+    socket?.emit("message", {
+      message: data.chatInput,
+      username: user?.username,
+      userId: user?.id,
+      serverId: params.serverId,
+      roomId: params.roomId,
+    });
     e.target.reset();
   };
 
