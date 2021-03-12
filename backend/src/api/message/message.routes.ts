@@ -28,6 +28,7 @@ router.post("/", protectRoute, async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
+    console.log("hello world");
     const { roomId } = req.params;
     const messages = await messageController.getAll(Number(roomId));
     res.json({

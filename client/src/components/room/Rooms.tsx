@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Room } from "../../types";
-import shortenString from "../../lib/shorten-string";
 import { Link, useParams } from "react-router-dom";
 import { useRooms } from "../../hooks/api/rooms";
 import TopRow from "./TopRow";
@@ -20,7 +19,7 @@ export const RoomName: React.FC<RoomNameProps> = React.memo(
     return (
       <Link
         to={`/chat/${serverId}/${id}`}
-        className="cursor-pointer block mb-3 mt-1 hover:bg-red-500 p-1 w-11/12 mx-auto rounded transition-colors duration-100 ease"
+        className="truncate whitespace-nowrap cursor-pointer block mb-3 mt-1 hover:bg-red-500 p-1 w-11/12 mx-auto rounded transition-colors duration-100 ease"
       >
         <span>#</span>
         <span>{children}</span>
@@ -59,7 +58,7 @@ const Rooms = React.memo(() => {
         {(rooms as Room[]).map((room) => (
           <li key={room.id}>
             <RoomName serverId={params.serverId!} id={room.id}>
-              {room.name.length > 20 ? shortenString(room.name, 20) : room.name}
+              {room.name}
             </RoomName>
           </li>
         ))}

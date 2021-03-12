@@ -18,8 +18,9 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-makeConnectionToDb();
+
 socket(server);
+makeConnectionToDb();
 
 app.use(helmet());
 app.use(morgan("common"));

@@ -1,9 +1,16 @@
+import axios from "axios";
 import { API_ENDPOINT } from "../constants";
 
-const MESSAGES_ENDPOINT = `${API_ENDPOINT}/messages`;
+const SERVER_ENDPOINT = `${API_ENDPOINT}/servers`;
 
-export function getAllMessages(roomId?: number) {
-  return fetch(
-    `${MESSAGES_ENDPOINT}?${isNaN === undefined ? "" : "roomId=" + roomId}`
+export const fetchAllMessages = async (serverId: number, roomId: number) => {
+  const {
+    data: { messages },
+  } = await axios.get(
+    `${SERVER_ENDPOINT}/${serverId}/rooms/${roomId}/messages`,
+    {
+      withCredentials: true,
+    }
   );
-}
+  return messages;
+};

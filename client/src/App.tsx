@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import Login from "./views/auth/Login";
 import Signup from "./views/auth/Signup";
-import Chat from "./views/Chat";
+import Chat from "./views/chat/Chat";
 import Home from "./views/Home";
 
 function App() {
