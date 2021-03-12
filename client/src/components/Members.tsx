@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { useMembers } from "../hooks/api/members";
+import { useFecthAllMembers } from "../hooks/api/members";
 
 interface Member {
   id: number;
@@ -9,7 +9,7 @@ interface Member {
 
 const Members = React.memo(() => {
   const params = useParams() as any;
-  const { members } = useMembers(params.serverId);
+  const { members } = useFecthAllMembers(params.serverId);
 
   return (
     <>

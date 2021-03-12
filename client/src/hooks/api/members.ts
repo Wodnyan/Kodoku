@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllMembers } from "../../api/members";
 
-export const useMembers = (serverId?: number) => {
+export const useFecthAllMembers = (serverId?: number) => {
   const [members, setMembers] = useState<any[] | []>([]);
 
   useEffect(() => {
@@ -17,4 +17,10 @@ export const useMembers = (serverId?: number) => {
   return {
     members,
   };
+};
+
+export const useFetchOneMember = (serverId: number, userId: number) => {
+  useEffect(() => {
+    console.log(serverId, userId);
+  }, []);
 };
