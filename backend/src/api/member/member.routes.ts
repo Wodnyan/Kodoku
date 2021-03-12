@@ -20,6 +20,21 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:userId", protectRoute, async (req, res, next) => {
+  const { userId, serverId } = req.params;
+  try {
+    const member = await memberController.getOne(
+      Number(serverId),
+      Number(userId)
+    );
+    res.json({
+      member,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/", protectRoute, async (req, res, next) => {
   try {
     const { serverId } = req.params;

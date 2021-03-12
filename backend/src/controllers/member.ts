@@ -39,10 +39,13 @@ export class MemberController {
   }
 
   public async getOne(serverId: number, userId: number) {
-    const member = await Member.query().findOne({
-      member_id: userId,
-      server_id: serverId,
-    });
+    const member = await Member.query()
+      .findOne({
+        member_id: userId,
+        server_id: serverId,
+      })
+      .joinRelated("user")
+      .select(MemberController.select);
     if (member === undefined) {
       throw new ErrorHandler(404, "No member found");
     }

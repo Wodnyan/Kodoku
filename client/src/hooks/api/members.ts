@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getAllMembers } from "../../api/members";
+import { useHistory } from "react-router-dom";
+import { getAllMembers, getOneMember } from "../../api/members";
 
 export const useFecthAllMembers = (serverId?: number) => {
   const [members, setMembers] = useState<any[] | []>([]);
@@ -19,8 +20,21 @@ export const useFecthAllMembers = (serverId?: number) => {
   };
 };
 
-export const useFetchOneMember = (serverId: number, userId: number) => {
+export const useFetchOneMember = (serverId: number, userId?: number) => {
+  const history = useHistory();
+  const [member, setMember] = useState(null);
+
   useEffect(() => {
-    console.log(serverId, userId);
-  }, []);
+    if (userId) {
+      getOneMember(serverId, userId)
+        .then((data) => {
+          setMember(data);
+        })
+        .catch(() => history.push("/chat"));
+    }
+  }, [serverId, userId]);
+
+  return {
+    member,
+  };
 };
