@@ -2,6 +2,7 @@ export interface Message {
   id: number;
   sender: string;
   body: string;
+  createdAt: string;
 }
 export interface User {
   id: number;
