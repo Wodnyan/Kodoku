@@ -26,13 +26,12 @@ export default function (server: Server) {
       "message",
       async ({ message, username, userId, serverId, roomId }) => {
         const room = `${serverId}:${roomId}`;
+        console.log(userId);
         const newMessage = await messageController.create(
-          serverId,
           roomId,
           userId,
           message
         );
-        console.log(newMessage);
         socket.to(room).emit("message", {
           id: newMessage.id,
           message: message,

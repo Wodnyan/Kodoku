@@ -67,7 +67,7 @@ exports.up = async (knex) => {
   // MESSAGES
   await knex.schema.createTable(tableNames.messages, (table) => {
     table.increments();
-    references(table, "sender_id", tableNames.members);
+    references(table, "sender_id", tableNames.users);
     references(table, "room_id", tableNames.rooms);
     table.string("body").notNullable();
     table.timestamps(false, true);
@@ -84,8 +84,8 @@ exports.up = async (knex) => {
 exports.down = async (knex) => {
   await knex.schema.dropTableIfExists(tableNames.invites);
   await knex.schema.dropTableIfExists(tableNames.provider);
-  await knex.schema.dropTableIfExists(tableNames.members);
   await knex.schema.dropTableIfExists(tableNames.messages);
+  await knex.schema.dropTableIfExists(tableNames.members);
   await knex.schema.dropTableIfExists(tableNames.rooms);
   await knex.schema.dropTableIfExists(tableNames.servers);
   await knex.schema.dropTableIfExists(tableNames.users);

@@ -10,10 +10,9 @@ const messageController = new MessageController();
 
 router.post("/", protectRoute, async (req, res, next) => {
   try {
-    const { roomId, serverId } = req.params;
+    const { roomId } = req.params;
     const { userId, message } = req.body;
     const newMessage = await messageController.create(
-      Number(serverId),
       Number(roomId),
       Number(userId),
       message
@@ -28,7 +27,6 @@ router.post("/", protectRoute, async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    console.log("hello world");
     const { roomId } = req.params;
     const messages = await messageController.getAll(Number(roomId));
     res.json({

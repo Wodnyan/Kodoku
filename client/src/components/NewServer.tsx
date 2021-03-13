@@ -86,7 +86,7 @@ export const JoinServerForm: React.FC<JoinServerFormProps> = ({
 
   return (
     <form className="w-1/3" onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full">
+      <div className="w-full max-w-md">
         <label htmlFor="inviteCode" className="text-white">
           Invite Code
         </label>

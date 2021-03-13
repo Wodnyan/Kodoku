@@ -1,4 +1,5 @@
 import { Model } from "objection";
+import Member from "./Member";
 import Room from "./Room";
 import User from "./User";
 
@@ -9,6 +10,7 @@ class Message extends Model {
   body!: string;
   created_at!: string;
   updated_at!: string;
+  // messages.sender_id -> member.id -> member.member_id -> users.id
   static get tableName() {
     return "messages";
   }
@@ -22,7 +24,7 @@ class Message extends Model {
       },
     },
     user: {
-      relation: Model.BelongsToOneRelation,
+      relation: Model.HasOneRelation,
       modelClass: User,
       join: {
         from: "messages.sender_id",
