@@ -11,16 +11,10 @@ export class MessageController {
     },
   };
   static select = ["messages.id", "body", "messages.created_at as createdAt"];
-  public async create(
-    serverId: number,
-    roomId: number,
-    userId: number,
-    message: string
-  ) {
-    const member = await memberController.getOne(serverId, userId);
+  public async create(roomId: number, userId: number, message: string) {
     const newMessage = await Message.query().insertAndFetch({
       room_id: roomId,
-      sender_id: member.id,
+      sender_id: userId,
       body: message,
     });
     return newMessage;
