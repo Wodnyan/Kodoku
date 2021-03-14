@@ -46,7 +46,7 @@ router.post("/", protectRoute, async (req, res, next) => {
       inviteCode
     );
     res.status(201).json({
-      newMember,
+      member: newMember,
     });
   } catch (error) {
     next(error);

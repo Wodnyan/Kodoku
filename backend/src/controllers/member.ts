@@ -25,7 +25,10 @@ export class MemberController {
         member_id: userId,
         server_id: serverId,
       });
-      return newMember;
+      return {
+        id: newMember.id,
+        serverId: newMember.server_id,
+      };
     }
   }
 
