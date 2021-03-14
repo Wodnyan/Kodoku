@@ -5,12 +5,14 @@ import useCloseOnClick from "../hooks/close-on-click";
 import { Server } from "../types";
 import { createServer } from "../api/server";
 import { joinServer } from "../api/members";
+import { useHistory } from "react-router-dom";
 
 interface NewServerInputs {
   serverName: string;
 }
 
 interface JoinServerInput {
+  serverId: number;
   inviteCode: string;
 }
 
@@ -77,16 +79,30 @@ export const JoinServerForm: React.FC<JoinServerFormProps> = ({
 }) => {
   const { register, handleSubmit } = useForm<JoinServerInput>();
   const user = useContext(UserContext);
+  const history = useHistory();
 
-  const onSubmit = async ({ inviteCode }: JoinServerInput) => {
+  const onSubmit = async ({ inviteCode, serverId }: JoinServerInput) => {
     if (user) {
-      const member = await joinServer(inviteCode, user.id, 2);
+      const member = await joinServer(inviteCode, user.id, serverId);
+      history.push(`/chat/${member.serverId}`);
     }
   };
 
   return (
     <form className="w-1/3" onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full max-w-md">
+      <div className="w-full">
+        <label htmlFor="inviteCode" className="text-white">
+          Server Id
+        </label>
+        <input
+          className="input"
+          name="serverId"
+          id="serverId"
+          type="text"
+          ref={register({ required: true })}
+        />
+      </div>
+      <div className="w-full">
         <label htmlFor="inviteCode" className="text-white">
           Invite Code
         </label>

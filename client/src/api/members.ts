@@ -1,7 +1,6 @@
 import axios from "axios";
 import { API_ENDPOINT } from "../constants";
 
-const MEMBERS_ENPOINT = `${API_ENDPOINT}/members`;
 const SERVERS_ENDPOINT = `${API_ENDPOINT}/servers`;
 
 export async function getOneMember(serverId: number, userId: number) {

@@ -26,7 +26,6 @@ export default function (server: Server) {
       "message",
       async ({ message, username, userId, serverId, roomId }) => {
         const room = `${serverId}:${roomId}`;
-        console.log(userId);
         const newMessage = await messageController.create(
           roomId,
           userId,
