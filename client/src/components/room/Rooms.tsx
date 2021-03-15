@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Room } from "../../types";
 import { Link, useParams } from "react-router-dom";
 import { useRooms } from "../../hooks/api/rooms";
 import TopRow from "./TopRow";
 import { InvitePopup, NewRoomPopup } from "./Popups";
+import UserContext from "../../context/UserContext";
+import UserCard from "./UserCard";
 
 enum Popups {
   Create = 1,
@@ -31,6 +33,7 @@ const Rooms = React.memo(() => {
   const [popup, setPopup] = useState<Popups | null>(null);
   const params = useParams() as any;
   const { rooms, setRooms } = useRooms(params.serverId);
+  const user = useContext(UserContext);
 
   const addRoom = (room: Room) => {
     setRooms((prev) => [...prev, room]);
@@ -63,6 +66,9 @@ const Rooms = React.memo(() => {
           </li>
         ))}
       </ul>
+      <div className="mt-auto">
+        <UserCard username={user?.username} avatarUrl={user?.avatarUrl} />
+      </div>
     </section>
   );
 });
