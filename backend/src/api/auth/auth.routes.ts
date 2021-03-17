@@ -4,9 +4,12 @@ import { CLIENT_URL } from "../../constants";
 import { AuthController } from "../../controllers/auth";
 import { UserController } from "../../controllers/user";
 import ErrorHandler from "../../lib/error-handler";
+import { limiter } from "../../lib/rate-limiter";
 import { protectRoute } from "../../middlewares/middlewares";
 
 const router = Router();
+
+router.use(limiter(100));
 
 const userController = new UserController();
 
