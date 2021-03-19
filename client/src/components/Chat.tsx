@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import scrollToBottom from "../lib/scroll-to-bottom";
 import { useParams } from "react-router-dom";
@@ -7,9 +7,13 @@ import UserContext from "../context/UserContext";
 import useSocket from "../hooks/connect-to-socket";
 import { useFetchAllMessages } from "../hooks/api/message";
 import * as timeago from "timeago.js";
+import { getScrollPercentage } from "../lib/get-scroll-percentage";
 
 interface ChatInputProps {
   innerRef: any;
+  scrollToBottom: () => void;
+  promptUser: boolean;
+  togglePrompt: () => void;
 }
 interface ChatMessageProps {
   children: React.ReactNode;
@@ -21,34 +25,58 @@ interface MessageInput {
 }
 
 const Chat = React.memo(() => {
+  const [promptUser, setPromptUser] = useState(false);
+
   const { register, handleSubmit } = useForm<MessageInput>();
   const params = useParams() as any;
   const user = useContext(UserContext);
   const socket = useSocket("/");
-  const chat = useRef<any>(null);
-  const { messages, setMessages } = useFetchAllMessages(
+  const chat = useRef<HTMLDivElement | null>(null);
+  const { messages, setMessages, loading } = useFetchAllMessages(
     params.serverId,
     params.roomId
   );
 
+  // On load scroll the chat to the bottom
   useEffect(() => {
-    scrollToBottom(chat.current);
-  }, [messages]);
+    if (chat.current) {
+      scrollToBottom(chat.current);
+    }
+  }, [params.serverId, params.roomId, loading, chat]);
 
   useEffect(() => {
-    socket?.on("message", (message: string, username: string) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: 1,
-          body: message,
-          sender: username,
-          createdAt: String(Date.now()),
-        },
-      ]);
-    });
+    socket?.on(
+      "message",
+      ({
+        createdAt,
+        id,
+        message,
+        username,
+      }: {
+        createdAt: string;
+        id: number;
+        message: string;
+        username: string;
+      }) => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id,
+            body: message,
+            sender: username,
+            createdAt: createdAt,
+          },
+        ]);
+        const scrollPercentage = getScrollPercentage(chat.current!);
+        if (chat.current && scrollPercentage > 75) {
+          scrollToBottom(chat.current);
+        } else {
+          setPromptUser(true);
+        }
+      }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket]);
+  }, [socket, chat]);
 
   useEffect(() => {
     socket?.emit("subscribe", {
@@ -67,6 +95,9 @@ const Chat = React.memo(() => {
         createdAt: String(Date.now()),
       },
     ]);
+    if (chat.current) {
+      scrollToBottom(chat.current);
+    }
     socket?.emit("message", {
       message: data.chatInput,
       username: user?.username,
@@ -77,9 +108,15 @@ const Chat = React.memo(() => {
     e.target.reset();
   };
 
+  const temp = () => {
+    if (chat.current) {
+      scrollToBottom(chat.current);
+    }
+  };
+
   return (
     <div className="h-full grid grid-rows-2">
-      <div ref={chat} className="overflow-auto h-full row-span-2">
+      <div ref={chat} className="overflow-auto min-h-full row-span-2">
         {(messages as Message[]).map((message, i) => (
           <ChatMessage
             createdAt={message.createdAt}
@@ -91,22 +128,36 @@ const Chat = React.memo(() => {
         ))}
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="bg-gray-800">
-        <ChatInput innerRef={register({ required: true })} />
+        <ChatInput
+          scrollToBottom={temp}
+          innerRef={register({ required: true })}
+          promptUser={promptUser}
+          togglePrompt={() => setPromptUser((prev) => !prev)}
+        />
       </form>
     </div>
   );
 });
 
-const ChatInput: React.FC<ChatInputProps> = React.memo(({ innerRef }) => {
-  return (
-    <input
-      type="text"
-      className="w-11/12 mx-auto block p-2 m-3 text-lg rounded"
-      name="chatInput"
-      ref={innerRef}
-    />
-  );
-});
+const ChatInput: React.FC<ChatInputProps> = React.memo(
+  ({ innerRef, scrollToBottom, promptUser, togglePrompt }) => {
+    const handleClick = () => {
+      scrollToBottom();
+      togglePrompt();
+    };
+    return (
+      <>
+        {promptUser && <button onClick={handleClick}>Scroll back</button>}
+        <input
+          type="text"
+          className="w-11/12 mx-auto block p-2 m-3 text-lg rounded"
+          name="chatInput"
+          ref={innerRef}
+        />
+      </>
+    );
+  }
+);
 
 const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ children, username, createdAt }) => {
