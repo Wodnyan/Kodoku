@@ -4,8 +4,10 @@ import { Message } from "../../types";
 
 export const useFetchAllMessages = (serverId: number, roomId: number) => {
   const [messages, setMessages] = useState<Message[] | []>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetchAllMessages(serverId, roomId)
       .then((messages) => {
         const temp = messages.map((message: any) => ({
@@ -16,11 +18,15 @@ export const useFetchAllMessages = (serverId: number, roomId: number) => {
         }));
         setMessages(temp);
       })
-      .catch(({ response }) => console.log(response));
+      .catch(({ response }) => console.log(response))
+      .finally(() => {
+        setLoading(false);
+      });
   }, [serverId, roomId]);
 
   return {
     messages,
     setMessages,
+    loading,
   };
 };
