@@ -12,7 +12,7 @@ import { getScrollPercentage } from "../lib/get-scroll-percentage";
 interface ChatInputProps {
   innerRef: any;
   scrollToBottom: () => void;
-  promptUser: boolean;
+  newMessage: boolean;
   togglePrompt: () => void;
 }
 interface ChatMessageProps {
@@ -25,7 +25,7 @@ interface MessageInput {
 }
 
 const Chat = React.memo(() => {
-  const [promptUser, setPromptUser] = useState(false);
+  const [newMessage, setNewMessage] = useState(true);
 
   const { register, handleSubmit } = useForm<MessageInput>();
   const params = useParams() as any;
@@ -71,7 +71,7 @@ const Chat = React.memo(() => {
         if (chat.current && scrollPercentage > 75) {
           scrollToBottom(chat.current);
         } else {
-          setPromptUser(true);
+          setNewMessage(true);
         }
       }
     );
@@ -131,8 +131,8 @@ const Chat = React.memo(() => {
         <ChatInput
           scrollToBottom={temp}
           innerRef={register({ required: true })}
-          promptUser={promptUser}
-          togglePrompt={() => setPromptUser((prev) => !prev)}
+          newMessage={newMessage}
+          togglePrompt={() => setNewMessage((prev) => !prev)}
         />
       </form>
     </div>
@@ -140,21 +140,29 @@ const Chat = React.memo(() => {
 });
 
 const ChatInput: React.FC<ChatInputProps> = React.memo(
-  ({ innerRef, scrollToBottom, promptUser, togglePrompt }) => {
+  ({ innerRef, scrollToBottom, newMessage, togglePrompt }) => {
     const handleClick = () => {
       scrollToBottom();
       togglePrompt();
     };
     return (
-      <>
-        {promptUser && <button onClick={handleClick}>Scroll back</button>}
+      <div className="relative z-50">
+        {newMessage && (
+          <button
+            className="absolute z-0 -top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 rounded bg-purple-600 text-white text-xl hover:bg-purple-700"
+            type="button"
+            onClick={handleClick}
+          >
+            New Message!
+          </button>
+        )}
         <input
           type="text"
           className="w-11/12 mx-auto block p-2 m-3 text-lg rounded"
           name="chatInput"
           ref={innerRef}
         />
-      </>
+      </div>
     );
   }
 );
