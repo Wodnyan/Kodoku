@@ -6,6 +6,7 @@ const tableNames = {
   members: "members",
   provider: "provider",
   invites: "invites",
+  blackListedRefreshTokens: "black_listed_refresh_tokens",
 };
 
 function references(table, name, tableName) {
@@ -28,14 +29,6 @@ exports.up = async (knex) => {
     table.string("avatar_url", 2083);
     table.timestamps(false, true);
   });
-  // PROVIDER
-  // await knex.schema.createTable(tableNames.provider, (table) => {
-  //   table.increments();
-  //   table.integer("provider_id").notNullable();
-  //   table.string("provider").notNullable();
-  //   table.unique(["provider", "provider_id"]);
-  //   references(table, "user_id", tableNames.users);
-  // });
   // SERVERS
   await knex.schema.createTable(tableNames.servers, (table) => {
     table.increments();
@@ -79,6 +72,15 @@ exports.up = async (knex) => {
     table.string("code", 10).unique().notNullable();
     table.timestamps(false, true);
   });
+  // BLACK LISTED REFRESH TOKEN
+  await knex.schema.createTable(
+    tableNames.blackListedRefreshTokens,
+    (table) => {
+      table.increments();
+      table.string("token", 343).unique().notNullable();
+      table.timestamps(false, true);
+    }
+  );
 };
 
 exports.down = async (knex) => {
@@ -89,4 +91,5 @@ exports.down = async (knex) => {
   await knex.schema.dropTableIfExists(tableNames.rooms);
   await knex.schema.dropTableIfExists(tableNames.servers);
   await knex.schema.dropTableIfExists(tableNames.users);
+  await knex.schema.dropTableIfExists(tableNames.blackListedRefreshTokens);
 };
