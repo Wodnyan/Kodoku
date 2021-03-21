@@ -39,7 +39,6 @@ export const validateServerParamIdMiddleWare = async (
       next();
     })
     .catch((error) => {
-      // if (error.errors.length > 0) {
       if (error.name === "ValidationError") {
         res.status(400);
       }

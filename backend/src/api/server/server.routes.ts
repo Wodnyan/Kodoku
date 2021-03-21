@@ -22,7 +22,6 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// TODO: write validation
 router.post("/", protectRoute, async (req, res, next) => {
   const { name, ownerId, icon } = req.body;
   try {
