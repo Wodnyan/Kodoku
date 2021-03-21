@@ -7,6 +7,9 @@ export const createRefreshToken = async (userId: number) => {
     jwt.sign(
       { userId },
       process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: "1d",
+      },
       (error: any, jwt: any) => {
         if (error) reject(error);
         resolve(jwt);
@@ -20,6 +23,9 @@ export const createAccessToken = async (userId: number) => {
     jwt.sign(
       { userId },
       process.env.ACCESS_TOKEN_SECRET!,
+      {
+        expiresIn: "15m",
+      },
       (error: any, jwt: any) => {
         if (error) reject(error);
         resolve(jwt);

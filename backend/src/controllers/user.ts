@@ -9,7 +9,7 @@ export class UserController {
     "created_at as createdAt",
   ];
 
-  public async getOne(id: number) {
+  static async getOne(id: number) {
     const user = await User.query()
       .findById(id)
       .select(UserController.nonCredentials);

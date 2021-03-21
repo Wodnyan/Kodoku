@@ -6,7 +6,10 @@ import {
   createRefreshToken,
   verifyAccessToken,
 } from "../lib/jwt";
-import { validateLogin, validateRegister } from "../lib/validate-user";
+import {
+  validateLogin,
+  validateRegister,
+} from "../lib/validators/validate-user";
 import { decryptPassword, hashPassword } from "../lib/password";
 import { UserController } from "./user";
 
@@ -20,8 +23,6 @@ interface SignUpCredentials {
   email: string;
   password: string;
 }
-
-const userController = new UserController();
 
 export class AuthController {
   private readonly query!: Objection.QueryBuilder<User, User[]>;
@@ -72,7 +73,7 @@ export class AuthController {
 
   public async checkAccessToken(token: string) {
     const { userId } = (await verifyAccessToken(token)) as any;
-    const user = await userController.getOne(userId);
+    const user = await UserController.getOne(userId);
     return user;
   }
 

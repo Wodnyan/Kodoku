@@ -5,6 +5,7 @@ import { protectRoute } from "../../middlewares/middlewares";
 import members from "../member/member.routes";
 import invites from "../invite/invite.routes";
 import rooms from "../room/room.routes";
+import { validateServerParamIdMiddleWare } from "../../lib/validators/validate-server";
 
 const router = Router();
 
@@ -36,41 +37,57 @@ router.post("/", protectRoute, async (req, res, next) => {
   }
 });
 
-router.get("/:serverId", async (req, res, next) => {
-  try {
-    const { serverId } = req.params;
-    const server = await serverController.getOne(Number(serverId));
-    if (!server) {
-      return next(new ErrorHandler(404, "No server found"));
+router.get(
+  "/:serverId",
+  validateServerParamIdMiddleWare,
+  async (req, res, next) => {
+    try {
+      const { serverId } = req.params;
+      const server = await serverController.getOne(Number(serverId));
+      if (!server) {
+        return next(new ErrorHandler(404, "No server found"));
+      }
+      return res.json({
+        server,
+      });
+    } catch (error) {
+      next(error);
     }
-    return res.json({
-      server,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
-router.put("/:serverId", protectRoute, async (req, res, next) => {
-  try {
-    const { serverId } = req.params;
-    const updated = await serverController.update(Number(serverId), req.body);
-    res.status(200).json({});
-  } catch (error) {
-    next(error);
+router.put(
+  "/:serverId",
+  validateServerParamIdMiddleWare,
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      const { serverId } = req.params;
+      const updated = await serverController.update(Number(serverId), req.body);
+      res.status(200).json({});
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-router.delete("/:serverId", async (req, res, next) => {
-  const { serverId } = req.params;
-  try {
-    await serverController.delete(Number(serverId));
-    return res.status(204).json({});
-  } catch (error) {
-    next(error);
+router.delete(
+  "/:serverId",
+  validateServerParamIdMiddleWare,
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      const { serverId } = req.params;
+      await serverController.delete(Number(serverId));
+      return res.status(204).json({});
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
+// Check if server id is an integer
+router.use("/:serverId", validateServerParamIdMiddleWare);
 router.use("/:serverId/members", members);
 router.use("/:serverId/invites", invites);
 router.use("/:serverId/rooms", rooms);

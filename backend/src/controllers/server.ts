@@ -1,6 +1,6 @@
 import Member from "../models/Member";
 import ErrorHandler from "../lib/error-handler";
-import validateServer from "../lib/validate-server";
+import validateServer from "../lib/validators/validate-server";
 import Server from "../models/Server";
 import { UserController } from "./user";
 import { MemberController } from "./member";
@@ -54,6 +54,10 @@ export class ServerController {
       ownerId: userId,
       icon,
     });
+    const user = await UserController.getOne(userId);
+    if (!user) {
+      throw new ErrorHandler(404, "No user exists with the id of " + userId);
+    }
     const uniqueServerName = await this.isServerNameTaken(name);
     if (!uniqueServerName) {
       throw new ErrorHandler(409, "Server name is taken");

@@ -6,7 +6,6 @@ export class RefreshTokenController {
     const isBlackListed = await RefreshTokenController.isTokenBlackListed(
       token
     );
-    console.log(isBlackListed);
     if (isBlackListed) {
       throw new ErrorHandler(409, "Already blacklisted");
     }

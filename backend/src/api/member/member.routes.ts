@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { MemberController } from "../../controllers/member";
+import { validateJoinServerMiddleware } from "../../lib/validators/validate-member";
 import { protectRoute } from "../../middlewares/middlewares";
 
 const router = Router({
@@ -35,23 +36,28 @@ router.get("/:userId", protectRoute, async (req, res, next) => {
   }
 });
 
-router.post("/", protectRoute, async (req, res, next) => {
-  try {
-    const { serverId } = req.params;
-    const { inviteCode, userId } = req.body;
-    // TODO: Write validation for this
-    const newMember = await memberController.create(
-      Number(serverId),
-      userId,
-      inviteCode
-    );
-    res.status(201).json({
-      member: newMember,
-    });
-  } catch (error) {
-    next(error);
+// Join server
+router.post(
+  "/",
+  protectRoute,
+  validateJoinServerMiddleware,
+  async (req, res, next) => {
+    try {
+      const { serverId } = req.params;
+      const { inviteCode, userId } = req.body;
+      const newMember = await memberController.create(
+        Number(serverId),
+        userId,
+        inviteCode
+      );
+      res.status(201).json({
+        member: newMember,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.delete("/", protectRoute, async (req, res, next) => {
   try {
