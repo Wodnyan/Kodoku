@@ -6,7 +6,10 @@ import {
   createRefreshToken,
   verifyAccessToken,
 } from "../lib/jwt";
-import { validateLogin, validateRegister } from "../lib/validate-user";
+import {
+  validateLogin,
+  validateRegister,
+} from "../lib/validators/validate-user";
 import { decryptPassword, hashPassword } from "../lib/password";
 import { UserController } from "./user";
 

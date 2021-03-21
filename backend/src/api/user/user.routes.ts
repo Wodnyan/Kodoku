@@ -1,13 +1,10 @@
 import { Router } from "express";
-import server from "../../app";
-import { MemberController } from "../../controllers/member";
 import { ServerController } from "../../controllers/server";
 import { protectRoute } from "../../middlewares/middlewares";
 
 const router = Router();
 const serverController = new ServerController();
 
-// const memberController = new MemberController();
 // All Users
 router.get("/", protectRoute, (req, res) => {
   const user = req.user;

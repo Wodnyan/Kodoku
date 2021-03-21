@@ -1,6 +1,6 @@
 import Member from "../models/Member";
 import ErrorHandler from "../lib/error-handler";
-import validateServer from "../lib/validate-server";
+import validateServer from "../lib/validators/validate-server";
 import Server from "../models/Server";
 import { UserController } from "./user";
 import { MemberController } from "./member";

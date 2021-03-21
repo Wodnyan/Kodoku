@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import { CLIENT_URL } from "../../constants";
 import { AuthController } from "../../controllers/auth";
+import { RefreshTokenController } from "../../controllers/refresh-token";
 import { UserController } from "../../controllers/user";
 import ErrorHandler from "../../lib/error-handler";
 import { limiter } from "../../lib/rate-limiter";
@@ -43,6 +44,19 @@ router.post("/register", async (req, res, next) => {
     if (error.errors?.length > 0) {
       next(new ErrorHandler(400, error.message, error.errors));
     }
+    next(error);
+  }
+});
+
+router.get("/logout", protectRoute, async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refresh_token;
+    await RefreshTokenController.blackList(refreshToken);
+
+    res.status(204).json({
+      message: "Logged out",
+    });
+  } catch (error) {
     next(error);
   }
 });
