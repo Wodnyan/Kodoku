@@ -12,8 +12,6 @@ const router = Router();
 
 router.use(limiter(100));
 
-const userController = new UserController();
-
 router.post("/login", async (req, res, next) => {
   try {
     const authController = new AuthController();
@@ -64,7 +62,7 @@ router.get("/logout", protectRoute, async (req, res, next) => {
 router.get("/check", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.user as any;
-    const user = await userController.getOne(id);
+    const user = await UserController.getOne(id);
     res.json({
       user,
     });
