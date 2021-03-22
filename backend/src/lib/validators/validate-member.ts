@@ -28,9 +28,6 @@ export const validateJoinServerMiddleware = async (
       next();
     })
     .catch((error) => {
-      if (error.name === "ValidationError") {
-        res.status(400);
-      }
       next(error);
     });
 };

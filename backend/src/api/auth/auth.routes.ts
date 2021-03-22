@@ -22,9 +22,6 @@ router.post("/login", async (req, res, next) => {
       accessToken,
     });
   } catch (error) {
-    if (error.errors?.length > 0) {
-      next(new ErrorHandler(400, error.message, error.errors));
-    }
     next(error);
   }
 });
@@ -39,9 +36,6 @@ router.post("/register", async (req, res, next) => {
       accessToken,
     });
   } catch (error) {
-    if (error.errors?.length > 0) {
-      next(new ErrorHandler(400, error.message, error.errors));
-    }
     next(error);
   }
 });

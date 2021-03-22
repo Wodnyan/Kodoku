@@ -52,6 +52,9 @@ export function errorHandler(
   if (error.statusCode) {
     statusCode = error.statusCode;
   }
+  if (error.name === "ValidationError") {
+    statusCode = 400;
+  }
   res.status(statusCode);
   res.json({
     message: error.message,
