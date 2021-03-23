@@ -23,9 +23,10 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/", protectRoute, async (req, res, next) => {
-  const { name, ownerId, icon } = req.body;
+  const { name, icon } = req.body;
+  const { id } = req.user as any;
   try {
-    const newServer = await serverController.create(ownerId, name, icon);
+    const newServer = await serverController.create(id, name, icon);
     res.status(201).json({
       newServer,
     });

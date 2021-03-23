@@ -44,10 +44,11 @@ router.post(
   async (req, res, next) => {
     try {
       const { serverId } = req.params;
-      const { inviteCode, userId } = req.body;
+      const { inviteCode } = req.body;
+      const { id } = req.user as any;
       const newMember = await memberController.create(
         Number(serverId),
-        userId,
+        id,
         inviteCode
       );
       res.status(201).json({
