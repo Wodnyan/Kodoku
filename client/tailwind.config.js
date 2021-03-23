@@ -327,6 +327,8 @@ module.exports = {
       2: "0.50rem",
       3: "0.75rem",
       4: "1rem",
+      8: "2rem",
+      16: "4rem",
     },
     letterSpacing: {
       tighter: "-0.05em",
