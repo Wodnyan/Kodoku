@@ -15,4 +15,13 @@ export class UserController {
       .select(UserController.nonCredentials);
     return user;
   }
+
+  static async getOneByEmail(email: string) {
+    const user = await User.query()
+      .where({
+        email,
+      })
+      .first();
+    return user;
+  }
 }
