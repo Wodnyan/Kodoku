@@ -25,7 +25,7 @@ interface MessageInput {
 }
 
 const Chat = React.memo(() => {
-  const [newMessage, setNewMessage] = useState(true);
+  const [newMessage, setNewMessage] = useState(false);
 
   const { register, handleSubmit } = useForm<MessageInput>();
   const params = useParams() as any;
@@ -146,7 +146,7 @@ const ChatInput: React.FC<ChatInputProps> = React.memo(
       togglePrompt();
     };
     return (
-      <div className="relative z-50">
+      <div className="relative z-40">
         {newMessage && (
           <button
             className="absolute z-0 -top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-2 rounded bg-purple-600 text-white text-xl hover:bg-purple-700"
