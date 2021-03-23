@@ -5,7 +5,6 @@ import UserContext from "../../context/UserContext";
 import { useFetchOneMember } from "../../hooks/api/members";
 
 export const ServerView = () => {
-  // TODO: check if user is a member
   const user = useContext(UserContext);
   const params = useParams() as any;
   const member = useFetchOneMember(params.serverId, user?.id);

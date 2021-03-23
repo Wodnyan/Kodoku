@@ -32,7 +32,7 @@ export const useFetchOneMember = (serverId: number, userId?: number) => {
         })
         .catch(() => history.push("/chat"));
     }
-  }, [serverId, userId]);
+  }, [serverId, userId, history]);
 
   return {
     member,
