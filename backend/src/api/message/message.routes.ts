@@ -10,11 +10,12 @@ const messageController = new MessageController();
 
 router.post("/", protectRoute, async (req, res, next) => {
   try {
+    const { id } = req.user as any;
     const { roomId } = req.params;
-    const { userId, message } = req.body;
+    const { message } = req.body;
     const newMessage = await messageController.create(
       Number(roomId),
-      Number(userId),
+      Number(id),
       message
     );
     res.status(201).json({

@@ -54,3 +54,14 @@ export const refreshAccessToken = async () => {
   });
   return accessToken;
 };
+
+export const logOut = async () => {
+  const accessToken = localStorage.getItem("access_token");
+  localStorage.removeItem("access_token");
+  await axios.get(`${AUTH_ENDPOINT}/logout`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

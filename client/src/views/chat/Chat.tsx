@@ -15,9 +15,11 @@ const ChatPage = () => {
     <UserContext.Provider value={user}>
       <Router>
         <div className="relative h-full flex">
-          <section className="hide-scrollbar bg-gray-800 w-16 h-screen overflow-auto">
-            <Servers />
-          </section>
+          <Route path="/chat">
+            <section className="hide-scrollbar bg-gray-800 w-16 h-screen overflow-auto">
+              <Servers />
+            </section>
+          </Route>
           <Route exact path="/chat">
             <LandingView />
           </Route>
