@@ -24,6 +24,12 @@ interface SignUpCredentials {
   password: string;
 }
 
+interface OAuthSignUp {
+  username: string;
+  email: string;
+  avatarUrl?: string;
+}
+
 export class AuthController {
   private readonly query!: Objection.QueryBuilder<User, User[]>;
 
@@ -45,6 +51,24 @@ export class AuthController {
     }
     const accessToken = await createAccessToken(user.id);
     const refreshToken = await createRefreshToken(user.id);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async oAuthSignUp(credentials: OAuthSignUp) {
+    const uniqueEmail = await this.isEmailUnique(credentials.email);
+    if (!uniqueEmail) {
+      throw new ErrorHandler(409, "Email is in use");
+    }
+    const newUser = await this.query.insert({
+      email: credentials.email,
+      username: credentials.username,
+      avatar_url: credentials.avatarUrl,
+    });
+    const accessToken = await createAccessToken(newUser.id);
+    const refreshToken = await createRefreshToken(newUser.id);
     return {
       accessToken,
       refreshToken,

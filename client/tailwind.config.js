@@ -321,6 +321,8 @@ module.exports = {
       "1/3": "33.33%",
       full: "100%",
       "-full": "-100%",
+      "-1/2": "-50%",
+      "-1/3": "-33.33%",
       1: "0.25rem",
       2: "0.50rem",
       3: "0.75rem",
@@ -363,6 +365,8 @@ module.exports = {
     maxHeight: {
       full: "100%",
       screen: "100vh",
+      none: "none",
+      0: "0",
     },
     maxWidth: (theme, { breakpoints }) => ({
       none: "none",

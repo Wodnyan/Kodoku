@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { login, signUp, check } from "../../api/auth";
+import { login, signUp, check, refreshAccessToken } from "../../api/auth";
 
 export const useAuth = (redirectUrl?: string) => {
   const [user, setUser] = useState(null);
@@ -12,12 +12,19 @@ export const useAuth = (redirectUrl?: string) => {
       .then(({ user }) => {
         setUser(user);
       })
-      .catch(() => {
-        if (redirectUrl) {
-          history.push(redirectUrl);
+      .catch(async () => {
+        try {
+          const accessToken = await refreshAccessToken();
+          localStorage.setItem("access_token", accessToken);
+          const { user } = await check();
+          setUser(user);
+        } catch (error) {
+          if (redirectUrl) {
+            history.push(redirectUrl);
+          }
         }
       });
-  }, []);
+  }, [history, redirectUrl]);
 
   return { user };
 };

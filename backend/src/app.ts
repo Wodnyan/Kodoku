@@ -13,6 +13,8 @@ import socket from "./socket";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import makeConnectionToDb from "./db";
+import passportConfig from "./passport.config";
+import passport from "passport";
 
 dotenv.config();
 
@@ -21,9 +23,11 @@ const server = http.createServer(app);
 
 socket(server);
 makeConnectionToDb();
+passportConfig();
 
 app.use(helmet());
 app.use(morgan("common"));
+app.use(passport.initialize());
 app.use(checkAuth);
 app.use(
   cors({

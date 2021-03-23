@@ -4,7 +4,6 @@ import { CLIENT_URL } from "../../constants";
 import { AuthController } from "../../controllers/auth";
 import { RefreshTokenController } from "../../controllers/refresh-token";
 import { UserController } from "../../controllers/user";
-import ErrorHandler from "../../lib/error-handler";
 import { limiter } from "../../lib/rate-limiter";
 import { protectRoute } from "../../middlewares/middlewares";
 
@@ -22,9 +21,6 @@ router.post("/login", async (req, res, next) => {
       accessToken,
     });
   } catch (error) {
-    if (error.errors?.length > 0) {
-      next(new ErrorHandler(400, error.message, error.errors));
-    }
     next(error);
   }
 });
@@ -39,9 +35,6 @@ router.post("/register", async (req, res, next) => {
       accessToken,
     });
   } catch (error) {
-    if (error.errors?.length > 0) {
-      next(new ErrorHandler(400, error.message, error.errors));
-    }
     next(error);
   }
 });
@@ -71,19 +64,28 @@ router.get("/check", protectRoute, async (req, res, next) => {
   }
 });
 
-router.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"] })
-);
+router.get("/github", (req, res, next) => {
+  passport.authenticate("github", { scope: ["user:email"], session: false })(
+    req,
+    res
+  );
+});
 
-router.get(
-  "/github/callback",
-  passport.authenticate("github", {
-    failureRedirect: `${CLIENT_URL}/auth/login`,
-  }),
-  function (_, res) {
-    res.redirect(`${CLIENT_URL}/chat`);
-  }
-);
+router.get("/github/callback", (req, res, next) => {
+  passport.authenticate(
+    "github",
+    {
+      failureRedirect: `${CLIENT_URL}/auth/login`,
+      session: false,
+    },
+    async (error, { refreshToken }) => {
+      if (error) return next(error);
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+      });
+      res.redirect(`${CLIENT_URL}/chat`);
+    }
+  )(req, res);
+});
 
 export default router;
