@@ -1,7 +1,6 @@
 import ErrorHandler from "../lib/error-handler";
 import Member from "../models/Member";
 import { InviteController } from "./invite";
-import { UserController } from "./user";
 
 const inviteController = new InviteController();
 

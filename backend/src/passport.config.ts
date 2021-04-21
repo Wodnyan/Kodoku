@@ -1,10 +1,10 @@
+import axios from "axios";
+import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy as GithubStrategy } from "passport-github2";
-import dotenv from "dotenv";
-import axios from "axios";
-import { UserController } from "./controllers/user";
 import { AuthController } from "./controllers/auth";
-import { createAccessToken, createRefreshToken } from "./lib/jwt";
+import { UserController } from "./controllers/user";
+import { createRefreshToken } from "./lib/jwt";
 
 dotenv.config();
 

@@ -1,8 +1,5 @@
 import Message from "../models/Message";
-import { MemberController } from "./member";
 import { UserController } from "./user";
-
-const memberController = new MemberController();
 
 export class MessageController {
   private readonly modifiers = {

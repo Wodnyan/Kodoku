@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { nextTick } from "process";
 import * as yup from "yup";
 
 const createInviteSchema = yup.object().shape({
@@ -20,7 +19,7 @@ export const validateJoinServer = async (invite: Invite) => {
 
 export const validateJoinServerMiddleware = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   validateJoinServer(req.body)

@@ -16,7 +16,7 @@ export function notFoundHandler(
 
 export async function checkAuth(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {
@@ -32,7 +32,7 @@ export async function checkAuth(
 
 export async function protectRoute(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   if (!req.user) {
@@ -44,9 +44,9 @@ export async function protectRoute(
 
 export function errorHandler(
   error: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) {
   let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   if (error.statusCode) {
