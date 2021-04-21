@@ -11,7 +11,7 @@ const router = Router();
 
 const serverController = new ServerController();
 
-router.get("/", async (req, res, next) => {
+router.get("/", async (_req, res, next) => {
   try {
     const allServers = await serverController.getAll();
     return res.json({
@@ -64,7 +64,7 @@ router.put(
   async (req, res, next) => {
     try {
       const { serverId } = req.params;
-      const updated = await serverController.update(Number(serverId), req.body);
+      await serverController.update(Number(serverId), req.body);
       res.status(200).json({});
     } catch (error) {
       next(error);

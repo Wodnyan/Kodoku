@@ -1,15 +1,12 @@
-import Member from "../models/Member";
 import ErrorHandler from "../lib/error-handler";
 import validateServer from "../lib/validators/validate-server";
+import Member from "../models/Member";
 import Server from "../models/Server";
 import { UserController } from "./user";
-import { MemberController } from "./member";
 
 interface Update {
   icon?: string;
 }
-
-const memberController = new MemberController();
 
 export class ServerController {
   private readonly modifiers = {
@@ -68,7 +65,7 @@ export class ServerController {
         owner_id: userId,
         icon,
       });
-      const member = await server.$relatedQuery<Member>("members", trx).insert({
+      await server.$relatedQuery<Member>("members", trx).insert({
         member_id: userId,
         server_id: server.id,
       });

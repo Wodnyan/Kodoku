@@ -64,7 +64,7 @@ router.get("/check", protectRoute, async (req, res, next) => {
   }
 });
 
-router.get("/github", (req, res, next) => {
+router.get("/github", (req, res, _next) => {
   passport.authenticate("github", { scope: ["user:email"], session: false })(
     req,
     res

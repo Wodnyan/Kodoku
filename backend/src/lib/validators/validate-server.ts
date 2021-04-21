@@ -30,7 +30,7 @@ export const validateServerParamId = async (serverId: number) => {
 
 export const validateServerParamIdMiddleWare = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   const { serverId } = req.params as any;
