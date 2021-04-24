@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { logOut } from "../../api/auth";
 import useCloseOnClick from "../../hooks/close-on-click";
 import { AccordionItem } from "../accordion/Accordion";

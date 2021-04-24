@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import useOutsideClick from "../../hooks/outside-click";
 
 interface DropdownProps {
   openCreateRoomPopup: () => void;
   openInvitePopup: () => void;
+  closeDropdown: () => void;
 }
 interface TopRowProps {
   openCreateRoomPopup: () => void;
@@ -12,9 +14,14 @@ interface TopRowProps {
 const Dropdown: React.FC<DropdownProps> = ({
   openCreateRoomPopup,
   openInvitePopup,
+  closeDropdown,
 }) => {
+  const ref = useOutsideClick(closeDropdown) as any;
   return (
-    <ul className="absolute top-full left-1/2 transform -translate-x-1/2 bg-blue-500 w-10/12 p-1">
+    <ul
+      ref={ref}
+      className="absolute top-full left-1/2 transform -translate-x-1/2 bg-blue-500 w-10/12 p-1"
+    >
       <li>
         <button className="room-dropdown-btn" onClick={openInvitePopup}>
           Invite People
@@ -57,11 +64,12 @@ const TopRow: React.FC<TopRowProps> = React.memo(
           <Dropdown
             openInvitePopup={openInvitePopup}
             openCreateRoomPopup={openCreateRoomPopup}
+            closeDropdown={() => setDropdown(false)}
           />
         )}
       </div>
     );
-  }
+  },
 );
 
 export default TopRow;
