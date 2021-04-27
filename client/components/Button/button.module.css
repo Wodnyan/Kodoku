@@ -1,0 +1,21 @@
+.btn {
+  border: none;
+  background: var(--accent);
+  color: var(--pure-white);
+  padding: 0.4rem 1.3rem;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.btn.btnFull {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn:hover {
+  background: var(--accent-hover);
+}
