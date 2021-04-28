@@ -1,0 +1,8 @@
+.input {
+  display: block;
+  padding: 0.5rem 0.3rem;
+}
+
+.input.inputFull {
+  width: 100%;
+}
