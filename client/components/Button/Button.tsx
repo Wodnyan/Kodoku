@@ -14,9 +14,9 @@ export const Button: React.FC<
       React.ButtonHTMLAttributes<HTMLButtonElement>,
       HTMLButtonElement
     >
-> = ({ block = false, isLoading = false, children, ...props }) => {
+> = ({ full = false, isLoading = false, children, ...props }) => {
   return (
-    <button {...props} className={`${styles.btn} ${block && styles.btnFull}`}>
+    <button {...props} className={`${styles.btn} ${full && styles.btnFull}`}>
       {isLoading ? <Spinner /> : children}
     </button>
   );
