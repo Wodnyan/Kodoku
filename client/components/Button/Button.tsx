@@ -16,7 +16,11 @@ export const Button: React.FC<
     >
 > = ({ full = false, isLoading = false, children, ...props }) => {
   return (
-    <button {...props} className={`${styles.btn} ${full && styles.btnFull}`}>
+    <button
+      disabled={isLoading}
+      {...props}
+      className={`${styles.btn} ${full && styles.btnFull}`}
+    >
       {isLoading ? <Spinner /> : children}
     </button>
   );

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -5,12 +7,16 @@
 }
 
 html,
-body {
+body,
+#__next {
   height: 100%;
   background: var(--gray-900);
+  color: var(--pure-white);
+  font-family: "Roboto", sans-serif;
 }
 
 :root {
+  /* COLORS */
   --accent: #fd4d4d;
   --accent-hover: #fd6868;
   --accent-disabled: #fd6868;
@@ -26,6 +32,12 @@ body {
   --gray-700: #242c37;
   --gray-800: #151a21;
   --gray-900: #0b0e11;
+
+  /* BREAKPOINTS */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1920px;
 }
 
 a {
