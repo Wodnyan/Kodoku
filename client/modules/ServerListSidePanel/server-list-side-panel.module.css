@@ -1,0 +1,17 @@
+.container {
+  height: 100vh;
+  overflow: auto;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.navListItem {
+  margin-bottom: 1rem;
+}
+
+.navListItem:first-child {
+  margin-top: 0.5rem;
+}
