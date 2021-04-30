@@ -32,7 +32,6 @@ export const createServer = async (
     });
   } catch (error) {
     if (error.errors?.length > 0) {
-      // TODO: Make this a ValidationException
       return next(new ValidationError(error.message));
     }
     next(error);
