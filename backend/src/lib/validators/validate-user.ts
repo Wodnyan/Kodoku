@@ -1,12 +1,12 @@
 import * as yup from "yup";
 
-const registerSchema = yup.object().shape({
+export const registerSchema = yup.object().shape({
   username: yup.string().min(2).max(30).required(),
   email: yup.string().email().max(254).required(),
   password: yup.string().min(8).max(100).required(),
 });
 
-const loginSchema = yup.object().shape({
+export const loginSchema = yup.object().shape({
   email: yup.string().email().max(254).required(),
   password: yup.string().min(8).max(100).required(),
 });

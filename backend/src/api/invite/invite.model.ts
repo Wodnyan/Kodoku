@@ -1,5 +1,5 @@
 import { Model } from "objection";
-import Server from "../server/server.model";
+import Server from "../../models/Server";
 
 class Invite extends Model {
   id!: number;

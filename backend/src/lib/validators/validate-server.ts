@@ -1,40 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import * as yup from "yup";
+import { validateSchemaAsync } from ".";
 
-const createServerSchema = yup.object().shape({
+export const createServerSchema = yup.object().shape({
   name: yup.string().min(2).max(100).required(),
-  ownerId: yup.number().positive().integer().required(),
   icon: yup.string().url().max(2083),
 });
 
-const serverParamIdSchema = yup.object().shape({
+export const serverParamIdSchema = yup.object().shape({
   serverId: yup.number().integer().required(),
 });
-
-interface Params {
-  name: string;
-  ownerId: number;
-  icon?: string;
-}
-
-const validateServer = async (body: Params) => {
-  return await createServerSchema.validate(body, { abortEarly: false });
-};
-
-export const validateServerParamId = async (serverId: number) => {
-  return await serverParamIdSchema.validate(
-    { serverId },
-    { abortEarly: false }
-  );
-};
 
 export const validateServerParamIdMiddleWare = async (
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { serverId } = req.params as any;
-  validateServerParamId(serverId)
+  return validateSchemaAsync(serverParamIdSchema, { serverId })
     .then(() => {
       next();
     })
@@ -42,5 +25,3 @@ export const validateServerParamIdMiddleWare = async (
       next(error);
     });
 };
-
-export default validateServer;

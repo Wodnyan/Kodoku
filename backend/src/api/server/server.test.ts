@@ -88,6 +88,11 @@ describe("Get one servers", () => {
   it("should respond with 404", async () => {
     await supertest(app).get(`${SERVER_ROUTE}/1`).expect(404);
   });
+
+  it("should respond with 400", async () => {
+    await supertest(app).get(`${SERVER_ROUTE}/foo`).expect(400);
+  });
+
   it("should respond with a server", async () => {
     const serverInfo = {
       name: "getOne",

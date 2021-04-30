@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ErrorHandler from "../../lib/error-handler";
+import HttpError from "../../lib/exceptions/error-handler";
 import { createAccessToken, verifyRefreshToken } from "../../lib/jwt";
 import { limiter } from "../../lib/rate-limiter";
 import { RefreshTokenController } from "../../controllers/refresh-token";
@@ -12,13 +12,13 @@ router.get("/refresh", async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refresh_token;
     if (!refreshToken) {
-      throw new ErrorHandler(400, "Provide a token");
+      throw new HttpError("Provide a token", 400);
     }
     const isBlackListed = await RefreshTokenController.isTokenBlackListed(
       refreshToken
     );
     if (isBlackListed) {
-      throw new ErrorHandler(403, "Token is blacklisted");
+      throw new HttpError("Token is blacklisted", 403);
     }
     const payload = (await verifyRefreshToken(refreshToken)) as any;
     const accessToken = await createAccessToken(payload.userId);
@@ -30,7 +30,7 @@ router.get("/refresh", async (req, res, next) => {
       error.name === "JsonWebTokenError" ||
       error.name === "TokenExpiredError"
     ) {
-      return next(new ErrorHandler(401, "Provide valid token"));
+      return next(new HttpError("Provide valid token", 401));
     }
     next(error);
   }

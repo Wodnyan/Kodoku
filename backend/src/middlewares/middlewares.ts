@@ -1,13 +1,13 @@
 import { NextFunction, Response, Request } from "express";
 import { AuthController } from "../controllers/auth";
-import ErrorHandler from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 
 const authController = new AuthController();
 
 export function notFoundHandler(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const error = new Error(`Not Found - ${req.originalUrl}`);
   res.status(404);
@@ -17,7 +17,7 @@ export function notFoundHandler(
 export async function checkAuth(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const bearerToken = req.headers.authorization;
@@ -33,10 +33,10 @@ export async function checkAuth(
 export async function protectRoute(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   if (!req.user) {
-    next(new ErrorHandler(401, "Unauthorized"));
+    next(new HttpError("Unauthorized", 401));
   } else {
     next();
   }
@@ -46,14 +46,11 @@ export function errorHandler(
   error: any,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   if (error.statusCode) {
     statusCode = error.statusCode;
-  }
-  if (error.name === "ValidationError") {
-    statusCode = 400;
   }
   res.status(statusCode);
   res.json({

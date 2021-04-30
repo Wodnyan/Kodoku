@@ -1,11 +1,11 @@
-import ErrorHandler from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import Room from "../models/Room";
 
 export class RoomController {
   public async create(serverId: number, roomName: string) {
     const isRoomNameInUse = await this.isRoomNameInUse(serverId, roomName);
     if (isRoomNameInUse) {
-      throw new ErrorHandler(409, "Room name in use");
+      throw new HttpError("Room name in use", 409);
     }
     const newRoom = await Room.query().insertAndFetch({
       name: roomName,

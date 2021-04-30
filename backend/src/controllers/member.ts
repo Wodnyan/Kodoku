@@ -1,4 +1,4 @@
-import ErrorHandler from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import Member from "../models/Member";
 import { InviteController } from "./invite";
 
@@ -14,11 +14,11 @@ export class MemberController {
   public async create(serverId: number, userId: number, inviteCode: string) {
     const isAlreadyMember = await this.isAlreadyMember(serverId, userId);
     if (isAlreadyMember) {
-      throw new ErrorHandler(409, "User is already a member");
+      throw new HttpError("User is already a member", 409);
     }
     const invite = await inviteController.getOne(serverId, inviteCode);
     if (!invite) {
-      throw new ErrorHandler(404, "No invite code found");
+      throw new HttpError("No invite code found", 404);
     } else {
       const newMember = await Member.query().insertAndFetch({
         member_id: userId,
@@ -49,7 +49,7 @@ export class MemberController {
       .joinRelated("user")
       .select(MemberController.select);
     if (member === undefined) {
-      throw new ErrorHandler(404, "No member found");
+      throw new HttpError("No member found", 404);
     }
     return member;
   }

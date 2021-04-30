@@ -1,5 +1,6 @@
-import ErrorHandler from "../lib/error-handler";
-import validateServer from "../lib/validators/validate-server";
+import HttpError from "../lib/exceptions/error-handler";
+import { validateSchemaAsync } from "../lib/validators";
+import { createServerSchema } from "../lib/validators/validate-server";
 import Member from "../models/Member";
 import Server from "../models/Server";
 import { UserController } from "./user";
@@ -8,14 +9,15 @@ interface Update {
   icon?: string;
 }
 
+// TODO: rework this so it doesn't suck
 export class ServerController {
-  private readonly modifiers = {
+  private static readonly modifiers = {
     selectNonCredentials(builder: any) {
       builder.select(...UserController.nonCredentials);
     },
   };
 
-  private readonly select = [
+  private static readonly select = [
     "servers.id",
     "icon",
     "name",
@@ -23,7 +25,7 @@ export class ServerController {
     "servers.updated_at as updatedAt",
   ];
 
-  public async getAll(userId?: number) {
+  public static async getAll(userId?: number) {
     const allServers = await Server.query()
       .withGraphJoined("owner(selectNonCredentials)")
       .modifiers(this.modifiers)
@@ -36,7 +38,7 @@ export class ServerController {
     return allServers;
   }
 
-  public async getOne(serverId: number) {
+  public static async getOne(serverId: number) {
     const server = await Server.query()
       .findOne({ "servers.id": serverId })
       .withGraphJoined("owner(selectNonCredentials)")
@@ -45,19 +47,18 @@ export class ServerController {
     return server;
   }
 
-  public async create(userId: number, name: string, icon?: string) {
-    await validateServer({
+  public static async create(userId: number, name: string, icon?: string) {
+    await validateSchemaAsync(createServerSchema, {
       name,
-      ownerId: userId,
       icon,
     });
     const user = await UserController.getOne(userId);
     if (!user) {
-      throw new ErrorHandler(404, "No user exists with the id of " + userId);
+      throw new HttpError("No user exists with the id of " + userId, 409);
     }
     const uniqueServerName = await this.isServerNameTaken(name);
     if (!uniqueServerName) {
-      throw new ErrorHandler(409, "Server name is taken");
+      throw new HttpError("Server name is taken", 409);
     }
     const newServer = await Server.transaction(async (trx) => {
       const server = await Server.query(trx).insertAndFetch({
@@ -74,7 +75,7 @@ export class ServerController {
     return newServer;
   }
 
-  public async update(serverId: number, update?: Update) {
+  public static async update(serverId: number, update?: Update) {
     const updatedServer = await Server.query()
       .patch({
         icon: update?.icon,
@@ -83,11 +84,11 @@ export class ServerController {
     return updatedServer;
   }
 
-  public async delete(serverId: number) {
+  public static async delete(serverId: number) {
     await Server.query().where({ id: serverId }).delete();
   }
 
-  private async isServerNameTaken(serverName: string) {
+  private static async isServerNameTaken(serverName: string) {
     const server = await Server.query().findOne({
       name: serverName,
     });
