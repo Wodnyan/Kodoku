@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import app from "../../app";
+import { jwtRegex } from "../../constants";
 import { connection } from "../../db";
 
 beforeAll(async () => {
@@ -12,7 +13,6 @@ afterAll(async () => {
 });
 
 const AUTH_ROUTE = "/api/v1/auth";
-const jwtRegex = "[A-Za-z0-9-_=]+.[A-Za-z0-9-_=]+.[A-Za-z0-9-_.+/=]*";
 const cookieJWTRegex = `^refresh_token=${jwtRegex};$`;
 
 const user = {

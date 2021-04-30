@@ -28,7 +28,7 @@ router.post("/", protectRoute, async (req, res, next) => {
   try {
     const newServer = await serverController.create(id, name, icon);
     res.status(201).json({
-      newServer,
+      server: newServer,
     });
   } catch (error) {
     if (error.errors?.length > 0) {
@@ -54,7 +54,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.put(
@@ -69,7 +69,7 @@ router.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.delete(
@@ -84,7 +84,7 @@ router.delete(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Check if server id is an integer
