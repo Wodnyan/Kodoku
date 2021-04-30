@@ -1,4 +1,4 @@
-import ErrorHandler from "../lib/error-handler";
+import HttpError from "../lib/error-handler";
 import validateServer from "../lib/validators/validate-server";
 import Member from "../models/Member";
 import Server from "../models/Server";
@@ -54,11 +54,11 @@ export class ServerController {
     });
     const user = await UserController.getOne(userId);
     if (!user) {
-      throw new ErrorHandler(404, "No user exists with the id of " + userId);
+      throw new HttpError("No user exists with the id of " + userId, 409);
     }
     const uniqueServerName = await this.isServerNameTaken(name);
     if (!uniqueServerName) {
-      throw new ErrorHandler(409, "Server name is taken");
+      throw new HttpError("Server name is taken", 409);
     }
     const newServer = await Server.transaction(async (trx) => {
       const server = await Server.query(trx).insertAndFetch({

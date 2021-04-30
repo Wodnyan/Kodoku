@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { RefreshTokenController } from "../../controllers/refresh-token";
-import ErrorHandler from "../../lib/error-handler";
+import HttpError from "../../lib/error-handler";
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.post("/", async (req, res, next) => {
   try {
     const { token } = req.body;
     if (!token) {
-      throw new ErrorHandler(400, "Provide a token");
+      throw new HttpError("Provide a token", 400);
     }
     await RefreshTokenController.blackList(token);
     res.json({

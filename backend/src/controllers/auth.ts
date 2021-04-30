@@ -1,6 +1,6 @@
 import Objection from "objection";
 import User from "../models/User";
-import ErrorHandler from "../lib/error-handler";
+import HttpError from "../lib/error-handler";
 import {
   createAccessToken,
   createRefreshToken,
@@ -43,11 +43,11 @@ export class AuthController {
       email: credentials.email,
     });
     if (!user) {
-      throw new ErrorHandler(404, "Email not found");
+      throw new HttpError("Email not found", 404);
     }
     const dehashed = await decryptPassword(credentials.password, user.password);
     if (!dehashed) {
-      throw new ErrorHandler(401, "Incorrect password");
+      throw new HttpError("Incorrect password", 401);
     }
     const accessToken = await createAccessToken(user.id);
     const refreshToken = await createRefreshToken(user.id);
@@ -60,7 +60,7 @@ export class AuthController {
   async oAuthSignUp(credentials: OAuthSignUp) {
     const uniqueEmail = await this.isEmailUnique(credentials.email);
     if (!uniqueEmail) {
-      throw new ErrorHandler(409, "Email is in use");
+      throw new HttpError("Email is in use", 409);
     }
     const newUser = await this.query.insert({
       email: credentials.email,
@@ -79,7 +79,7 @@ export class AuthController {
     await validateRegister(credentials);
     const uniqueEmail = await this.isEmailUnique(credentials.email);
     if (!uniqueEmail) {
-      throw new ErrorHandler(409, "Email is in use");
+      throw new HttpError("Email is in use", 409);
     }
     const hashedPassword = await hashPassword(credentials.password);
     const newUser = await this.query.insert({

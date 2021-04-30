@@ -1,6 +1,6 @@
 import { Request, NextFunction, Response } from "express";
 import { ServerController } from "../../controllers/server";
-import ErrorHandler from "../../lib/error-handler";
+import HttpError from "../../lib/error-handler";
 
 export const getAllServers = async (
   _req: Request,
@@ -31,7 +31,8 @@ export const createServer = async (
     });
   } catch (error) {
     if (error.errors?.length > 0) {
-      return next(new ErrorHandler(400, error.message, error.errors));
+      // TODO: Make this a ValidationException
+      return next(new HttpError(error.message, 400));
     }
     next(error);
   }
@@ -46,7 +47,7 @@ export const getOneServer = async (
     const { serverId } = req.params;
     const server = await ServerController.getOne(Number(serverId));
     if (!server) {
-      return next(new ErrorHandler(404, "No server found"));
+      return next(new HttpError("No server found", 404));
     }
     return res.json({
       server,
