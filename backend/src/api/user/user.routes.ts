@@ -3,7 +3,7 @@ import { ServerController } from "../../controllers/server";
 import { protectRoute } from "../../middlewares/middlewares";
 
 const router = Router();
-const serverController = new ServerController();
+// const serverController = new ServerController();
 
 // All Users
 router.get("/", protectRoute, (req, res) => {
@@ -18,7 +18,7 @@ router.get("/", protectRoute, (req, res) => {
 router.get("/:userId/servers", protectRoute, async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const servers = await serverController.getAll(Number(userId));
+    const servers = await ServerController.getAll(Number(userId));
     res.json({
       servers,
     });
