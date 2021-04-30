@@ -1,11 +1,11 @@
 import { Request, NextFunction, Response } from "express";
 import { ServerController } from "../../controllers/server";
-import HttpError from "../../lib/error-handler";
+import HttpError from "../../lib/exceptions/error-handler";
 
 export const getAllServers = async (
   _req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const allServers = await ServerController.getAll();
@@ -20,7 +20,7 @@ export const getAllServers = async (
 export const createServer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { name, icon } = req.body;
   const { id } = req.user as any;
@@ -41,7 +41,7 @@ export const createServer = async (
 export const getOneServer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { serverId } = req.params;
@@ -60,7 +60,7 @@ export const getOneServer = async (
 export const updateServer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { serverId } = req.params;
@@ -74,7 +74,7 @@ export const updateServer = async (
 export const deleteServer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { serverId } = req.params;

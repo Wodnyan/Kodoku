@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { RefreshTokenController } from "../../controllers/refresh-token";
-import HttpError from "../../lib/error-handler";
+import HttpError from "../../lib/exceptions/error-handler";
 
 const router = Router();
 

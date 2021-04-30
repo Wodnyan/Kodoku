@@ -1,6 +1,6 @@
 import Objection from "objection";
 import User from "../models/User";
-import HttpError from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import {
   createAccessToken,
   createRefreshToken,

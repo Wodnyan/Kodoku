@@ -1,4 +1,4 @@
-import HttpError from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import validateServer from "../lib/validators/validate-server";
 import Member from "../models/Member";
 import Server from "../models/Server";

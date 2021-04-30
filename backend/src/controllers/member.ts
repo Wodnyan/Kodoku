@@ -1,4 +1,4 @@
-import HttpError from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import Member from "../models/Member";
 import { InviteController } from "./invite";
 

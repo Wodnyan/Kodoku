@@ -1,5 +1,5 @@
 import { Router } from "express";
-import HttpError from "../../lib/error-handler";
+import HttpError from "../../lib/exceptions/error-handler";
 import { createAccessToken, verifyRefreshToken } from "../../lib/jwt";
 import { limiter } from "../../lib/rate-limiter";
 import { RefreshTokenController } from "../../controllers/refresh-token";
@@ -15,7 +15,7 @@ router.get("/refresh", async (req, res, next) => {
       throw new HttpError("Provide a token", 400);
     }
     const isBlackListed = await RefreshTokenController.isTokenBlackListed(
-      refreshToken,
+      refreshToken
     );
     if (isBlackListed) {
       throw new HttpError("Token is blacklisted", 403);

@@ -1,10 +1,10 @@
-import HttpError from "../lib/error-handler";
+import HttpError from "../lib/exceptions/error-handler";
 import { RefreshToken } from "../models/RefreshToken";
 
 export class RefreshTokenController {
   static async blackList(token: string) {
     const isBlackListed = await RefreshTokenController.isTokenBlackListed(
-      token,
+      token
     );
     if (isBlackListed) {
       throw new HttpError("Already blacklisted", 409);
