@@ -6,12 +6,10 @@ import {
   createRefreshToken,
   verifyAccessToken,
 } from "../lib/jwt";
-import {
-  validateLogin,
-  validateRegister,
-} from "../lib/validators/validate-user";
+import { loginSchema, registerSchema } from "../lib/validators/validate-user";
 import { decryptPassword, hashPassword } from "../lib/password";
 import { UserController } from "./user";
+import { validateSchemaAsync } from "../lib/validators";
 
 interface LoginCredentials {
   email: string;
@@ -38,7 +36,7 @@ export class AuthController {
   }
 
   async login(credentials: LoginCredentials) {
-    await validateLogin(credentials);
+    await validateSchemaAsync(loginSchema, credentials);
     const user = await this.query.findOne({
       email: credentials.email,
     });
@@ -76,7 +74,7 @@ export class AuthController {
   }
 
   async signUp(credentials: SignUpCredentials) {
-    await validateRegister(credentials);
+    await validateSchemaAsync(registerSchema, credentials);
     const uniqueEmail = await this.isEmailUnique(credentials.email);
     if (!uniqueEmail) {
       throw new HttpError("Email is in use", 409);

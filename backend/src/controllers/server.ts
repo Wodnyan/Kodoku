@@ -1,5 +1,6 @@
 import HttpError from "../lib/exceptions/error-handler";
-import validateServer from "../lib/validators/validate-server";
+import { validateSchemaAsync } from "../lib/validators";
+import { createServerSchema } from "../lib/validators/validate-server";
 import Member from "../models/Member";
 import Server from "../models/Server";
 import { UserController } from "./user";
@@ -47,9 +48,8 @@ export class ServerController {
   }
 
   public static async create(userId: number, name: string, icon?: string) {
-    await validateServer({
+    await validateSchemaAsync(createServerSchema, {
       name,
-      ownerId: userId,
       icon,
     });
     const user = await UserController.getOne(userId);
