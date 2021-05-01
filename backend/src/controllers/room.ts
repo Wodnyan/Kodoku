@@ -1,8 +1,13 @@
 import HttpError from "../lib/exceptions/error-handler";
+import { validateSchemaAsync } from "../lib/validators";
+import { createRoomSchema } from "../lib/validators/validate-room";
 import Room from "../models/Room";
 
 export class RoomController {
-  public async create(serverId: number, roomName: string) {
+  public static async create(serverId: number, roomName: string) {
+    await validateSchemaAsync(createRoomSchema, {
+      name: roomName,
+    });
     const isRoomNameInUse = await this.isRoomNameInUse(serverId, roomName);
     if (isRoomNameInUse) {
       throw new HttpError("Room name in use", 409);
@@ -14,14 +19,14 @@ export class RoomController {
     return newRoom;
   }
 
-  public async getAll(serverId?: number) {
+  public static async getAll(serverId?: number) {
     const rooms = await Room.query().where({
       server_id: serverId,
     });
     return rooms;
   }
 
-  public async delete(serverId: number, roomId: number) {
+  public static async delete(serverId: number, roomId: number) {
     return await Room.query()
       .where({
         server_id: serverId,
@@ -30,7 +35,7 @@ export class RoomController {
       .delete();
   }
 
-  private async isRoomNameInUse(serverId: number, roomName: string) {
+  private static async isRoomNameInUse(serverId: number, roomName: string) {
     const room = await Room.query().findOne({
       server_id: serverId,
       name: roomName,
