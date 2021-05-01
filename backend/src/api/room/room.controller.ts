@@ -4,7 +4,7 @@ import { RoomController } from "../../controllers/room";
 export const getAllRooms = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { serverId } = req.params;
@@ -21,7 +21,7 @@ export const getAllRooms = async (
 export const createRoom = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { serverId } = req.params;
@@ -39,12 +39,12 @@ export const createRoom = async (
 export const deleteRoom = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const { roomId, serverId } = req.params;
     await RoomController.delete(Number(serverId), Number(roomId));
-    res.status(204).json();
+    res.status(204).json({});
   } catch (error) {
     next(error);
   }

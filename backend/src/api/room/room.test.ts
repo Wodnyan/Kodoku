@@ -34,6 +34,39 @@ beforeAll(async () => {
   serverId = body.server.id;
 });
 
+describe("Get all rooms", () => {
+  it("should respond with an empty array", async () => {
+    const rooms = await supertest(app)
+      .get(`/api/v1/servers/${serverId}/rooms`)
+      .expect(200);
+
+    expect(rooms.body.rooms).toHaveLength(0);
+  });
+});
+
+describe("Delete room", () => {
+  // Success
+  it("should respond with 204", async () => {
+    const { body } = await supertest(app)
+      .post(`/api/v1/servers/${serverId}/rooms`)
+      .send({
+        name: "Foobar",
+      })
+      .set("Authorization", `Bearer ${accessToken}`);
+    await supertest(app)
+      .del(`/api/v1/servers/${serverId}/rooms/${body.room.id}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(204);
+  });
+
+  // Unauthorized
+  it("should respond with 401", async () => {
+    await supertest(app)
+      .del(`/api/v1/servers/${serverId}/rooms/12345`)
+      .expect(401);
+  });
+});
+
 describe("Create room", () => {
   const roomInfo = {
     name: "Foo",
