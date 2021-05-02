@@ -11,7 +11,8 @@ const inviteController = new InviteController();
 router.get("/", protectRoute, async (req, res, next) => {
   try {
     const { serverId } = req.params;
-    const inviteCode = await inviteController.create(Number(serverId));
+    const { id: userId } = req.user as any;
+    const inviteCode = await inviteController.create(Number(serverId), userId);
     return res.status(201).json({
       inviteCode,
     });

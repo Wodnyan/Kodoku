@@ -37,7 +37,7 @@ exports.up = async (knex) => {
     table
       .string("icon", 2083)
       .defaultTo(
-        "https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg"
+        "https://i.kym-cdn.com/entries/icons/mobile/000/026/489/crying.jpg",
       );
     table.timestamps(false, true);
   });
@@ -52,6 +52,7 @@ exports.up = async (knex) => {
   // MEMBERS
   await knex.schema.createTable(tableNames.members, (table) => {
     table.increments();
+    table.boolean("is_owner").defaultTo(false).notNullable();
     references(table, "member_id", tableNames.users);
     references(table, "server_id", tableNames.servers);
     table.unique(["member_id", "server_id"]);
@@ -79,7 +80,7 @@ exports.up = async (knex) => {
       table.increments();
       table.string("token", 343).unique().notNullable();
       table.timestamps(false, true);
-    }
+    },
   );
 };
 

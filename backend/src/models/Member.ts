@@ -5,6 +5,7 @@ class Member extends Model {
   id!: number;
   member_id!: number;
   server_id!: number;
+  is_owner!: boolean;
   created_at!: string;
   updated_at!: string;
   static get tableName() {

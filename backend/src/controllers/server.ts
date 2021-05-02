@@ -9,7 +9,6 @@ interface Update {
   icon?: string;
 }
 
-// TODO: rework this so it doesn't suck
 export class ServerController {
   private static readonly modifiers = {
     selectNonCredentials(builder: any) {

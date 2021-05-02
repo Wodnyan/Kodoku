@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { MemberController } from "../../controllers/member";
-import { validateJoinServerMiddleware } from "../../lib/validators/validate-member";
+// import { validateJoinServerMiddleware } from "../../lib/validators/validate-member";
 import { protectRoute } from "../../middlewares/middlewares";
 
 const router = Router({
@@ -26,7 +26,7 @@ router.get("/:userId", protectRoute, async (req, res, next) => {
   try {
     const member = await memberController.getOne(
       Number(serverId),
-      Number(userId)
+      Number(userId),
     );
     res.json({
       member,
@@ -40,7 +40,7 @@ router.get("/:userId", protectRoute, async (req, res, next) => {
 router.post(
   "/",
   protectRoute,
-  validateJoinServerMiddleware,
+  // validateJoinServerMiddleware,
   async (req, res, next) => {
     try {
       const { serverId } = req.params;
@@ -49,7 +49,7 @@ router.post(
       const newMember = await memberController.create(
         Number(serverId),
         id,
-        inviteCode
+        inviteCode,
       );
       res.status(201).json({
         member: newMember,
@@ -57,11 +57,12 @@ router.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.delete("/", protectRoute, async (req, res, next) => {
   try {
+    // TODO: only the owner should be able to delete member.
     const { serverId } = req.params;
     const { userId } = req.body;
     await memberController.delete(Number(serverId), userId);
