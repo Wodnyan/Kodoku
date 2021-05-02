@@ -26,13 +26,12 @@ export class ServerController {
 
   public static async getAll(userId?: number) {
     const allServers = await Server.query()
-      .withGraphJoined("owner(selectNonCredentials)")
+      .withGraphFetched("owner(selectNonCredentials)")
       .modifiers(this.modifiers)
-      .joinRelated("members")
+      .leftJoinRelated("members")
       .where({
         "members.member_id": userId,
       })
-      .select(this.select)
       .skipUndefined();
     return allServers;
   }
