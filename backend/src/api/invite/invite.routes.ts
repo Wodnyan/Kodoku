@@ -8,7 +8,7 @@ const router = Router({
 
 const inviteController = new InviteController();
 
-router.post("/", protectRoute, async (req, res, next) => {
+router.get("/", protectRoute, async (req, res, next) => {
   try {
     const { serverId } = req.params;
     const inviteCode = await inviteController.create(Number(serverId));
