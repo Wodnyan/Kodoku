@@ -13,6 +13,7 @@ const serverInfo = {
 };
 
 let accessToken: string;
+let accessToken2: string;
 
 let serverId: number;
 
@@ -27,6 +28,14 @@ beforeAll(async () => {
     .post("/api/v1/auth/register")
     .send(userInfo);
   accessToken = user.body.accessToken;
+
+  const user2 = await supertest(app)
+    .post("/api/v1/auth/register")
+    .send({
+      ...userInfo,
+      email: "different@email.com",
+    });
+  accessToken2 = user2.body.accessToken;
 
   const { body } = await supertest(app)
     .post("/api/v1/servers")
@@ -43,7 +52,15 @@ describe("Create invite code", () => {
       .expect(201);
     expect(body.inviteCode).toBeTruthy();
   });
+  // Unauthorized
   it("should respond with 401", async () => {
     await supertest(app).get(`/api/v1/servers/${serverId}/invites`).expect(401);
+  });
+  // Not a member
+  it("should respond with 401", async () => {
+    await supertest(app)
+      .get(`/api/v1/servers/${serverId}/invites`)
+      .set("Authorization", `Bearer ${accessToken2}`)
+      .expect(401);
   });
 });
