@@ -10,7 +10,6 @@ const inviteController = new InviteController();
 
 router.get("/", protectRoute, async (req, res, next) => {
   try {
-    // Only members should be able to create invites
     const { serverId } = req.params;
     const { id: userId } = req.user as any;
     const inviteCode = await inviteController.create(Number(serverId), userId);
