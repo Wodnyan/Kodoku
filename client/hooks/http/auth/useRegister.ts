@@ -29,6 +29,7 @@ export const useRegister = () => {
           withCredentials: true,
         },
       );
+      localStorage.setItem("accessToken", data.accessToken);
       console.log(data);
       setTimeout(() => setIsLoading(false), 1000);
       return true;

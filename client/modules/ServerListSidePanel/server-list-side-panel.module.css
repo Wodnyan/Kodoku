@@ -10,8 +10,13 @@
 
 .navListItem {
   margin-bottom: 1rem;
+  display: flex;
 }
 
 .navListItem:first-child {
   margin-top: 0.5rem;
+}
+
+.navListItem a {
+  height: 100%;
 }
