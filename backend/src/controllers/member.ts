@@ -13,7 +13,11 @@ export class MemberController {
     "members.created_at as createdAt",
   ];
 
-  public async create(serverId: number, userId: number, inviteCode: string) {
+  public static async create(
+    serverId: number,
+    userId: number,
+    inviteCode: string
+  ) {
     await validateSchemaAsync(inviteSchema, {
       inviteCode,
     });
@@ -38,7 +42,7 @@ export class MemberController {
     }
   }
 
-  public async getAll(serverId?: number) {
+  public static async getAll(serverId?: number) {
     const allMembers = await Member.query()
       .where({ server_id: serverId })
       .joinRelated("user")
@@ -47,7 +51,7 @@ export class MemberController {
     return allMembers;
   }
 
-  public async getOne(serverId: number, userId: number) {
+  public static async getOne(serverId: number, userId: number) {
     const member = await Member.query()
       .findOne({
         member_id: userId,
@@ -61,7 +65,7 @@ export class MemberController {
     return member;
   }
 
-  public async delete(serverId: number, userId: number) {
+  public static async delete(serverId: number, userId: number) {
     const isOwner = await this.isOwner(serverId, userId);
     if (!isOwner) {
       throw new HttpError("Not the owner", 401);
@@ -74,17 +78,17 @@ export class MemberController {
       .delete();
   }
 
-  private async isOwner(serverId: number, userId: number) {
+  private static async isOwner(serverId: number, userId: number) {
     return Boolean(
       Member.query().where({
         member_id: userId,
         server_id: serverId,
         is_owner: true,
-      }),
+      })
     );
   }
 
-  private async isAlreadyMember(serverId: number, userId: number) {
+  private static async isAlreadyMember(serverId: number, userId: number) {
     const member = await Member.query().findOne({
       member_id: userId,
       server_id: serverId,
