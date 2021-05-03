@@ -32,6 +32,7 @@ export const useGetAllServers = (): [[] | Server[], { isLoading: boolean }] => {
       setIsLoading(true);
       try {
         const { data } = await axios.get(`${API_ENDPOINT}/servers`);
+        console.log(data);
         setServers(data.servers);
       } catch (error) {
         console.log(error);
