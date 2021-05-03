@@ -6,6 +6,7 @@ class Message extends Model {
   id!: number;
   sender_id!: number;
   room_id!: number;
+  server_id!: number;
   body!: string;
   created_at!: string;
   updated_at!: string;
