@@ -14,12 +14,10 @@ export const ChatPageLayout: React.FC<Props> = ({
 }) => {
   return (
     <div className={styles.container}>
-      <div>{serverList}</div>
-      <div style={{ background: "blue" }} className="">
-        {roomList || ""}
-      </div>
-      <div style={{ background: "purple" }} className=""></div>
-      <div style={{ background: "yellow" }} className=""></div>
+      <div className={styles.serverList}>{serverList}</div>
+      <div className={styles.roomList}>{roomList || ""}</div>
+      <div className={styles.chat}></div>
+      <div className={styles.memberList}></div>
     </div>
   );
 };
