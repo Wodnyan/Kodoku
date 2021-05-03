@@ -63,6 +63,7 @@ exports.up = async (knex) => {
     table.increments();
     references(table, "sender_id", tableNames.users);
     references(table, "room_id", tableNames.rooms);
+    references(table, "server_id", tableNames.servers);
     table.string("body").notNullable();
     table.timestamps(false, true);
   });
