@@ -3,6 +3,36 @@ import { useEffect, useState } from "react";
 import { API_ENDPOINT } from "../../../constants";
 import { Server } from "../../../types";
 
+type CreateServerPayload = {
+  name: string;
+};
+
+export const useCreateServer = (): [
+  (payload: CreateServerPayload) => Promise<Server>,
+  { isLoading: boolean },
+] => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function request(payload: CreateServerPayload) {
+    setIsLoading(true);
+    try {
+      const { data } = await axios.post(`${API_ENDPOINT}/servers`, payload, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      setIsLoading(false);
+      return data.server as Server;
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
+  }
+
+  return [request, { isLoading }];
+};
+
 export const useGetOneServer = (id: number) => {
   const [server, setServer] = useState<null | Server>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);

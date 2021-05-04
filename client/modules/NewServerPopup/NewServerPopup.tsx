@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { useCreateServer } from "../../hooks/http/servers";
 import styles from "./new-server-popup.module.css";
 
 type Props = {
@@ -101,15 +102,17 @@ const Default: React.FC<DefaultProps> = ({ changeCurrentView, closePopup }) => {
 };
 
 const CreateNewServer: React.FC<CreateNewServerProps> = ({ goBack }) => {
+  const [request] = useCreateServer();
   return (
     <>
       <h1>Create new Server</h1>
       <Formik
         initialValues={{ name: "" }}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           // Create new server
           // Add server to current servers list
-          console.log(values);
+          const server = await request(values);
+          console.log(server);
         }}
       >
         {({ values, handleChange, handleSubmit }) => (
