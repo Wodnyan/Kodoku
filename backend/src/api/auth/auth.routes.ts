@@ -28,11 +28,14 @@ router.post("/login", async (req, res, next) => {
 router.post("/register", async (req, res, next) => {
   try {
     const authController = new AuthController();
-    const { accessToken, refreshToken } = await authController.signUp(req.body);
+    const { accessToken, refreshToken, user } = await authController.signUp(
+      req.body
+    );
     res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.status(201).json({
       message: "register",
       accessToken,
+      user,
     });
   } catch (error) {
     next(error);

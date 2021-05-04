@@ -80,7 +80,7 @@ export class AuthController {
       throw new HttpError("Email is in use", 409);
     }
     const hashedPassword = await hashPassword(credentials.password);
-    const newUser = await this.query.insert({
+    const newUser = await UserController.create({
       password: hashedPassword,
       email: credentials.email,
       username: credentials.username,
@@ -88,6 +88,7 @@ export class AuthController {
     const accessToken = await createAccessToken(newUser.id);
     const refreshToken = await createRefreshToken(newUser.id);
     return {
+      user: newUser,
       accessToken,
       refreshToken,
     };
