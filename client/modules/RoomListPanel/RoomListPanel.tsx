@@ -16,7 +16,7 @@ export const RoomList = () => {
     <>
       <ul className={styles.roomList}>
         {(rooms as Room[]).map((room) => (
-          <li>{room.name}</li>
+          <li key={room.id}>{room.name}</li>
         ))}
       </ul>
     </>

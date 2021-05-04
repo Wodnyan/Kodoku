@@ -20,3 +20,10 @@
 .navListItem a {
   height: 100%;
 }
+
+.createServerButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pure-white);
+}
