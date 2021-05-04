@@ -1,5 +1,5 @@
 .container {
-  background-color: red;
+  /* background-color: red; */
   height: 100%;
   display: grid;
 
@@ -9,4 +9,20 @@
 
 .container > div {
   height: 100%;
+}
+
+.serverList {
+  background: var(--gray-900);
+}
+
+.roomList {
+  background: var(--gray-800);
+}
+
+.chat {
+  background: var(--gray-700);
+}
+
+.memberList {
+  background: var(--gray-800);
 }
