@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../constants";
 import { mapValidationErrorArrayToObject } from "../../../utils/mapValidationErrorArrayToObject";
+import { useAuth } from "../../../context/auth/AuthProvider";
 
 interface Credentials {
   username: string;
@@ -11,6 +12,7 @@ interface Credentials {
 
 export const useRegister = () => {
   // TODO: Write validation
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Credentials>>({
     username: null,
@@ -30,7 +32,7 @@ export const useRegister = () => {
         },
       );
       localStorage.setItem("accessToken", data.accessToken);
-      console.log(data);
+      login(data.user);
       setTimeout(() => setIsLoading(false), 1000);
       return true;
     } catch (error) {

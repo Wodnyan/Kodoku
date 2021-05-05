@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_ENDPOINT } from "../../../constants";
+import { useAuth } from "../../../context/auth/AuthProvider";
 import { Server } from "../../../types";
 
 type CreateServerPayload = {
@@ -12,6 +13,9 @@ export const useCreateServer = (): [
   { isLoading: boolean },
 ] => {
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+
+  console.log(user);
 
   async function request(payload: CreateServerPayload) {
     setIsLoading(true);
