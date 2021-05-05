@@ -58,22 +58,32 @@ export const useGetOneServer = (id: number) => {
 };
 
 export const useGetAllServers = (): [[] | Server[], { isLoading: boolean }] => {
+  const { user } = useAuth();
   const [servers, setServers] = useState<[] | Server[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await axios.get(`${API_ENDPOINT}/servers`);
-        console.log(data);
-        setServers(data.servers);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    })();
-  }, []);
+    setIsLoading(true);
+    if (user !== null) {
+      (async () => {
+        try {
+          const { data } = await axios.get(
+            `${API_ENDPOINT}/users/${user.id}/servers`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              },
+            },
+          );
+          console.log(data);
+          setServers(data.servers);
+        } catch (error) {
+          console.log(error);
+        }
+        setIsLoading(false);
+      })();
+    }
+  }, [user]);
 
   return [servers, { isLoading }];
 };
