@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Server } from "../../types";
 import styles from "./server-list-side-panel.module.css";
@@ -8,16 +8,28 @@ import { NewServerPopup } from "../NewServerPopup/NewServerPopup";
 
 export const ServerListSidePanel: React.FC = () => {
   const [servers] = useGetAllServers();
+  const [serverList, setServerList] = useState<Server[] | []>([]);
   const [newServerPopup, setNewserverPopup] = useState(false);
 
   function toggleCreateServerPopup() {
     setNewserverPopup((prev) => !prev);
   }
 
+  function addToServerList(server: Server) {
+    setServerList((prev) => [...prev, server]);
+  }
+
+  useEffect(() => {
+    setServerList(servers);
+  }, [servers]);
+
   return (
     <div className={styles.container}>
       {newServerPopup && (
-        <NewServerPopup closePopup={toggleCreateServerPopup} />
+        <NewServerPopup
+          addServer={addToServerList}
+          closePopup={toggleCreateServerPopup}
+        />
       )}
       <nav>
         <ul>
@@ -31,7 +43,7 @@ export const ServerListSidePanel: React.FC = () => {
               </Avatar>
             </button>
           </li>
-          {(servers as Server[]).map((server) => {
+          {(serverList as Server[]).map((server) => {
             return (
               <li key={server.id} className={styles.navListItem}>
                 <NextLink href={`/channels/${server.id}`}>
