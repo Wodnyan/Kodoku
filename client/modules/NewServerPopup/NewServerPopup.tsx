@@ -3,14 +3,20 @@ import React, { useState } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { useCreateServer } from "../../hooks/http/servers";
+import { Server } from "../../types";
 import styles from "./new-server-popup.module.css";
+
+type AddServer = (server: Server) => void;
 
 type Props = {
   closePopup: () => void;
+  addServer: AddServer;
 };
 
 type CreateNewServerProps = {
   goBack: () => void;
+  addServer: AddServer;
 };
 
 enum CurrentPage {
@@ -19,7 +25,7 @@ enum CurrentPage {
   JoinServer = "join",
 }
 
-export const NewServerPopup: React.FC<Props> = ({ closePopup }) => {
+export const NewServerPopup: React.FC<Props> = ({ closePopup, addServer }) => {
   const [state, setState] = useState<CurrentPage>(CurrentPage.Default);
 
   let body = null;
@@ -42,10 +48,20 @@ export const NewServerPopup: React.FC<Props> = ({ closePopup }) => {
       );
       break;
     case CurrentPage.NewServer:
-      body = <CreateNewServer goBack={() => setState(CurrentPage.Default)} />;
+      body = (
+        <CreateNewServer
+          addServer={addServer}
+          goBack={() => setState(CurrentPage.Default)}
+        />
+      );
       break;
     case CurrentPage.JoinServer:
-      body = <JoinNewServer goBack={() => setState(CurrentPage.Default)} />;
+      body = (
+        <JoinNewServer
+          addServer={addServer}
+          goBack={() => setState(CurrentPage.Default)}
+        />
+      );
       break;
   }
 
@@ -100,16 +116,22 @@ const Default: React.FC<DefaultProps> = ({ changeCurrentView, closePopup }) => {
   );
 };
 
-const CreateNewServer: React.FC<CreateNewServerProps> = ({ goBack }) => {
+const CreateNewServer: React.FC<CreateNewServerProps> = ({
+  goBack,
+  addServer,
+}) => {
+  const [request] = useCreateServer();
   return (
     <>
       <h1>Create new Server</h1>
       <Formik
         initialValues={{ name: "" }}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           // Create new server
           // Add server to current servers list
-          console.log(values);
+          const server = await request(values);
+          addServer(server);
+          console.log(server);
         }}
       >
         {({ values, handleChange, handleSubmit }) => (

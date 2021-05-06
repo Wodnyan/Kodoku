@@ -1,5 +1,11 @@
 import User from "../models/User";
 
+type CreateUserPayload = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 export class UserController {
   static readonly nonCredentials: string[] = [
     "id",
@@ -14,6 +20,23 @@ export class UserController {
       .findById(id)
       .select(UserController.nonCredentials);
     return user;
+  }
+
+  static async create(payload: CreateUserPayload) {
+    const {
+      id,
+      avatar_url,
+      created_at,
+      username,
+      email,
+    } = await User.query().insertAndFetch(payload);
+    return {
+      id,
+      username,
+      email,
+      createdAt: created_at,
+      avatarUrl: avatar_url,
+    };
   }
 
   static async getOneByEmail(email: string) {
