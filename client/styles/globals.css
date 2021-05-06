@@ -44,3 +44,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.bar-of-progress {
+  z-index: 50;
+}
