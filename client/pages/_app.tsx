@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import Router from "next/router";
+import Head from "next/head";
 import { AuthProvider } from "../context/auth/AuthProvider";
 import ProgressBar from "@badrap/bar-of-progress";
 
@@ -17,6 +18,14 @@ Router.events.on("routeChangeError", progress.finish);
 function MyApp({ Component, pageProps }) {
   return (
     <>
+      <Head>
+        <title>Kodoku</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
       <AuthProvider>
         <Component {...pageProps} />
       </AuthProvider>

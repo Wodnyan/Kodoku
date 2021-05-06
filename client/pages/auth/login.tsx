@@ -1,4 +1,5 @@
 import styles from "../../styles/auth/auth.module.css";
+import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
@@ -13,52 +14,57 @@ const Register = () => {
   const { login, isLoading, errors } = useLogin();
 
   return (
-    <div className={styles.container}>
-      <Formik
-        initialValues={{
-          email: "",
-          password: "",
-        }}
-        onSubmit={async (values) => {
-          const success = await login(values);
-          if (success) {
-            router.push("/channels");
-          }
-        }}
-      >
-        {({ handleChange, values, handleSubmit }) => (
-          <form noValidate onSubmit={handleSubmit} className={styles.form}>
-            <h1 className={styles.callToAction}>Log In!</h1>
-            <Input
-              onChange={handleChange}
-              value={values.email}
-              full
-              placeholder="Email"
-              type="email"
-              name="email"
-            />
-            {errors?.email && <h1>{errors.email.toLocaleLowerCase()}</h1>}
-            <Input
-              onChange={handleChange}
-              value={values.password}
-              full
-              placeholder="Password"
-              type="password"
-              name="password"
-            />
-            {errors?.password && <h1>{errors.password.toLowerCase()}</h1>}
-            <div className={styles.bottom}>
-              <NextLink href="/auth/register">
-                <a>Create a new account</a>
-              </NextLink>
-              <Button isLoading={isLoading} type="submit">
-                Login
-              </Button>
-            </div>
-          </form>
-        )}
-      </Formik>
-    </div>
+    <>
+      <Head>
+        <title>Login</title>
+      </Head>
+      <div className={styles.container}>
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          onSubmit={async (values) => {
+            const success = await login(values);
+            if (success) {
+              router.push("/channels");
+            }
+          }}
+        >
+          {({ handleChange, values, handleSubmit }) => (
+            <form noValidate onSubmit={handleSubmit} className={styles.form}>
+              <h1 className={styles.callToAction}>Log In!</h1>
+              <Input
+                onChange={handleChange}
+                value={values.email}
+                full
+                placeholder="Email"
+                type="email"
+                name="email"
+              />
+              {errors?.email && <h1>{errors.email.toLocaleLowerCase()}</h1>}
+              <Input
+                onChange={handleChange}
+                value={values.password}
+                full
+                placeholder="Password"
+                type="password"
+                name="password"
+              />
+              {errors?.password && <h1>{errors.password.toLowerCase()}</h1>}
+              <div className={styles.bottom}>
+                <NextLink href="/auth/register">
+                  <a>Create a new account</a>
+                </NextLink>
+                <Button isLoading={isLoading} type="submit">
+                  Login
+                </Button>
+              </div>
+            </form>
+          )}
+        </Formik>
+      </div>
+    </>
   );
 };
 
