@@ -5,34 +5,31 @@ import { mapValidationErrorArrayToObject } from "../../../utils/mapValidationErr
 import { useAuth } from "../../../context/auth/AuthProvider";
 
 interface Credentials {
-  username: string;
   password: string;
   email: string;
 }
 
-export const useRegister = () => {
-  // TODO: Write validation
-  const { login } = useAuth();
+export const useLogin = () => {
+  const { login: addUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Credentials>>({
-    username: null,
     password: null,
     email: null,
   });
 
-  async function register(credentials: Credentials) {
+  async function login(credentials: Credentials) {
     setErrors(null);
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const { data } = await axios.post(
-        `${API_ENDPOINT}/auth/register`,
+        `${API_ENDPOINT}/auth/login`,
         credentials,
         {
           withCredentials: true,
         }
       );
       localStorage.setItem("accessToken", data.accessToken);
-      login(data.user);
+      addUser(data.user);
       setTimeout(() => setIsLoading(false), 1000);
       return true;
     } catch (error) {
@@ -41,14 +38,13 @@ export const useRegister = () => {
       if (error.response.status === 400) {
         const errors = mapValidationErrorArrayToObject(
           error.response.data.errors,
-          ["username", "password", "email"]
+          ["email", "password"]
         );
         validationErrors = errors;
-        // Existing email
-      } else if (error.response.status === 409) {
+      } else if (error.response.status === 401) {
         const errors = mapValidationErrorArrayToObject(
-          [error.response.data.message],
-          ["email"]
+          [error.response.data.message.toLowerCase()],
+          ["email", "password"]
         );
         validationErrors = errors;
       }
@@ -61,7 +57,7 @@ export const useRegister = () => {
   }
 
   return {
-    register,
+    login,
     isLoading,
     errors,
   };

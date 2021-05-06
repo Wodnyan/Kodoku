@@ -88,7 +88,7 @@ describe("Login User", () => {
     await supertest(app)
       .post(`${AUTH_ROUTE}/login`)
       .send(noEmailFound)
-      .expect(404);
+      .expect(401);
   });
 
   it("should respond with 400 Bad Request", async () => {

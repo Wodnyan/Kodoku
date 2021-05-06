@@ -14,11 +14,15 @@ router.use(limiter(100));
 router.post("/login", async (req, res, next) => {
   try {
     const authController = new AuthController();
-    const { accessToken, refreshToken } = await authController.login(req.body);
+    const { user, accessToken, refreshToken } = await authController.login(
+      req.body
+    );
+    console.log(user);
     res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.json({
       message: "login",
       accessToken,
+      user,
     });
   } catch (error) {
     next(error);

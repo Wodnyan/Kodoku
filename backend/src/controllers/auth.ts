@@ -41,7 +41,7 @@ export class AuthController {
       email: credentials.email,
     });
     if (!user) {
-      throw new HttpError("Email not found", 404);
+      throw new HttpError("Email not found", 401);
     }
     const dehashed = await decryptPassword(credentials.password, user.password);
     if (!dehashed) {
@@ -49,9 +49,14 @@ export class AuthController {
     }
     const accessToken = await createAccessToken(user.id);
     const refreshToken = await createRefreshToken(user.id);
+    const userWithoutPassword = {
+      ...user,
+      password: undefined,
+    };
     return {
       accessToken,
       refreshToken,
+      user: userWithoutPassword,
     };
   }
 
