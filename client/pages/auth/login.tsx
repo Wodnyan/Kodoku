@@ -6,22 +6,21 @@ import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 
 import { Formik } from "formik";
-import { useRegister } from "../../hooks/http/auth/useRegister";
+import { useLogin } from "../../hooks/http/auth/useLogin";
 
 const Register = () => {
   const router = useRouter();
-  const { register, isLoading, errors } = useRegister();
+  const { login, isLoading, errors } = useLogin();
 
   return (
     <div className={styles.container}>
       <Formik
         initialValues={{
-          username: "",
           email: "",
           password: "",
         }}
         onSubmit={async (values) => {
-          const success = await register(values);
+          const success = await login(values);
           if (success) {
             router.push("/channels");
           }
@@ -29,16 +28,7 @@ const Register = () => {
       >
         {({ handleChange, values, handleSubmit }) => (
           <form noValidate onSubmit={handleSubmit} className={styles.form}>
-            <h1 className={styles.callToAction}>Create an account</h1>
-            <Input
-              onChange={handleChange}
-              value={values.username}
-              full
-              placeholder="Username"
-              type="text"
-              name="username"
-            />
-            {errors?.username && <h1>{errors.username.toLocaleLowerCase()}</h1>}
+            <h1 className={styles.callToAction}>Log In!</h1>
             <Input
               onChange={handleChange}
               value={values.email}
@@ -58,11 +48,11 @@ const Register = () => {
             />
             {errors?.password && <h1>{errors.password.toLowerCase()}</h1>}
             <div className={styles.bottom}>
-              <NextLink href="/auth/login">
-                <a>Already have an account</a>
+              <NextLink href="/auth/register">
+                <a>Create a new account</a>
               </NextLink>
               <Button isLoading={isLoading} type="submit">
-                Sign Up
+                Login
               </Button>
             </div>
           </form>

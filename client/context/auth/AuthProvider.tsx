@@ -46,7 +46,7 @@ export function AuthProvider({ children }: Props) {
       } catch (error) {
         logout();
         setIsLoading(false);
-        console.error(error);
+        // console.error(error);
       }
     }
     refreshAccessToken();
