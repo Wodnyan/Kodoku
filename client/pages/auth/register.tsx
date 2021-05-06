@@ -23,6 +23,7 @@ const Register = () => {
         onSubmit={async (values) => {
           const success = await register(values);
           if (success) {
+            console.log("Foo");
             router.push("/channels");
           }
         }}
