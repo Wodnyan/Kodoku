@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 import messages from "../message/message.routes";
 import { createRoom, deleteRoom, getAllRooms } from "./room.controller";
 

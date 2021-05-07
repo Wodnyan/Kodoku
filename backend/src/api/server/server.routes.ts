@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 import members from "../member/member.routes";
 import invites from "../invite/invite.routes";
 import rooms from "../room/room.routes";
@@ -24,14 +24,14 @@ router.put(
   "/:serverId",
   validateServerParamIdMiddleWare,
   protectRoute,
-  updateServer,
+  updateServer
 );
 
 router.delete(
   "/:serverId",
   validateServerParamIdMiddleWare,
   protectRoute,
-  deleteServer,
+  deleteServer
 );
 
 // Check if server id is an integer

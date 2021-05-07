@@ -2,13 +2,11 @@ import axios from "axios";
 import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy as GithubStrategy } from "passport-github2";
-import { AuthController } from "./controllers/auth";
 import { UserController } from "./controllers/user";
 import { createRefreshToken } from "./lib/jwt";
+import { authController } from "./controllers/auth";
 
 dotenv.config();
-
-const authController = new AuthController();
 
 const setup = () => {
   passport.use(

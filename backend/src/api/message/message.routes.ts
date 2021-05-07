@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { MessageController } from "../../controllers/message";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 
 const router = Router({
   mergeParams: true,
@@ -17,7 +17,7 @@ router.post("/", protectRoute, async (req, res, next) => {
       Number(serverId),
       Number(roomId),
       Number(userId),
-      message,
+      message
     );
     res.status(201).json({
       newMessage,
