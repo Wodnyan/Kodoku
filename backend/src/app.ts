@@ -2,11 +2,8 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
-import {
-  notFoundHandler,
-  errorHandler,
-  checkAuth,
-} from "./middlewares/middlewares";
+import { notFoundHandler, errorHandler } from "./middlewares/error";
+import { checkAuth } from "./middlewares/auth";
 import api from "./api/api";
 import cors from "cors";
 import socket from "./socket";

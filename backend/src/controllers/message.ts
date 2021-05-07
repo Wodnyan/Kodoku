@@ -1,9 +1,16 @@
 import HttpError from "../lib/exceptions/error-handler";
 import { validateSchemaAsync } from "../lib/validators";
 import { messageSchema } from "../lib/validators/validate-message";
+import { defaultQueryParamOptions } from "../lib/validators/validate-query-param-options";
 import Member from "../models/Member";
 import Message from "../models/Message";
 import { UserController } from "./user";
+
+type Options = {
+  offset?: number;
+  limit?: number;
+  orderBy?: "asc" | "desc";
+};
 
 export class MessageController {
   private readonly modifiers = {
@@ -16,7 +23,7 @@ export class MessageController {
     serverId: number,
     roomId: number,
     userId: number,
-    message: string,
+    message: string
   ) {
     // Check if user is a member of the server
     const isMember = await Member.query()
@@ -40,11 +47,16 @@ export class MessageController {
     return newMessage;
   }
 
-  public async getAll(roomId?: number) {
+  public async getAll(roomId?: number, options?: Options) {
+    // Write validation for api options
+    await validateSchemaAsync(defaultQueryParamOptions, options);
     const messages = await Message.query()
       .withGraphJoined("user(selectNonCredentials)")
       .modifiers(this.modifiers)
       .select(MessageController.select)
+      .orderBy("created_at", options?.orderBy || "asc")
+      .limit(Number(options?.limit))
+      .offset(Number(options?.offset))
       .where({ room_id: roomId });
     return messages;
   }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 import { createInvite } from "./invite.controller";
 
 const router = Router({

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ServerController } from "../../controllers/server";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 
 const router = Router();
 // const serverController = new ServerController();

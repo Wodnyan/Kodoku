@@ -28,7 +28,7 @@ interface OAuthSignUp {
   avatarUrl?: string;
 }
 
-export class AuthController {
+class AuthController {
   private readonly query!: Objection.QueryBuilder<User, User[]>;
 
   constructor() {
@@ -112,3 +112,5 @@ export class AuthController {
     return unique === undefined;
   }
 }
+
+export const authController = new AuthController();

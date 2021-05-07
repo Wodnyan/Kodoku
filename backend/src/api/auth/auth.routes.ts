@@ -1,11 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
 import { CLIENT_URL } from "../../constants";
-import { AuthController } from "../../controllers/auth";
+import { authController } from "../../controllers/auth";
 import { RefreshTokenController } from "../../controllers/refresh-token";
 import { UserController } from "../../controllers/user";
 import { limiter } from "../../lib/rate-limiter";
-import { protectRoute } from "../../middlewares/middlewares";
+import { protectRoute } from "../../middlewares/auth";
 
 const router = Router();
 
@@ -13,11 +13,9 @@ router.use(limiter(100));
 
 router.post("/login", async (req, res, next) => {
   try {
-    const authController = new AuthController();
     const { user, accessToken, refreshToken } = await authController.login(
       req.body
     );
-    console.log(user);
     res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.json({
       message: "login",
@@ -31,7 +29,6 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/register", async (req, res, next) => {
   try {
-    const authController = new AuthController();
     const { accessToken, refreshToken, user } = await authController.signUp(
       req.body
     );
