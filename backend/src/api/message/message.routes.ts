@@ -30,7 +30,12 @@ router.post("/", protectRoute, async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   try {
     const { roomId } = req.params;
-    const messages = await messageController.getAll(Number(roomId));
+    const { limit, offset, orderBy } = req.query;
+    const messages = await messageController.getAll(Number(roomId), {
+      limit: Number(limit),
+      offset: Number(offset),
+      orderBy: orderBy as "asc" | "desc",
+    });
     res.json({
       messages,
     });
