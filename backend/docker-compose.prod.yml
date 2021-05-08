@@ -1,0 +1,27 @@
+version: "3.1"
+
+# TODO: Add volumes
+services:
+  backend:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - 5050:5050
+  db:
+    image: postgres
+    restart: "no"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    restart: "no"
+    ports:
+      - 8080:8080
