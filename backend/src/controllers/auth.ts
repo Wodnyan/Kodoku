@@ -1,4 +1,3 @@
-import Objection from "objection";
 import User from "../models/User";
 import HttpError from "../lib/exceptions/error-handler";
 import {
@@ -29,15 +28,11 @@ interface OAuthSignUp {
 }
 
 class AuthController {
-  private readonly query!: Objection.QueryBuilder<User, User[]>;
-
-  constructor() {
-    this.query = User.query();
-  }
+  // private readonly User.query()!: Objection.QueryBuilder<User, User[]>;
 
   async login(credentials: LoginCredentials) {
     await validateSchemaAsync(loginSchema, credentials);
-    const user = await this.query.findOne({
+    const user = await User.query().findOne({
       email: credentials.email,
     });
     if (!user) {
@@ -65,7 +60,7 @@ class AuthController {
     if (!uniqueEmail) {
       throw new HttpError("Email is in use", 409);
     }
-    const newUser = await this.query.insert({
+    const newUser = await User.query().insert({
       email: credentials.email,
       username: credentials.username,
       avatar_url: credentials.avatarUrl,
@@ -106,7 +101,7 @@ class AuthController {
   }
 
   private async isEmailUnique(email: string) {
-    const unique = await this.query.findOne({
+    const unique = await User.query().findOne({
       email,
     });
     return unique === undefined;
