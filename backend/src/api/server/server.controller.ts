@@ -2,6 +2,7 @@ import { Request, NextFunction, Response } from "express";
 import { ServerController } from "../../controllers/server";
 import HttpError from "../../lib/exceptions/error-handler";
 import { ValidationError } from "../../lib/exceptions/validation";
+import { uploadFile } from "../../lib/upload-file";
 
 export const getAllServers = async (
   _req: Request,
@@ -64,8 +65,21 @@ export const updateServer = async (
 ) => {
   try {
     const { serverId } = req.params;
-    await ServerController.update(Number(serverId), req.body);
-    res.status(200).json({});
+    const server = await ServerController.getOne(Number(serverId));
+    if (!server) {
+      throw new HttpError("No server found", 404);
+    }
+    const icon = (await uploadFile(
+      req.file.buffer,
+      `server-icons/${req.file.filename}`
+    )) as any;
+    const updatedServer = await ServerController.updateIcon(
+      Number(serverId),
+      icon.Location
+    );
+    res.status(200).json({
+      server: updatedServer,
+    });
   } catch (error) {
     next(error);
   }

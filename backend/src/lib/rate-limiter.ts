@@ -1,7 +1,8 @@
 import rateLimit from "express-rate-limit";
 
-export const limiter = (max: number) =>
+// Default timeout is 15 minutes
+export const limiter = (max: number, amountInMs: number = 15 * 60 * 1000) =>
   rateLimit({
-    windowMs: 15 * 60 * 1000,
+    windowMs: amountInMs,
     max,
   });
