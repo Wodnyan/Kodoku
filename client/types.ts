@@ -1,19 +1,19 @@
 export type AuthenticationToken = "accessToken" | "refreshToken";
 
-export interface Server {
+export type Server = {
   id: number;
   name: string;
   icon: string;
-}
+};
 
-export interface User {
+export type User = {
   id: number;
   username: string;
   email: string;
   avatar?: string;
-}
+};
 
-export interface Room {
+export type Room = {
   id: number;
   name: string;
-}
+};

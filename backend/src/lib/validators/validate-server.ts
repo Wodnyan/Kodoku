@@ -3,7 +3,7 @@ import * as yup from "yup";
 import { validateSchemaAsync } from ".";
 
 export const createServerSchema = yup.object().shape({
-  name: yup.string().min(2).max(100).required(),
+  name: yup.string().min(2).max(100),
   icon: yup.string().url().max(2083),
 });
 

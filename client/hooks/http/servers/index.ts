@@ -8,14 +8,17 @@ type CreateServerPayload = {
   name: string;
 };
 
+type CreateServerError = {
+  error: string;
+};
+
 export const useCreateServer = (): [
   (payload: CreateServerPayload) => Promise<Server>,
-  { isLoading: boolean },
+  { isLoading: boolean; error: CreateServerError }
 ] => {
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
 
-  console.log(user);
+  const [error, setError] = useState<CreateServerError>({ error: null });
 
   async function request(payload: CreateServerPayload) {
     setIsLoading(true);
@@ -26,15 +29,21 @@ export const useCreateServer = (): [
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
       return data.server as Server;
     } catch (error) {
-      setIsLoading(false);
-      console.error(error);
+      setTimeout(() => {
+        setIsLoading(false);
+        setError({
+          error: error.response.data.message.toLowerCase(),
+        });
+      }, 1000);
     }
   }
 
-  return [request, { isLoading }];
+  return [request, { isLoading, error }];
 };
 
 export const useGetOneServer = (id: number) => {
@@ -73,7 +82,7 @@ export const useGetAllServers = (): [[] | Server[], { isLoading: boolean }] => {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
               },
-            },
+            }
           );
           console.log(data);
           setServers(data.servers);
