@@ -3,6 +3,7 @@ import Router from "next/router";
 import Head from "next/head";
 import { AuthProvider } from "../context/auth/AuthProvider";
 import ProgressBar from "@badrap/bar-of-progress";
+import { RecoilRoot } from "recoil";
 
 const progress = new ProgressBar({
   size: 2,
@@ -26,9 +27,11 @@ function MyApp({ Component, pageProps }) {
           rel="stylesheet"
         />
       </Head>
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <RecoilRoot>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </RecoilRoot>
     </>
   );
 }

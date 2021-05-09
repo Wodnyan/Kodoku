@@ -1,3 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 ul.roomList {
   list-style-type: none;
+}
+
+.userSection {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  background: var(--gray-600);
+  padding: 0.4rem 0.5rem;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+}
+
+.userInfo p {
+  margin-left: 5px;
+}
+
+.userOptions {
+  margin-left: auto;
 }
