@@ -121,17 +121,17 @@ const CreateNewServer: React.FC<CreateNewServerProps> = ({
   goBack,
   addServer,
 }) => {
-  const [request] = useCreateServer();
+  const [request, { error, isLoading }] = useCreateServer();
   return (
     <>
       <h1>Create new Server</h1>
       <Formik
         initialValues={{ name: "" }}
         onSubmit={async (values) => {
-          // Create new server
-          // Add server to current servers list
           const server = await request(values);
-          addServer(server);
+          if (server) {
+            addServer(server);
+          }
         }}
       >
         {({ values, handleChange, handleSubmit }) => (
@@ -143,7 +143,10 @@ const CreateNewServer: React.FC<CreateNewServerProps> = ({
               placeholder="name"
               name="name"
             />
-            <Button type="submit">Create</Button>
+            {error.error && <h1>{error.error}</h1>}
+            <Button isLoading={isLoading} type="submit">
+              Create
+            </Button>
           </form>
         )}
       </Formik>

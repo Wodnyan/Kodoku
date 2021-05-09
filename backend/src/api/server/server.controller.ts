@@ -1,7 +1,6 @@
 import { Request, NextFunction, Response } from "express";
 import { ServerController } from "../../controllers/server";
 import HttpError from "../../lib/exceptions/error-handler";
-import { ValidationError } from "../../lib/exceptions/validation";
 import { uploadFile } from "../../lib/upload-file";
 
 export const getAllServers = async (
@@ -32,9 +31,6 @@ export const createServer = async (
       server: newServer,
     });
   } catch (error) {
-    if (error.errors?.length > 0) {
-      return next(new ValidationError(error.message));
-    }
     next(error);
   }
 };
@@ -71,11 +67,11 @@ export const updateServer = async (
     }
     const icon = (await uploadFile(
       req.file.buffer,
-      `server-icons/${req.file.filename}`
+      `server-icons/${req.file.filename}`,
     )) as any;
     const updatedServer = await ServerController.updateIcon(
       Number(serverId),
-      icon.Location
+      icon.Location,
     );
     res.status(200).json({
       server: updatedServer,
