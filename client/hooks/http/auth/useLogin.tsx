@@ -20,7 +20,7 @@ export const useLogin = () => {
   async function login(credentials: Credentials) {
     setErrors(null);
     try {
-      // setIsLoading(true);
+      setIsLoading(true);
       const { data } = await axios.post(
         `${API_ENDPOINT}/auth/login`,
         credentials,
