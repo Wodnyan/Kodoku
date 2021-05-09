@@ -5,10 +5,6 @@ import Member from "../models/Member";
 import Server from "../models/Server";
 import { UserController } from "./user";
 
-interface Update {
-  icon?: string;
-}
-
 export class ServerController {
   private static readonly modifiers = {
     selectNonCredentials(builder: any) {
@@ -73,12 +69,13 @@ export class ServerController {
     return newServer;
   }
 
-  public static async update(serverId: number, update?: Update) {
+  public static async updateIcon(serverId: number, icon: string) {
     const updatedServer = await Server.query()
       .patch({
-        icon: update?.icon,
+        icon,
       })
-      .findById(serverId);
+      .findById(serverId)
+      .returning("*");
     return updatedServer;
   }
 
