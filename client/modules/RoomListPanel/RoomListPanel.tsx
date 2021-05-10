@@ -30,8 +30,8 @@ export const RoomList = () => {
       {/* Make this a component */}
       <section className={styles.userSection}>
         <div className={styles.userInfo}>
-          <Avatar src={user.avatar}>{user.username[0]}</Avatar>
-          <p>{user.username}</p>
+          <Avatar src={user?.avatar}>{user?.username[0]}</Avatar>
+          <p>{user?.username}</p>
         </div>
         <div className={styles.userOptions}>
           <Avatar>S</Avatar>

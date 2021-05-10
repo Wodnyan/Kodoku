@@ -46,7 +46,6 @@ export function AuthProvider({ children }: Props) {
       } catch (error) {
         logout();
         setIsLoading(false);
-        // console.error(error);
       }
     }
     refreshAccessToken();
@@ -68,7 +67,6 @@ export function AuthProvider({ children }: Props) {
         login(data.user);
         setIsLoading(false);
       } catch (error) {
-        setUser(null);
         setIsLoading(false);
       }
     })();
@@ -79,7 +77,6 @@ export function AuthProvider({ children }: Props) {
     setUser(user);
   }
   function logout() {
-    console.log("logout");
     setUser(null);
   }
   const value = {
@@ -88,9 +85,5 @@ export function AuthProvider({ children }: Props) {
     logout,
     isLoading,
   };
-  return (
-    <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

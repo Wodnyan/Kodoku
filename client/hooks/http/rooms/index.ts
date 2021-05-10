@@ -17,7 +17,6 @@ export const useGetAllRoomsOfServer = (
           const { data } = await axios.get(
             `${API_ENDPOINT}/servers/${serverId}/rooms`
           );
-          console.log(data);
           setRooms(data.rooms);
         }
       } catch (error) {

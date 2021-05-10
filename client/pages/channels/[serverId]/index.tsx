@@ -11,18 +11,24 @@ import { currentServerState } from "../../../global-state/current-server";
 const PageWithRooms = () => {
   const router = useRouter();
   const [, setCurrentServer] = useRecoilState(currentServerState);
+
+  // Get current server
   useEffect(() => {
-    // TODO: Get current server
     (async () => {
-      const { data } = await axios.get(
-        `${API_ENDPOINT}/servers/${router.query.serverId}`
-      );
-      setCurrentServer({
-        server: data.server,
-      });
+      try {
+        if (router.query.serverId) {
+          const { data } = await axios.get(
+            `${API_ENDPOINT}/servers/${router.query.serverId}`
+          );
+          setCurrentServer({
+            server: data.server,
+          });
+        }
+      } catch (error) {
+        console.error(error.response.data);
+      }
     })();
-    console.log(router.query);
-  }, []);
+  }, [router.query.serverId]);
 
   return (
     <div className={styles.container}>
