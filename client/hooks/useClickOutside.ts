@@ -11,7 +11,7 @@ export const useClickOutside = (
       // If target is child of ref do nothing
       if (
         (ref.current && ref.current.contains(e.target)) ||
-        (ignore.current && e.target === ignore.current)
+        (ignore?.current && e.target === ignore?.current)
       ) {
         return;
       }
