@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useGetAllRoomsOfServer } from "../../hooks/http/rooms";
 import { Room } from "../../types";
@@ -21,7 +21,9 @@ export const RoomList = () => {
 
   const [popout, setPopout] = useState(true);
 
-  const { ref } = useClickOutside(() => setPopout(false));
+  const closePopupBtnRef = useRef(null);
+
+  const { ref } = useClickOutside(() => setPopout(false), closePopupBtnRef);
 
   function togglePopout() {
     setPopout((prev) => !prev);
@@ -41,7 +43,11 @@ export const RoomList = () => {
             exitDone: styles.popoutBtnExitDone,
           }}
         >
-          <button className={styles.popoutBtn} onClick={togglePopout}>
+          <button
+            ref={closePopupBtnRef}
+            className={styles.popoutBtn}
+            onClick={togglePopout}
+          >
             open
           </button>
         </CSSTransition>
