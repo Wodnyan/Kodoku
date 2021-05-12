@@ -84,7 +84,6 @@ export const useGetAllServers = (): [[] | Server[], { isLoading: boolean }] => {
               },
             }
           );
-          console.log(data);
           setServers(data.servers);
         } catch (error) {
           console.log(error);
