@@ -7,22 +7,44 @@ import { API_ENDPOINT } from "../../../constants";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { currentServerState } from "../../../global-state/current-server";
+import { useGetAllRoomsOfServer } from "../../../hooks/http/rooms";
 
 const PageWithRooms = () => {
-  const router = useRouter();
+  const {
+    query: { serverId },
+  } = useRouter();
   const [, setCurrentServer] = useRecoilState(currentServerState);
+  const [rooms] = useGetAllRoomsOfServer(Number(serverId));
+
+  // Set rooms in global state
   useEffect(() => {
-    // TODO: Get current server
+    setCurrentServer((prev) => ({
+      ...prev,
+      rooms: rooms.map((room: { id: number; name: string }) => ({
+        id: room.id,
+        name: room.name,
+      })),
+    }));
+  }, [serverId, JSON.stringify(rooms)]);
+
+  // Get current server
+  useEffect(() => {
     (async () => {
-      const { data } = await axios.get(
-        `${API_ENDPOINT}/servers/${router.query.serverId}`
-      );
-      setCurrentServer({
-        server: data.server,
-      });
+      try {
+        if (serverId) {
+          const { data } = await axios.get(
+            `${API_ENDPOINT}/servers/${serverId}`
+          );
+          setCurrentServer((prev) => ({
+            ...prev,
+            server: data.server,
+          }));
+        }
+      } catch (error) {
+        console.error(error.response.data);
+      }
     })();
-    console.log(router.query);
-  }, []);
+  }, [serverId]);
 
   return (
     <div className={styles.container}>
