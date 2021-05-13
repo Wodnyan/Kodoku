@@ -31,7 +31,7 @@ const upload = multer({
     }
     // File name: <fieldname>-<timeStamp>.<fileType>
     file.filename = `${file.fieldname}-${Date.now()}${path.extname(
-      file.originalname
+      file.originalname,
     )}`;
     cb(null, true);
   },
@@ -52,20 +52,20 @@ router.put(
   validateServerParamIdMiddleWare,
   protectRoute,
   upload.single("icon"),
-  updateServer
+  updateServer,
 );
 
 router.delete(
   "/:serverId",
   validateServerParamIdMiddleWare,
   protectRoute,
-  deleteServer
+  deleteServer,
 );
 
 // Check if server id is an integer
 router.use("/:serverId", validateServerParamIdMiddleWare);
-router.use("/:serverId/members", members);
-router.use("/:serverId/invites", invites);
-router.use("/:serverId/rooms", rooms);
+router.use("/:serverId/members", validateServerParamIdMiddleWare, members);
+router.use("/:serverId/invites", validateServerParamIdMiddleWare, invites);
+router.use("/:serverId/rooms", validateServerParamIdMiddleWare, rooms);
 
 export default router;
