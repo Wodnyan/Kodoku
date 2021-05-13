@@ -1,8 +1,11 @@
+import axios from "axios";
 import { Formik } from "formik";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { API_ENDPOINT } from "../../constants";
 import { useCreateServer } from "../../hooks/http/servers";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { Server } from "../../types";
@@ -159,6 +162,60 @@ const JoinNewServer: React.FC<CreateNewServerProps> = ({ goBack }) => {
   return (
     <>
       <h1>Join new Server</h1>
+      <Formik
+        initialValues={{ inviteCode: "", serverId: undefined }}
+        onSubmit={async ({ inviteCode, serverId }, { setErrors }) => {
+          setErrors({
+            inviteCode: "What is going on here",
+            serverId: "Server Id error",
+          });
+          try {
+            const { data } = await axios.post(
+              `${API_ENDPOINT}/servers/${serverId}/members`,
+              {
+                inviteCode,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem(
+                    "accessToken"
+                  )}`,
+                },
+              }
+            );
+            console.log(data);
+          } catch (error) {
+            console.error(error.response);
+            console.error(error.response.data);
+          }
+        }}
+      >
+        {({ handleChange, handleSubmit, values, errors }) => (
+          <>
+            <form onSubmit={handleSubmit}>
+              <Input
+                full
+                value={values.serverId}
+                onChange={handleChange}
+                placeholder="Server Id"
+                name="serverId"
+              />
+              {errors.serverId && <h1>{errors.serverId}</h1>}
+              <Input
+                full
+                value={values.inviteCode}
+                onChange={handleChange}
+                placeholder="Invite Code"
+                name="inviteCode"
+              />
+              {errors.inviteCode && <h1>{errors.inviteCode}</h1>}
+              <Button full type="submit">
+                Join!
+              </Button>
+            </form>
+          </>
+        )}
+      </Formik>
       <button onClick={() => goBack()}>Go Back</button>
     </>
   );
