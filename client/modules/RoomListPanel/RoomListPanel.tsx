@@ -14,6 +14,7 @@ import { Formik } from "formik";
 import { Popup } from "../../components/Popup/Popup";
 import axios from "axios";
 import { API_ENDPOINT } from "../../constants";
+import { Input } from "../../components/Input/Input";
 
 enum Popups {
   Create = "create",
@@ -89,7 +90,8 @@ export const RoomList = () => {
             <>
               <h1>Create a Room</h1>
               <form onSubmit={handleSubmit}>
-                <input
+                <Input
+                  full
                   onChange={handleChange}
                   value={values.roomName}
                   name="roomName"
@@ -105,7 +107,47 @@ export const RoomList = () => {
       break;
 
     case Popups.Invite:
-      popup = <h1>Invite Popup</h1>;
+      popup = (
+        <>
+          <h1>Create Invite Code</h1>
+          <Formik
+            initialValues={{
+              inviteCode: "",
+            }}
+            onSubmit={async (values) => {
+              try {
+                const { data } = await axios.get(
+                  `${API_ENDPOINT}/servers/${serverId}/invites`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem(
+                        "accessToken"
+                      )}`,
+                    },
+                  }
+                );
+                values.inviteCode = data.inviteCode;
+              } catch (error) {
+                console.error(error.response);
+              }
+            }}
+          >
+            {({ handleSubmit, handleChange, values }) => (
+              <form onSubmit={handleSubmit}>
+                <Input
+                  full
+                  onChange={handleChange}
+                  value={values.inviteCode}
+                  name="inviteCode"
+                  placeholder="Invite Code"
+                  readOnly
+                />
+                <Button type="submit">Create Code</Button>
+              </form>
+            )}
+          </Formik>
+        </>
+      );
       break;
   }
 

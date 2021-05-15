@@ -67,7 +67,9 @@ export const useGetOneServer = (id: number) => {
 };
 
 export const useGetAllServers = (): [[] | Server[], { isLoading: boolean }] => {
-  const { user } = useAuth();
+  const { user } = useAuth({
+    redirectTo: "/",
+  });
   const [servers, setServers] = useState<[] | Server[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
