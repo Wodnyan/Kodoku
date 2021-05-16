@@ -9,6 +9,7 @@ import { useRecoilState } from "recoil";
 import { currentServerState } from "../../../global-state/current-server";
 import { useGetAllRoomsOfServer } from "../../../hooks/http/rooms";
 import { useAuth } from "../../../context/auth/AuthProvider";
+import { MemberListPanel } from "../../../modules/MemberListPanel/MemberListPanel";
 
 const PageWithRooms = () => {
   const {
@@ -52,7 +53,10 @@ const PageWithRooms = () => {
 
   return (
     <div className={styles.container}>
-      <ChatPageLayout roomList={<RoomList />} />
+      <ChatPageLayout
+        memberList={<MemberListPanel />}
+        roomList={<RoomList />}
+      />
     </div>
   );
 };

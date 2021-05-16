@@ -17,3 +17,9 @@ export type Room = {
   id: number;
   name: string;
 };
+
+export type Member = {
+  id: number;
+  username: string;
+  createdAt: string;
+};
