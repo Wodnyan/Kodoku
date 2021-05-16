@@ -6,6 +6,7 @@ import { Input } from "../../components/Input/Input";
 import { ChatLayout } from "../../components/layouts/ChatLayout/ChatLayout";
 import { API_ENDPOINT } from "../../constants";
 import { useAuth } from "../../context/auth/AuthProvider";
+import { useScrollToBottom } from "../../hooks/useScrollToBottom";
 import { User } from "../../types";
 
 type Message = {
@@ -19,6 +20,7 @@ export const Chat = () => {
     query: { serverId, roomId },
   } = useRouter();
   const { user } = useAuth();
+  const { ref, scrollToBottom } = useScrollToBottom();
 
   const [messages, setMessages] = useState<[] | Message[]>([]);
 
@@ -32,28 +34,39 @@ export const Chat = () => {
             params: {
               limit: 25,
               offset: 0,
+              orderBy: "desc",
             },
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           }
         );
-        console.log(data);
-        setMessages(data.messages);
+        let messages: Message[] | [] = [];
+
+        // Reverse messages order
+        for (let i = 0; i < data.messages.length; i++) {
+          const message = (data.messages as never)[i];
+          messages = [message, ...messages];
+        }
+
+        setMessages(messages);
+        if (ref.current) {
+          scrollToBottom("auto");
+        }
       } catch (error) {
-        console.log(error.response);
+        console.error(error);
       }
     };
     if (serverId && roomId) {
       getAllMessages();
     }
     return () => {};
-  }, [serverId, roomId]);
+  }, [serverId, roomId, ref]);
 
   return (
     <ChatLayout
       messages={(messages as Message[]).map((message) => (
-        <div key={message.id}>
+        <div ref={ref} key={message.id}>
           <h1>{message.body}</h1>
         </div>
       ))}
@@ -89,8 +102,9 @@ export const Chat = () => {
                 },
               ]);
               resetForm();
+              scrollToBottom("smooth");
             } catch (error) {
-              console.log(error.response);
+              console.error(error.response);
             }
           }}
         >

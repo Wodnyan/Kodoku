@@ -6,10 +6,12 @@
 
 .messages {
   height: 100%;
+  display: block;
   overflow-y: auto;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   padding: 0.5rem 0.2rem;
+  padding-bottom: 5rem;
 }
 
 .input {
