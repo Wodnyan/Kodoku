@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import styles from "../../../styles/channels/channels.module.css";
-import { ChatPageLayout } from "../../../modules/layouts/ChatPageLayout/ChatPageLayout";
+import { ChatPageLayout } from "../../../components/layouts/ChatPageLayout/ChatPageLayout";
 import { RoomList } from "../../../modules/RoomListPanel/RoomListPanel";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../constants";
@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { currentServerState } from "../../../global-state/current-server";
 import { useGetAllRoomsOfServer } from "../../../hooks/http/rooms";
+import { useAuth } from "../../../context/auth/AuthProvider";
 
 const PageWithRooms = () => {
   const {
@@ -15,6 +16,9 @@ const PageWithRooms = () => {
   } = useRouter();
   const [, setCurrentServer] = useRecoilState(currentServerState);
   const [rooms] = useGetAllRoomsOfServer(Number(serverId));
+  const {} = useAuth({
+    redirectTo: "/",
+  });
 
   // Set rooms in global state
   useEffect(() => {
