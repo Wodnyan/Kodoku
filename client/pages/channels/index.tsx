@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../../styles/channels/channels.module.css";
-import { ChatPageLayout } from "../../modules/layouts/ChatPageLayout/ChatPageLayout";
+import { ChatPageLayout } from "../../components/layouts/ChatPageLayout/ChatPageLayout";
 
 const ChannelsPage = () => {
   return (

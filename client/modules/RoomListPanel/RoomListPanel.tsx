@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useGetAllRoomsOfServer } from "../../hooks/http/rooms";
 import { Room } from "../../types";
 import styles from "./room-list-panel.module.css";
 import { Avatar } from "../../components/Avatar/Avatar";
@@ -15,6 +14,7 @@ import { Popup } from "../../components/Popup/Popup";
 import axios from "axios";
 import { API_ENDPOINT } from "../../constants";
 import { Input } from "../../components/Input/Input";
+import NextLink from "next/link";
 
 enum Popups {
   Create = "create",
@@ -220,7 +220,11 @@ export const RoomList = () => {
         {currentServer.rooms.length === 0 && <p>No rooms</p>}
         <ul className={styles.roomList}>
           {(currentServer.rooms as Room[]).map((room) => (
-            <li key={room.id}>{room.name}</li>
+            <li key={room.id}>
+              <NextLink href={`/channels/${serverId}/${room.id}`}>
+                <a>{room.name}</a>
+              </NextLink>
+            </li>
           ))}
         </ul>
       </section>
