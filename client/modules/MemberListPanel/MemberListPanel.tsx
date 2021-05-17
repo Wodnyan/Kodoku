@@ -31,7 +31,7 @@ export const MemberListPanel = () => {
       <h1>Members</h1>
       <ul className={styles.memberList}>
         {members.map((member: Member) => (
-          <li>{member.username}</li>
+          <li key={member.id}>{member.username}</li>
         ))}
       </ul>
     </section>
