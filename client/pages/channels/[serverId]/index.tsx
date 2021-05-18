@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styles from "../../../styles/channels/channels.module.css";
 import { ChatPageLayout } from "../../../components/layouts/ChatPageLayout/ChatPageLayout";
-import { RoomList } from "../../../modules/RoomListPanel/RoomListPanel";
+import { RoomListPanel } from "../../../modules/RoomListPanel/RoomListPanel";
 import axios from "axios";
 import { API_ENDPOINT } from "../../../constants";
 import { useRouter } from "next/router";
@@ -55,7 +55,7 @@ const PageWithRooms = () => {
     <div className={styles.container}>
       <ChatPageLayout
         memberList={<MemberListPanel />}
-        roomList={<RoomList />}
+        roomList={<RoomListPanel />}
       />
     </div>
   );

@@ -8,7 +8,7 @@ import { currentServerState } from "../../../../global-state/current-server";
 import { useGetAllRoomsOfServer } from "../../../../hooks/http/rooms";
 import { Chat } from "../../../../modules/Chat/Chat";
 import { MemberListPanel } from "../../../../modules/MemberListPanel/MemberListPanel";
-import { RoomList } from "../../../../modules/RoomListPanel/RoomListPanel";
+import { RoomListPanel } from "../../../../modules/RoomListPanel/RoomListPanel";
 import styles from "../../../../styles/channels/channels.module.css";
 
 const PageWithChat = () => {
@@ -53,7 +53,7 @@ const PageWithChat = () => {
       <ChatPageLayout
         memberList={<MemberListPanel />}
         chat={<Chat />}
-        roomList={<RoomList />}
+        roomList={<RoomListPanel />}
       />
     </div>
   );
