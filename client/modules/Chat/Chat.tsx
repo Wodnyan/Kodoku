@@ -7,6 +7,7 @@ import { ChatLayout } from "../../components/layouts/ChatLayout/ChatLayout";
 import { API_ENDPOINT } from "../../constants";
 import { useAuth } from "../../context/auth/AuthProvider";
 import { useScrollToBottom } from "../../hooks/useScrollToBottom";
+import { useSocketio } from "../../hooks/useSocketio";
 import { User } from "../../types";
 
 type Message = {
@@ -21,11 +22,42 @@ export const Chat = () => {
   } = useRouter();
   const { user } = useAuth();
   const { ref, scrollToBottom } = useScrollToBottom();
+  const [pingToScrollDown, setPingToScrollDown] = useState(false);
+  const socket = useSocketio();
 
   const [messages, setMessages] = useState<[] | Message[]>([]);
 
+  // Subscribe to the room
   useEffect(() => {
-    // Get all messages of a rooms
+    socket?.on("connect", () => {
+      console.log("connected");
+
+      socket.emit("subscribeToRoom", {
+        serverId,
+        roomId,
+      });
+    });
+  }, [socket, roomId, serverId]);
+
+  // Message event
+  useEffect(() => {
+    socket?.on("message", (message) => {
+      console.log(message);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: message.id,
+          body: message.message,
+          user: message.user,
+        },
+      ]);
+      scrollToBottom("smooth");
+      setPingToScrollDown(true);
+    });
+  }, [socket, roomId, serverId]);
+
+  // Get all messages of a rooms
+  useEffect(() => {
     const getAllMessages = async () => {
       try {
         const { data } = await axios.get(
@@ -76,37 +108,26 @@ export const Chat = () => {
             message: "",
           }}
           onSubmit={async ({ message }, { resetForm }) => {
-            // Refactor: This is supposed to be done with sockets
             if (!message) return;
-            try {
-              const {
-                data: { newMessage },
-              } = await axios.post(
-                `${API_ENDPOINT}/servers/${serverId}/rooms/${roomId}/messages`,
-                {
-                  message,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem(
-                      "accessToken"
-                    )}`,
-                  },
-                }
-              );
-              setMessages((prev) => [
-                ...prev,
-                {
-                  body: newMessage.body,
-                  id: newMessage.id,
-                  user,
-                },
-              ]);
-              resetForm();
-              scrollToBottom("smooth");
-            } catch (error) {
-              console.error(error.response);
-            }
+            socket?.emit("message", {
+              message,
+              username: user.username,
+              userId: user.id,
+              serverId,
+              roomId,
+            });
+
+            setMessages((prev) => [
+              ...prev,
+              {
+                body: message,
+                user,
+                id: +new Date(),
+              },
+            ]);
+
+            resetForm();
+            scrollToBottom("smooth");
           }}
         >
           {({ handleChange, values, handleSubmit }) => (
