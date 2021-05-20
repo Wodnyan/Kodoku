@@ -77,6 +77,7 @@ export const Chat = () => {
           }}
           onSubmit={async ({ message }, { resetForm }) => {
             // Refactor: This is supposed to be done with sockets
+            if (!message) return;
             try {
               const {
                 data: { newMessage },

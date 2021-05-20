@@ -9,15 +9,13 @@ const messageController = new MessageController();
 export default function (server: Server) {
   const io = socketio(server, {
     cors: {
-      origin: "http://localhost:3000/",
+      origin: "http://localhost:3000",
       credentials: true,
     },
   });
 
   io.on("connection", (socket: Socket) => {
-    console.log("User Connected");
-
-    socket.on("subscribe", ({ serverId, roomId }) => {
+    socket.on("subscribeToRoom", ({ serverId, roomId }) => {
       const room = `${serverId}:${roomId}`;
       socket.join(room);
     });
@@ -30,15 +28,15 @@ export default function (server: Server) {
           serverId,
           roomId,
           userId,
-          message
+          message,
         );
         socket.to(room).emit("message", {
           id: newMessage.id,
           message: message,
           username,
-          createdAt: newMessage.created_at,
+          createdAt: newMessage.createdAt,
         });
-      }
+      },
     );
   });
 }

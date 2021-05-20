@@ -1,18 +1,24 @@
-import { Model } from "objection";
+import { Model, snakeCaseMappers } from "objection";
 import Room from "./Room";
 import User from "./User";
 
 class Message extends Model {
   id!: number;
-  sender_id!: number;
-  room_id!: number;
-  server_id!: number;
+  senderId!: number;
+  roomId!: number;
+  serverId!: number;
   body!: string;
-  created_at!: string;
-  updated_at!: string;
+  createdAt!: string;
+  updatedAt!: string;
+
   static get tableName() {
     return "messages";
   }
+
+  static get columnNameMappers() {
+    return snakeCaseMappers();
+  }
+
   static relationMappings = {
     room: {
       relation: Model.BelongsToOneRelation,

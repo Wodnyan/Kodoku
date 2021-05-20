@@ -2,12 +2,13 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import { ChatPageLayout } from "../../../../components/layouts/ChatPageLayout/ChatPageLayout";
 import { API_ENDPOINT } from "../../../../constants";
 import { currentServerState } from "../../../../global-state/current-server";
 import { useGetAllRoomsOfServer } from "../../../../hooks/http/rooms";
 import { Chat } from "../../../../modules/Chat/Chat";
-import { ChatPageLayout } from "../../../../components/layouts/ChatPageLayout/ChatPageLayout";
-import { RoomList } from "../../../../modules/RoomListPanel/RoomListPanel";
+import { MemberListPanel } from "../../../../modules/MemberListPanel/MemberListPanel";
+import { RoomListPanel } from "../../../../modules/RoomListPanel/RoomListPanel";
 import styles from "../../../../styles/channels/channels.module.css";
 
 const PageWithChat = () => {
@@ -49,7 +50,11 @@ const PageWithChat = () => {
 
   return (
     <div className={styles.container}>
-      <ChatPageLayout chat={<Chat />} roomList={<RoomList />} />
+      <ChatPageLayout
+        memberList={<MemberListPanel />}
+        chat={<Chat />}
+        roomList={<RoomListPanel />}
+      />
     </div>
   );
 };

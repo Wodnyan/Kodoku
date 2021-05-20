@@ -19,11 +19,12 @@ export class MessageController {
     },
   };
   static select = ["messages.id", "body", "messages.created_at as createdAt"];
+
   public async create(
     serverId: number,
     roomId: number,
     userId: number,
-    message: string
+    message: string,
   ) {
     // Check if user is a member of the server
     const isMember = await Member.query()
@@ -38,17 +39,20 @@ export class MessageController {
     await validateSchemaAsync(messageSchema, {
       message,
     });
-    const newMessage = await Message.query().insertAndFetch({
-      server_id: serverId,
-      room_id: roomId,
-      sender_id: userId,
-      body: message,
-    });
+    const newMessage = await Message.query()
+      .insert({
+        serverId: serverId,
+        roomId: roomId,
+        senderId: userId,
+        body: message,
+      })
+      .returning("*")
+      .withGraphFetched("user(selectNonCredentials)")
+      .modifiers(this.modifiers);
     return newMessage;
   }
 
   public async getAll(roomId?: number, options?: Options) {
-    // Write validation for api options
     await validateSchemaAsync(defaultQueryParamOptions, options);
     const messages = await Message.query()
       .withGraphJoined("user(selectNonCredentials)")

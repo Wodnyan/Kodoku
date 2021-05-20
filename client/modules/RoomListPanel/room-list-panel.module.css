@@ -8,6 +8,10 @@ ul.roomList {
   list-style-type: none;
 }
 
+.roomListItemCurrent {
+  color: var(--gray-500);
+}
+
 .userSection {
   margin-top: auto;
   display: flex;
