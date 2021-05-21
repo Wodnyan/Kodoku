@@ -1,3 +1,4 @@
+import React from "react";
 import "../styles/globals.css";
 import Router from "next/router";
 import Head from "next/head";

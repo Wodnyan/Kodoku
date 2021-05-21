@@ -8,6 +8,7 @@ import { Input } from "../../components/Input/Input";
 
 import { Formik } from "formik";
 import { useLogin } from "../../hooks/http/auth/useLogin";
+import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 
 const Register = () => {
   const router = useRouter();
@@ -42,7 +43,9 @@ const Register = () => {
                 type="email"
                 name="email"
               />
-              {errors?.email && <h1>{errors.email.toLocaleLowerCase()}</h1>}
+              {errors?.email && (
+                <ErrorMessage error={errors.email.toLocaleLowerCase()} />
+              )}
               <Input
                 onChange={handleChange}
                 value={values.password}
@@ -51,7 +54,10 @@ const Register = () => {
                 type="password"
                 name="password"
               />
-              {errors?.password && <h1>{errors.password.toLowerCase()}</h1>}
+              {/* {errors?.password && <h1>{errors.password.toLowerCase()}</h1>} */}
+              {errors?.password && (
+                <ErrorMessage error={errors.password.toLocaleLowerCase()} />
+              )}
               <div className={styles.bottom}>
                 <NextLink href="/auth/register">
                   <a>Create a new account</a>
