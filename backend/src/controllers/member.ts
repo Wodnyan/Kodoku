@@ -16,7 +16,7 @@ export class MemberController {
   public static async create(
     serverId: number,
     userId: number,
-    inviteCode: string
+    inviteCode: string,
   ) {
     await validateSchemaAsync(inviteSchema, {
       inviteCode,
@@ -84,7 +84,7 @@ export class MemberController {
         member_id: userId,
         server_id: serverId,
         is_owner: true,
-      })
+      }),
     );
   }
 
