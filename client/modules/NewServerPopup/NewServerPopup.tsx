@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Formik } from "formik";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import { Button } from "../../components/Button/Button";
@@ -158,17 +157,16 @@ const CreateNewServer: React.FC<CreateNewServerProps> = ({
   );
 };
 
-const JoinNewServer: React.FC<CreateNewServerProps> = ({ goBack }) => {
+const JoinNewServer: React.FC<CreateNewServerProps> = ({
+  goBack,
+  addServer,
+}) => {
   return (
     <>
       <h1>Join new Server</h1>
       <Formik
         initialValues={{ inviteCode: "", serverId: undefined }}
-        onSubmit={async ({ inviteCode, serverId }, { setErrors }) => {
-          setErrors({
-            inviteCode: "What is going on here",
-            serverId: "Server Id error",
-          });
+        onSubmit={async ({ inviteCode, serverId }) => {
           try {
             const { data } = await axios.post(
               `${API_ENDPOINT}/servers/${serverId}/members`,
@@ -183,10 +181,14 @@ const JoinNewServer: React.FC<CreateNewServerProps> = ({ goBack }) => {
                 },
               }
             );
-            console.log(data);
+            const {
+              data: { server },
+            } = await axios.get(
+              `${API_ENDPOINT}/servers/${data.member.serverId}`
+            );
+            addServer(server);
           } catch (error) {
             console.error(error.response);
-            console.error(error.response.data);
           }
         }}
       >
