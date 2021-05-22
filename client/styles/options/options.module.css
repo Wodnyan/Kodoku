@@ -1,0 +1,86 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  overflow: hidden;
+}
+
+.container ul {
+  list-style: none;
+}
+
+.settingsListContainer {
+  /* height: 100%; */
+  background: var(--gray-800);
+  padding: 3rem 1rem 0 0;
+  display: flex;
+  /* width: 100%; */
+  /* overflow-y: auto; */
+}
+
+.settingsList {
+  margin-left: auto;
+}
+
+.settingsList .settingsListItem {
+  font-size: 1.2rem;
+}
+
+.currentSettingContainer {
+  overflow-y: auto;
+}
+
+.currentSetting {
+  padding: 3rem 1rem 0 1rem;
+  width: 100%;
+  max-width: var(--breakpoint-md);
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.topRow .goBackBtn {
+}
+
+.userInfoContainer {
+  background: var(--gray-800);
+  padding: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.userInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.userInfo > div {
+  display: flex;
+  align-items: center;
+}
+
+.userInfo > div p {
+  margin-left: 5px;
+  font-size: 1.2rem;
+}
+
+.userInfoSettingsListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.userInfoSettingsListItem:last-child {
+  margin-bottom: 0;
+}
+
+.userInfoSettingsListItem .label {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gray-500);
+  margin-bottom: 0.1rem;
+}
