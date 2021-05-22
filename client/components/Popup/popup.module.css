@@ -10,3 +10,23 @@
 
   background: var(--gray-600);
 }
+
+.popup.sm {
+  width: 100vw;
+  max-width: var(--breakpoint-sm);
+}
+
+.popup.md {
+  width: 100vw;
+  max-width: var(--breakpoint-md);
+}
+
+.popup.lg {
+  width: 100vw;
+  max-width: var(--breakpoint-lg);
+}
+
+.popup.xl {
+  width: 100vw;
+  max-width: var(--breakpoint-xl);
+}
