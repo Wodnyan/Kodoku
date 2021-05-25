@@ -14,7 +14,7 @@ router.use(limiter(100));
 router.post("/login", async (req, res, next) => {
   try {
     const { user, accessToken, refreshToken } = await authController.login(
-      req.body
+      req.body,
     );
     res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.json({
@@ -30,7 +30,7 @@ router.post("/login", async (req, res, next) => {
 router.post("/register", async (req, res, next) => {
   try {
     const { accessToken, refreshToken, user } = await authController.signUp(
-      req.body
+      req.body,
     );
     res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.status(201).json({
@@ -43,7 +43,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.get("/logout", protectRoute, async (req, res, next) => {
+router.delete("/logout", protectRoute, async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refresh_token;
     await RefreshTokenController.blackList(refreshToken);
@@ -71,7 +71,7 @@ router.get("/check", protectRoute, async (req, res, next) => {
 router.get("/github", (req, res, _next) => {
   passport.authenticate("github", { scope: ["user:email"], session: false })(
     req,
-    res
+    res,
   );
 });
 
@@ -88,7 +88,7 @@ router.get("/github/callback", (req, res, next) => {
         httpOnly: true,
       });
       res.redirect(`${CLIENT_URL}/chat`);
-    }
+    },
   )(req, res);
 });
 
