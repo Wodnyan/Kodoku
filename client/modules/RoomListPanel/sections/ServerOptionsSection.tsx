@@ -8,6 +8,7 @@ import { Button } from "../../../components/Button/Button";
 import { Input } from "../../../components/Input/Input";
 import { Popup } from "../../../components/Popup/Popup";
 import { API_ENDPOINT } from "../../../constants";
+import { useAuth } from "../../../context/auth/AuthProvider";
 import { currentServerState } from "../../../global-state/current-server";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { Server } from "../../../types";
@@ -21,9 +22,12 @@ enum Popups {
 export const ServerOptionsSection: React.FC<{ server?: Server }> = ({
   server,
 }) => {
+  const router = useRouter();
   const [popout, setPopout] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [currentPopup, setCurrentPopup] = useState<Popups | null>(null);
+  const [currentServer, setCurrentServer] = useRecoilState(currentServerState);
+  const { user } = useAuth();
 
   const closePopupBtnRef = useRef(null);
 
@@ -42,6 +46,29 @@ export const ServerOptionsSection: React.FC<{ server?: Server }> = ({
     case Popups.Invite:
       popup = <CreateInvitePopupView />;
       break;
+  }
+
+  async function leaveServer() {
+    if (!currentServer.server.id || !user.id) {
+      return;
+    }
+    try {
+      await axios.delete(
+        `${API_ENDPOINT}/servers/${currentServer.server.id}/members/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      setCurrentServer((prev) => ({
+        ...prev,
+        rooms: prev.rooms.filter((room) => room.id !== currentServer.server.id),
+      }));
+      router.push("/channels");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -104,7 +131,9 @@ export const ServerOptionsSection: React.FC<{ server?: Server }> = ({
             >
               Create Invite
             </Button>
-            <Button full>Leave Server</Button>
+            <Button full onClick={leaveServer}>
+              Leave Server
+            </Button>
             <Button full>Server Options</Button>
           </div>
         </CSSTransition>
