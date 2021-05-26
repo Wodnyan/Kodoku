@@ -10,6 +10,7 @@ import { currentServerState } from "../../../global-state/current-server";
 import { useGetAllRoomsOfServer } from "../../../hooks/http/rooms";
 import { useAuth } from "../../../context/auth/AuthProvider";
 import { MemberListPanel } from "../../../modules/MemberListPanel/MemberListPanel";
+import { useIsMember } from "../../../hooks/http/members/useIsMember";
 
 const PageWithRooms = () => {
   const {
@@ -20,6 +21,7 @@ const PageWithRooms = () => {
   const {} = useAuth({
     redirectTo: "/",
   });
+  const {} = useIsMember();
 
   // Set rooms in global state
   useEffect(() => {
