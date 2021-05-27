@@ -4,7 +4,7 @@ import { MemberController } from "../../controllers/member";
 export const getAllMembers = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { serverId } = req.params;
@@ -20,13 +20,13 @@ export const getAllMembers = async (
 export const getOneMember = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { userId, serverId } = req.params;
   try {
     const member = await MemberController.getOne(
       Number(serverId),
-      Number(userId)
+      Number(userId),
     );
     res.json({
       member,
@@ -39,7 +39,7 @@ export const getOneMember = async (
 export const joinServer = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { serverId } = req.params;
@@ -48,7 +48,7 @@ export const joinServer = async (
     const newMember = await MemberController.create(
       Number(serverId),
       id,
-      inviteCode
+      inviteCode,
     );
     res.status(201).json({
       member: newMember,
@@ -61,13 +61,12 @@ export const joinServer = async (
 export const deleteMember = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    // TODO: only the owner should be able to delete member.
-    const { serverId } = req.params;
-    const { userId } = req.body;
-    await MemberController.delete(Number(serverId), userId);
+    // TODO: if user is owner throw exception
+    const { serverId, userId } = req.params;
+    await MemberController.delete(Number(serverId), Number(userId));
     res.status(204).json({});
   } catch (error) {
     next(error);

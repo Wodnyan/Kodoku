@@ -17,6 +17,6 @@ router.get("/:userId", protectRoute, getOneMember);
 
 router.post("/", protectRoute, joinServer);
 
-router.delete("/", protectRoute, deleteMember);
+router.delete("/:userId", protectRoute, deleteMember);
 
 export default router;
