@@ -19,7 +19,7 @@ export const useIsMember = () => {
     (async () => {
       try {
         if (user.id || serverId) {
-          const foo = await axios.get(
+          await axios.get(
             `${API_ENDPOINT}/servers/${serverId}/members/${user.id}`,
             {
               headers: {
@@ -27,7 +27,6 @@ export const useIsMember = () => {
               },
             }
           );
-          console.log(foo.data);
         }
       } catch (error) {
         if (
@@ -35,7 +34,7 @@ export const useIsMember = () => {
           error.response.status === 404 &&
           error.response.data.message === "No member found"
         ) {
-          router.push("/");
+          router.push("/channels");
         }
       }
     })();
