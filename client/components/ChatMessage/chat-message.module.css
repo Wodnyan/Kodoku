@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.username {
+  font-size: 1rem;
+}
+
+.avatarContainer {
+  margin-right: 0.3rem;
+}

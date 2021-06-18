@@ -2,6 +2,8 @@ import axios from "axios";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { Button } from "../../components/Button/Button";
+import { ChatMessage } from "../../components/ChatMessage/ChatMessage";
 import { Input } from "../../components/Input/Input";
 import { ChatLayout } from "../../components/layouts/ChatLayout/ChatLayout";
 import { API_ENDPOINT } from "../../constants";
@@ -24,6 +26,7 @@ export const Chat = () => {
   const { ref, scrollToBottom } = useScrollToBottom();
   const [pingToScrollDown, setPingToScrollDown] = useState(false);
   const socket = useSocketio();
+  // const chatRef = useRef(null);
 
   const [messages, setMessages] = useState<[] | Message[]>([]);
 
@@ -64,7 +67,7 @@ export const Chat = () => {
           `${API_ENDPOINT}/servers/${serverId}/rooms/${roomId}/messages`,
           {
             params: {
-              limit: 25,
+              limit: 100,
               offset: 0,
               orderBy: "desc",
             },
@@ -96,53 +99,56 @@ export const Chat = () => {
   }, [serverId, roomId, ref]);
 
   return (
-    <ChatLayout
-      messages={(messages as Message[]).map((message) => (
-        <div ref={ref} key={message.id}>
-          <h1>{message.body}</h1>
-        </div>
-      ))}
-      input={
-        <Formik
-          initialValues={{
-            message: "",
-          }}
-          onSubmit={async ({ message }, { resetForm }) => {
-            if (!message) return;
-            socket?.emit("message", {
-              message,
-              username: user.username,
-              userId: user.id,
-              serverId,
-              roomId,
-            });
+    <>
+      <ChatLayout
+        messages={(messages as Message[]).map((message) => (
+          <div ref={ref} key={message.id}>
+            <ChatMessage user={message.user} message={message.body} />
+          </div>
+        ))}
+        input={
+          <Formik
+            initialValues={{
+              message: "",
+            }}
+            onSubmit={async ({ message }, { resetForm }) => {
+              if (!message) return;
+              socket?.emit("message", {
+                message,
+                username: user.username,
+                userId: user.id,
+                serverId,
+                roomId,
+              });
 
-            setMessages((prev) => [
-              ...prev,
-              {
-                body: message,
-                user,
-                id: +new Date(),
-              },
-            ]);
+              setMessages((prev) => [
+                ...prev,
+                {
+                  body: message,
+                  user,
+                  id: +new Date(),
+                },
+              ]);
 
-            resetForm();
-            scrollToBottom("smooth");
-          }}
-        >
-          {({ handleChange, values, handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <Input
-                full
-                onChange={handleChange}
-                value={values.message}
-                name="message"
-                placeholder="Write a message..."
-              />
-            </form>
-          )}
-        </Formik>
-      }
-    />
+              resetForm();
+              scrollToBottom("smooth");
+            }}
+          >
+            {({ handleChange, values, handleSubmit }) => (
+              <form onSubmit={handleSubmit}>
+                <Input
+                  full
+                  onChange={handleChange}
+                  value={values.message}
+                  name="message"
+                  placeholder="Write a message..."
+                />
+              </form>
+            )}
+          </Formik>
+        }
+      />
+      {pingToScrollDown && <Button>Scroll Back</Button>}
+    </>
   );
 };
