@@ -4,6 +4,9 @@ import Router from "next/router";
 import Head from "next/head";
 import { AuthProvider } from "../context/auth/AuthProvider";
 import ProgressBar from "@badrap/bar-of-progress";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate } from "react-query/hydration";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { RecoilRoot } from "recoil";
 
 const progress = new ProgressBar({
@@ -18,8 +21,10 @@ Router.events.on("routeChangeComplete", progress.finish);
 Router.events.on("routeChangeError", progress.finish);
 
 function MyApp({ Component, pageProps }) {
+  const [queryClient] = React.useState(() => new QueryClient());
+
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Head>
         <title>Kodoku</title>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -28,12 +33,14 @@ function MyApp({ Component, pageProps }) {
           rel="stylesheet"
         />
       </Head>
-      <RecoilRoot>
-        <AuthProvider>
-          <Component {...pageProps} />
-        </AuthProvider>
-      </RecoilRoot>
-    </>
+      <Hydrate>
+        <RecoilRoot>
+          <AuthProvider>
+            <Component {...pageProps} />
+          </AuthProvider>
+        </RecoilRoot>
+      </Hydrate>
+    </QueryClientProvider>
   );
 }
 
