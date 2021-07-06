@@ -17,7 +17,7 @@ router.post("/", protectRoute, async (req, res, next) => {
       Number(serverId),
       Number(roomId),
       Number(userId),
-      message
+      message,
     );
     res.status(201).json({
       newMessage,
