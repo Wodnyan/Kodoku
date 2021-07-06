@@ -1,16 +1,16 @@
-import axios from "axios";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { ChatMessage } from "../../components/ChatMessage/ChatMessage";
 import { Input } from "../../components/Input/Input";
-import { ChatLayout } from "../../components/layouts/ChatLayout/ChatLayout";
-import { API_ENDPOINT } from "../../constants";
 import { useAuth } from "../../context/auth/AuthProvider";
 import { useScrollToBottom } from "../../hooks/useScrollToBottom";
 import { useSocketio } from "../../hooks/useSocketio";
+import { fetchAllMessagesOfRoom } from "../../lib/api/messages";
+import { reverse } from "../../lib/reverse";
 import { User } from "../../types";
+import styles from "./chat.module.css";
 
 type Message = {
   id: number;
@@ -18,17 +18,52 @@ type Message = {
   user: User;
 };
 
+const PAGINATION_LIMIT_AMOUNT = 10;
+
 export const Chat = () => {
   const {
     query: { serverId, roomId },
   } = useRouter();
+
   const { user } = useAuth();
+
   const { ref, scrollToBottom } = useScrollToBottom();
-  const [pingToScrollDown, setPingToScrollDown] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const [, setPingToScrollDown] = useState(false);
+  const [pagination, setPagination] = useState({
+    offset: 0,
+    limit: PAGINATION_LIMIT_AMOUNT,
+  });
+
   const socket = useSocketio();
-  // const chatRef = useRef(null);
 
   const [messages, setMessages] = useState<[] | Message[]>([]);
+
+  async function loadMore() {
+    const fetchedMessages = await fetchAllMessagesOfRoom(
+      Number(serverId),
+      Number(roomId),
+      {
+        limit: pagination.limit + PAGINATION_LIMIT_AMOUNT,
+        offset: pagination.offset,
+        orderBy: "desc",
+      }
+    );
+    const reversedMessages = reverse<Message>(fetchedMessages);
+
+    const oldScrollHeight = chatContainerRef.current.scrollHeight;
+
+    setMessages(reversedMessages);
+
+    chatContainerRef.current.scrollTop =
+      chatContainerRef.current.scrollHeight - oldScrollHeight;
+
+    setPagination((prev) => ({
+      ...prev,
+      limit: prev.limit + PAGINATION_LIMIT_AMOUNT,
+    }));
+  }
 
   // Subscribe to the room
   useEffect(() => {
@@ -63,28 +98,17 @@ export const Chat = () => {
   useEffect(() => {
     const getAllMessages = async () => {
       try {
-        const { data } = await axios.get(
-          `${API_ENDPOINT}/servers/${serverId}/rooms/${roomId}/messages`,
+        const fetchedMessages = await fetchAllMessagesOfRoom(
+          Number(serverId),
+          Number(roomId),
           {
-            params: {
-              limit: 100,
-              offset: 0,
-              orderBy: "desc",
-            },
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
+            limit: pagination.limit,
+            offset: pagination.offset,
+            orderBy: "desc",
           }
         );
-        let messages: Message[] | [] = [];
-
-        // Reverse messages order
-        for (let i = 0; i < data.messages.length; i++) {
-          const message = (data.messages as never)[i];
-          messages = [message, ...messages];
-        }
-
-        setMessages(messages);
+        const reversedMessages = reverse<Message>(fetchedMessages);
+        setMessages(reversedMessages);
         if (ref.current) {
           scrollToBottom("auto");
         }
@@ -99,56 +123,67 @@ export const Chat = () => {
   }, [serverId, roomId, ref]);
 
   return (
-    <>
-      <ChatLayout
-        messages={(messages as Message[]).map((message) => (
-          <div ref={ref} key={message.id}>
-            <ChatMessage user={message.user} message={message.body} />
+    <div className={styles.container}>
+      <main ref={chatContainerRef} className={styles.messages}>
+        {(messages as Message[]).map((message, id) => (
+          <div key={message.id}>
+            {id === 0 && (
+              <Button
+                style={{ margin: "0.5rem 0 1rem" }}
+                full
+                color="primary"
+                onClick={loadMore}
+              >
+                Load more
+              </Button>
+            )}
+            <div id="message" ref={ref}>
+              <ChatMessage user={message.user} message={message.body} />
+            </div>
           </div>
         ))}
-        input={
-          <Formik
-            initialValues={{
-              message: "",
-            }}
-            onSubmit={async ({ message }, { resetForm }) => {
-              if (!message) return;
-              socket?.emit("message", {
-                message,
-                username: user.username,
-                userId: user.id,
-                serverId,
-                roomId,
-              });
+      </main>
+      <div className={styles.input}>
+        <Formik
+          initialValues={{
+            message: "",
+          }}
+          onSubmit={async ({ message }, { resetForm }) => {
+            if (!message) return;
+            socket?.emit("message", {
+              message,
+              username: user.username,
+              userId: user.id,
+              serverId,
+              roomId,
+            });
 
-              setMessages((prev) => [
-                ...prev,
-                {
-                  body: message,
-                  user,
-                  id: +new Date(),
-                },
-              ]);
+            setMessages((prev) => [
+              ...prev,
+              {
+                body: message,
+                user,
+                id: +new Date(),
+              },
+            ]);
 
-              resetForm();
-              scrollToBottom("smooth");
-            }}
-          >
-            {({ handleChange, values, handleSubmit }) => (
-              <form onSubmit={handleSubmit}>
-                <Input
-                  full
-                  onChange={handleChange}
-                  value={values.message}
-                  name="message"
-                  placeholder="Write a message..."
-                />
-              </form>
-            )}
-          </Formik>
-        }
-      />
-      {pingToScrollDown && <Button>Scroll Back</Button>}
-    </>
+            resetForm();
+            scrollToBottom("smooth");
+          }}
+        >
+          {({ handleChange, values, handleSubmit }) => (
+            <form onSubmit={handleSubmit}>
+              <Input
+                full
+                onChange={handleChange}
+                value={values.message}
+                name="message"
+                placeholder="Write a message..."
+              />
+            </form>
+          )}
+        </Formik>
+      </div>
+    </div>
   );
 };
