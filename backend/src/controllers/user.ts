@@ -39,6 +39,28 @@ export class UserController {
     };
   }
 
+  static async changeAvatar() {
+    throw new Error("NOT IMPLEMENTED");
+  }
+
+  static async changeEmail() {
+    throw new Error("NOT IMPLEMENTED");
+  }
+
+  static async changeUsername(userId: number, newUsername: string) {
+    await User.query()
+      .patch({
+        username: newUsername,
+      })
+      .findById(userId);
+    const user = await UserController.getOne(userId);
+    return user;
+  }
+
+  static async changePassword() {
+    throw new Error("NOT IMPLEMENTED");
+  }
+
   static async getOneByEmail(email: string) {
     const user = await User.query()
       .where({

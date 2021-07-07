@@ -5,7 +5,7 @@ import HttpError from "../lib/exceptions/error-handler";
 export async function checkAuth(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const bearerToken = req.headers.authorization;
@@ -21,9 +21,22 @@ export async function checkAuth(
 export async function protectRoute(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   if (!req.user) {
+    next(new HttpError("Unauthorized", 401));
+  } else {
+    next();
+  }
+}
+
+export async function checkUserId(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
+  const { user } = req as any;
+  if (!user || user.id !== Number(req.params.userId)) {
     next(new HttpError("Unauthorized", 401));
   } else {
     next();
