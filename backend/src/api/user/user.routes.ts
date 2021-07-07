@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { checkUserId, protectRoute } from "../../middlewares/auth";
 import {
+  changeEmail,
   changeUsername,
   getAllServersOfUser,
   getAllUsers,
@@ -16,7 +17,7 @@ router.get("/", protectRoute, getAllUsers);
 router.get("/:userId/servers", protectRoute, getAllServersOfUser);
 
 router.patch("/:userId/avatar", protectRoute);
-router.patch("/:userId/email", protectRoute);
+router.patch("/:userId/email", protectRoute, checkUserId, changeEmail);
 router.patch("/:userId/username", protectRoute, checkUserId, changeUsername);
 router.patch("/:userId/password", protectRoute);
 

@@ -43,8 +43,14 @@ export class UserController {
     throw new Error("NOT IMPLEMENTED");
   }
 
-  static async changeEmail() {
-    throw new Error("NOT IMPLEMENTED");
+  static async changeEmail(userId: number, newEmail: string) {
+    await User.query()
+      .patch({
+        email: newEmail,
+      })
+      .findById(userId);
+    const user = await UserController.getOne(userId);
+    return user;
   }
 
   static async changeUsername(userId: number, newUsername: string) {
