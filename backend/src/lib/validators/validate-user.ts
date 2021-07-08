@@ -11,8 +11,14 @@ export const loginSchema = yup.object().shape({
   password: yup.string().min(8).max(100).required(),
 });
 
-export const emailSchema = yup.object().shape({
+export const changeEmailSchema = yup.object().shape({
   email: yup.string().email().max(254).required(),
+  password: yup.string().min(8).max(100).required(),
+});
+
+export const changeUsernameSchema = yup.object().shape({
+  username: yup.string().min(2).max(30).required(),
+  password: yup.string().min(8).max(100).required(),
 });
 
 interface Register {

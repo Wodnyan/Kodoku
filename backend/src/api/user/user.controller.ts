@@ -2,8 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { ServerController } from "../../controllers/server";
 import { UserController } from "../../controllers/user";
 import HttpError from "../../lib/exceptions/error-handler";
+import { uploadFile } from "../../lib/upload-file";
 import { validateSchemaAsync } from "../../lib/validators";
-import { emailSchema } from "../../lib/validators/validate-user";
+import {
+  changeEmailSchema,
+  changeUsernameSchema,
+} from "../../lib/validators/validate-user";
 
 export const getAllUsers = (req: Request, res: Response) => {
   const user = req.user;
@@ -29,11 +33,21 @@ export const getAllServersOfUser = async (
   }
 };
 
-export const changeAvatar = (
-  _req: Request,
-  _res: Response,
+export const changeAvatar = async (
+  req: Request,
+  res: Response,
   _next: NextFunction,
-) => {};
+) => {
+  const { user } = req as any;
+  const avatar = (await uploadFile(
+    req.file.buffer,
+    `user-avatars/${req.file.filename}`,
+  )) as any;
+  const updatedUser = await UserController.changeAvatar(user.id, avatar);
+  return res.json({
+    user: updatedUser,
+  });
+};
 
 export const changeEmail = async (
   req: Request,
@@ -42,9 +56,13 @@ export const changeEmail = async (
 ) => {
   try {
     const { user } = req as any;
-    const { email } = req.body;
-    await validateSchemaAsync(emailSchema, { email });
-    const updatedUser = await UserController.changeEmail(user.id, email);
+    const { email, password } = req.body;
+    await validateSchemaAsync(changeEmailSchema, { email, password });
+    const updatedUser = await UserController.changeEmail(
+      user.id,
+      email,
+      password,
+    );
 
     return res.json({
       user: updatedUser,
@@ -60,13 +78,26 @@ export const changeEmail = async (
 export const changeUsername = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  next: NextFunction,
 ) => {
-  const { user } = req as any;
-  const { username } = req.body;
-  const updatedUser = await UserController.changeUsername(user.id, username);
+  try {
+    const { user } = req as any;
+    const { username, password } = req.body;
+    await validateSchemaAsync(changeUsernameSchema, {
+      username,
+      password,
+    });
 
-  return res.json({
-    user: updatedUser,
-  });
+    const updatedUser = await UserController.changeUsername(
+      user.id,
+      username,
+      password,
+    );
+
+    return res.json({
+      user: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
