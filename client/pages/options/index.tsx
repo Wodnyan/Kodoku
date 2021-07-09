@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import axios from "axios";
 import { API_ENDPOINT } from "../../constants";
 import { useAuth } from "../../context/auth/AuthProvider";
+import { User } from "../../types";
 
 enum PopupOptions {
   ChangeUsername = 1,
@@ -26,29 +27,30 @@ export default function OptionsPage() {
 
   let popupBody = null;
 
-  function updateUsername(username: string) {
+  function updateUser(field: keyof User, value: string) {
     login({
       ...user,
-      username,
+      [field]: value,
     });
   }
 
   switch (popup) {
     case PopupOptions.ChangeUsername:
       popupBody = (
-        <ChangeUsernameForm updateUsername={updateUsername} userId={user.id} />
+        <ChangeUsernameForm
+          updateUsername={(username: string) =>
+            updateUser("username", username)
+          }
+          userId={user.id}
+        />
       );
       break;
     case PopupOptions.ChangeEmail:
       popupBody = (
-        <div>
-          <h1>Change email</h1>
-          <form>
-            <Input full placeholder="New email" />
-            <Input full placeholder="Password" />
-            <Button full>Change</Button>
-          </form>
-        </div>
+        <ChangeEmailForm
+          updateEmail={(email: string) => updateUser("email", email)}
+          userId={user.id}
+        />
       );
       break;
     case PopupOptions.ChangePassword:
@@ -147,6 +149,66 @@ export default function OptionsPage() {
     </div>
   );
 }
+
+type ChangeEmailFormProps = {
+  userId: number;
+  updateEmail: (email: string) => void;
+};
+
+const ChangeEmailForm: React.FC<ChangeEmailFormProps> = ({
+  userId,
+  updateEmail,
+}) => {
+  return (
+    <Formik
+      initialValues={{
+        email: "",
+        password: "",
+      }}
+      onSubmit={async (values) => {
+        try {
+          const { data } = await axios.patch(
+            `${API_ENDPOINT}/users/${userId}/email`,
+            values,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              },
+            }
+          );
+          updateEmail(data.user.email);
+        } catch (error) {
+          console.error(error);
+        }
+      }}
+    >
+      {({ handleChange, values, handleSubmit }) => (
+        <>
+          <h1>Change email</h1>
+          <form onSubmit={handleSubmit}>
+            <Input
+              onChange={handleChange}
+              name="email"
+              value={values.email}
+              full
+              placeholder="New email"
+            />
+            <Input
+              onChange={handleChange}
+              name="password"
+              value={values.password}
+              full
+              placeholder="Password"
+            />
+            <Button full type="submit">
+              Change
+            </Button>
+          </form>
+        </>
+      )}
+    </Formik>
+  );
+};
 
 type ChangeUsernameFormProps = {
   userId: number;
